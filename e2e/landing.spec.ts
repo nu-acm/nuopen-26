@@ -43,6 +43,13 @@ test.describe("NU Open landing", () => {
     }
   });
 
+  test("should show the Vader mask as the tab icon", async ({ request }) => {
+    const html = await (await request.get("/")).text();
+    const href = html.match(/<link rel="icon" href="([^"]+)"[^>]*type="image\/png"/)?.[1];
+    expect(href).toBeTruthy();
+    expect((await request.get(href!)).headers()["content-type"]).toBe("image/png");
+  });
+
   test("should render every section of the story in order", async ({ page }) => {
     await skipIntro(page);
     await page.goto("/");
