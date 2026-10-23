@@ -72,9 +72,9 @@ describe("Soundtrack", () => {
     expect(audios[0].play).toHaveBeenCalled();
   });
 
-  it("should not download the score until it starts playing, so it never slows the page", async () => {
+  it("should fetch only the score's header up front, so the page stays fast and the music starts at once", async () => {
     await mount();
-    expect(audios[0].preload).toBe("none");
+    expect(audios[0].preload).toBe("metadata");
   });
 
   it("should fade through a gain node, since iOS ignores the element's volume", async () => {

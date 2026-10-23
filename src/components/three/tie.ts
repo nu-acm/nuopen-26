@@ -19,6 +19,8 @@ const DIVE_LIFT = 4;
 // The model's nose points at the camera; this turns it three-quarters toward the copy on the left.
 const FACING = { yaw: -0.85, pitch: 0.12 };
 
+export const TIE_MODEL = "/models/tie.glb";
+
 export function tieActor({ scene, camera, reduced, disposed }: StageContext, approach: Approach): StageActor {
   const key = new THREE.DirectionalLight("#fff3e4", 3);
   key.position.set(5, 3, 3);
@@ -28,7 +30,7 @@ export function tieActor({ scene, camera, reduced, disposed }: StageContext, app
 
   const ship = new THREE.Group();
   scene.add(ship);
-  loadModel("/models/tie.glb", 2)
+  loadModel(TIE_MODEL, 2)
     .then((m) => {
       if (disposed()) {
         disposeTree(m.root);

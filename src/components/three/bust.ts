@@ -12,7 +12,7 @@ export type BustLook = { progress: number; pointerX: number; pointerY: number };
 type Figure = { name: string; url: string; height: number; lift: number; turn?: number; arms?: number };
 
 // Vader's file is a bust; Anakin's is a full T-posed figure facing +x, scaled, turned and lowered into the same frame.
-const FIGURES: Record<Side, Figure> = {
+export const FIGURES: Record<Side, Figure> = {
   dark: { name: "Darth Vader", url: "/models/vader.glb", height: 2, lift: 0 },
   light: { name: "Anakin Skywalker", url: "/models/anakin.glb", height: 2.33, lift: -0.165, turn: -Math.PI / 2, arms: 1.25 },
 };

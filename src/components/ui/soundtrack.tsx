@@ -35,7 +35,7 @@ function audioContext() {
 
 function createTrack(side: Side): Track {
   const ctx = audioContext();
-  const audio = Object.assign(new Audio(), { preload: "none", loop: true, src: TRACKS[side], onerror: () => sideStore.setMusic(false) });
+  const audio = Object.assign(new Audio(), { preload: "metadata", loop: true, src: TRACKS[side], onerror: () => sideStore.setMusic(false) });
   const gain = ctx.createGain();
   gain.gain.value = 0;
   ctx.createMediaElementSource(audio).connect(gain).connect(ctx.destination);

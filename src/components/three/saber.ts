@@ -97,6 +97,8 @@ function buildBlade(shared: Shared) {
   return { rig, light, parts };
 }
 
+export const SABER_MODEL = "/models/saber.glb";
+
 export function saberActor({ scene, camera, reduced, disposed }: StageContext, hilt: Hilt): StageActor {
   const shared: Shared = { time: { value: 0 }, wobble: { value: reduced ? 0 : 1 }, colour: new THREE.Color() };
   const blade = buildBlade(shared);
@@ -114,7 +116,7 @@ export function saberActor({ scene, camera, reduced, disposed }: StageContext, h
   pivot.add(lean);
   scene.add(pivot, key, rim);
 
-  loadModel("/models/saber.glb", 1)
+  loadModel(SABER_MODEL, 1)
     .then((m) => {
       if (disposed()) {
         disposeTree(m.root);

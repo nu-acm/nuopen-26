@@ -16,12 +16,14 @@ import { FlightPlan } from "./sections/schedule";
 import { SideChoice } from "./sections/side-choice";
 import { Trench } from "./sections/trench";
 import { Starfield } from "./space/starfield";
+import { usePrefetchModels } from "./three/prefetch";
 import { Header } from "./ui/header";
 import { SaberProgress } from "./ui/saber-progress";
 import { Soundtrack } from "./ui/soundtrack";
 import { SideSync } from "./ui/use-side";
 
 export function Landing() {
+  usePrefetchModels();
   return (
     <SmoothScroll>
       <SideSync />

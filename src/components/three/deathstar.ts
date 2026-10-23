@@ -2,7 +2,7 @@ import * as THREE from "three";
 
 import { disposeTree, loadModel } from "./load-model";
 
-const DEATH_STAR_URL = "/models/deathstar.glb";
+export const DEATH_STAR_MODEL = "/models/deathstar.glb";
 
 export function lightDeathStar(scene: THREE.Scene) {
   scene.environmentIntensity = 0.04;
@@ -14,7 +14,7 @@ export function lightDeathStar(scene: THREE.Scene) {
 }
 
 export function attachDeathStar(parent: THREE.Object3D, disposed: () => boolean) {
-  loadModel(DEATH_STAR_URL, 2)
+  loadModel(DEATH_STAR_MODEL, 2)
     .then((m) => {
       if (disposed()) {
         disposeTree(m.root);

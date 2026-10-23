@@ -16,6 +16,7 @@ test.describe("NU Open landing", () => {
   test("should play the intro once the visitor begins, then reveal the hero", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByText(/a long time ago in a galaxy far/i)).toBeVisible();
+    await expect(page.getByText("Click anywhere to begin")).toBeVisible({ timeout: 12_000 });
     await page.mouse.click(200, 200);
     await expect(page.locator("html")).not.toHaveAttribute("data-intro", "1", { timeout: 12_000 });
     await expect(page.locator("#top").getByRole("link", { name: /register your team/i })).toBeVisible();
@@ -26,6 +27,14 @@ test.describe("NU Open landing", () => {
   test("should start downloading the hero ship together with the page", async ({ request }) => {
     const html = await (await request.get("/")).text();
     expect(html).toMatch(/<link rel="preload" href="\/models\/destroyer\.glb" as="fetch"/);
+  });
+
+  test("should download the models further down before the visitor scrolls to them", async ({ page }) => {
+    test.slow();
+    await skipIntro(page);
+    const anakin = page.waitForRequest((r) => r.url().endsWith("/models/anakin.glb"), { timeout: 60_000 });
+    await page.goto("/");
+    await anakin;
   });
 
   test("should render every section of the story in order", async ({ page }) => {
