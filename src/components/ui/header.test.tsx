@@ -30,9 +30,9 @@ describe("Header", () => {
 
   it("should switch to the light side and back", () => {
     render(<Header />);
-    fireEvent.click(screen.getByRole("button", { name: "Light side" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "Light side" })[0]);
     expect(document.documentElement.dataset.side).toBe("light");
-    fireEvent.click(screen.getByRole("button", { name: "Dark side" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "Dark side" })[0]);
     expect(document.documentElement.dataset.side).toBe("dark");
   });
 
@@ -101,5 +101,15 @@ describe("Header", () => {
       fireEvent.keyDown(document, { key: "Escape" });
     });
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("should keep the closed menu in the layout so it can slide open, but out of reach of keyboard and screen readers", () => {
+    render(<Header />);
+    const menu = document.getElementById("mobile-menu") as HTMLElement;
+    expect(menu.hasAttribute("hidden")).toBe(false);
+    expect(menu.hasAttribute("inert")).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: /menu/i }));
+    expect(menu.hasAttribute("inert")).toBe(false);
+    expect(menu.dataset.open).toBe("true");
   });
 });

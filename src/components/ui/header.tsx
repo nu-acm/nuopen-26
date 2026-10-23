@@ -104,8 +104,10 @@ export function Header() {
   return (
     <header
       data-site-header
-      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color] duration-500 ${
-        open ? "border-b border-line bg-space" : scrolled ? "border-b border-line bg-[rgb(3_4_10/0.96)]" : "border-b border-transparent"
+      className={`fixed inset-x-0 top-0 z-50 border-b ${
+        open
+          ? "border-line bg-space"
+          : `transition-[background-color,border-color] duration-500 ${scrolled ? "border-line bg-[rgb(3_4_10/0.96)]" : "border-transparent"}`
       }`}
     >
       <div className="mx-auto flex h-[var(--header-h)] max-w-[1240px] items-center gap-4 px-[var(--gutter)]">
@@ -153,18 +155,23 @@ export function Header() {
 
       <div
         id="mobile-menu"
-        hidden={!open}
-        className="max-h-[calc(100svh-var(--header-h))] overflow-y-auto overscroll-contain border-t border-line px-[var(--gutter)] pb-6 pt-2 lg:hidden"
+        data-open={open}
+        inert={!open}
+        className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-[400ms] ease-[var(--ease-out)] motion-reduce:transition-none data-[open=true]:grid-rows-[1fr] lg:hidden"
       >
-        <nav aria-label="Sections menu" className="flex flex-col">
-          {NAV.map((item) => (
-            <a key={item.id} href={`#${item.id}`} onClick={go} className="border-b border-line py-4 font-display text-[1.5rem] text-ink">
-              {item.label}
-            </a>
-          ))}
-        </nav>
-        <div className="mt-4">
-          <SideToggle />
+        <div className="min-h-0 overflow-hidden">
+          <div className="max-h-[calc(100svh-var(--header-h))] overflow-y-auto overscroll-contain border-t border-line bg-space px-[var(--gutter)] pb-6 pt-2">
+            <nav aria-label="Sections menu" className="flex flex-col">
+              {NAV.map((item) => (
+                <a key={item.id} href={`#${item.id}`} onClick={go} className="border-b border-line py-4 font-display text-[1.5rem] text-ink">
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+            <div className="mt-4">
+              <SideToggle />
+            </div>
+          </div>
         </div>
       </div>
     </header>
