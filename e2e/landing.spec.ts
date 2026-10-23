@@ -37,6 +37,12 @@ test.describe("NU Open landing", () => {
     await anakin;
   });
 
+  test("should let browsers keep the models and the music for a day instead of re-checking each visit", async ({ request }) => {
+    for (const file of ["/models/saber.glb", "/audio/main-theme.m4a"]) {
+      expect((await request.head(file)).headers()["cache-control"], file).toContain("max-age=86400");
+    }
+  });
+
   test("should render every section of the story in order", async ({ page }) => {
     await skipIntro(page);
     await page.goto("/");

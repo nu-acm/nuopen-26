@@ -46,6 +46,8 @@ Also:
 - **ACM chapter badge** in the footer is a redrawn SVG (`ui/acm-mark.tsx`). Check it against the official badge.
 - **Music and effects** (`public/audio/`): the Imperial March on the dark side, the Main Theme on the light side.
   Clicking the TIE fighter fires `blaster.mp3`, clicking the lightsaber plays `saber-swing.mp3`. Muting silences all.
+- **Replacing a model or track**: browsers keep `public/models/` and `public/audio/` for a day (`next.config.ts`),
+  so give a changed file a new name (`saber-2.glb`) and update its path, or returning visitors keep the old one.
 - **3D model licences**: the Death Star (CC BY-NC-ND) and Vader (CC BY-NC-SA) are non-commercial.
   That fits a free student event; credits are on `/credits`, linked from the footer, as the licences require.
   Anakin and the TIE fighter are CC BY 4.0: credit plus a note that they were changed, both on `/credits`.
