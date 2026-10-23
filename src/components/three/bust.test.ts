@@ -45,6 +45,7 @@ describe("bustActor", () => {
   beforeEach(() => {
     pending.length = 0;
     sideStore.reset();
+    sideStore.choose("dark");
   });
   afterEach(() => sideStore.reset());
 

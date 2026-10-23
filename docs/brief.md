@@ -16,8 +16,8 @@ registration.
   → the trench run, a TIE fighter diving in (final call to register).
 - **Mechanic.** *Choose your side.* Light side = saber blue + the Main Theme.
   Dark side = saber red + the Imperial March. The choice re-tints the whole page
-  (`html[data-side]`) and switches the music. Default: **dark** (NU Open's brand
-  is red on black).
+  (`html[data-side]`) and switches the music. Default: **light**; a visitor's
+  choice is remembered.
 - **Spine.** A slow starfield drifts behind every section; it streaks into
   hyperspace only in the jump section. A lightsaber blade along the top is the
   progress bar.

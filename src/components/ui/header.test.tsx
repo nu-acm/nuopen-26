@@ -28,12 +28,12 @@ describe("Header", () => {
     expect(screen.getAllByRole("link", { name: /register/i })[0].getAttribute("href")).toBe(EVENT.registerHref);
   });
 
-  it("should switch to the light side and back", () => {
+  it("should switch to the dark side and back", () => {
     render(<Header />);
-    fireEvent.click(screen.getAllByRole("button", { name: "Light side" })[0]);
-    expect(document.documentElement.dataset.side).toBe("light");
     fireEvent.click(screen.getAllByRole("button", { name: "Dark side" })[0]);
     expect(document.documentElement.dataset.side).toBe("dark");
+    fireEvent.click(screen.getAllByRole("button", { name: "Light side" })[0]);
+    expect(document.documentElement.dataset.side).toBe("light");
   });
 
   it("should offer the side switch inside the phone menu", () => {

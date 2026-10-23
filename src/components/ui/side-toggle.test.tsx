@@ -20,19 +20,19 @@ describe("SideToggle", () => {
     expect(within(group).getAllByRole("button").map((b) => b.textContent)).toEqual(["Dark", "Light"]);
   });
 
-  it("should press the dark segment by default", () => {
+  it("should press the light segment by default", () => {
     render(<SideToggle />);
-    expect(screen.getByRole("button", { name: "Dark side" }).getAttribute("aria-pressed")).toBe("true");
-    expect(screen.getByRole("button", { name: "Light side" }).getAttribute("aria-pressed")).toBe("false");
+    expect(screen.getByRole("button", { name: "Light side" }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByRole("button", { name: "Dark side" }).getAttribute("aria-pressed")).toBe("false");
   });
 
   it("should choose the side it is clicked on and remember it for the next visit", () => {
     render(<SideToggle />);
-    fireEvent.click(screen.getByRole("button", { name: "Light side" }));
-    expect(sideStore.get().side).toBe("light");
-    expect(document.documentElement.dataset.side).toBe("light");
-    expect(localStorage.getItem(SIDE_KEY)).toBe("light");
-    expect(screen.getByRole("button", { name: "Light side" }).getAttribute("aria-pressed")).toBe("true");
+    fireEvent.click(screen.getByRole("button", { name: "Dark side" }));
+    expect(sideStore.get().side).toBe("dark");
+    expect(document.documentElement.dataset.side).toBe("dark");
+    expect(localStorage.getItem(SIDE_KEY)).toBe("dark");
+    expect(screen.getByRole("button", { name: "Dark side" }).getAttribute("aria-pressed")).toBe("true");
   });
 
   it("should give the control a 44 pixel tall hit area", () => {

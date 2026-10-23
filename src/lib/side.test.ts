@@ -24,8 +24,8 @@ describe("sideStore", () => {
 
   afterEach(() => vi.unstubAllGlobals());
 
-  it("should start on the dark side with music on", () => {
-    expect(sideStore.get()).toEqual({ side: "dark", music: true });
+  it("should start on the light side with music on", () => {
+    expect(sideStore.get()).toEqual({ side: "light", music: true });
   });
 
   it("should switch sides, remember the choice and tag the page", () => {
@@ -38,36 +38,36 @@ describe("sideStore", () => {
   it("should notify subscribers on change and stop after unsubscribe", () => {
     const listener = vi.fn();
     const off = sideStore.subscribe(listener);
-    sideStore.choose("light");
-    off();
     sideStore.choose("dark");
+    off();
+    sideStore.choose("light");
     expect(listener).toHaveBeenCalledTimes(1);
   });
 
   it("should not notify when the side does not change", () => {
     const listener = vi.fn();
     sideStore.subscribe(listener);
-    sideStore.choose("dark");
+    sideStore.choose("light");
     expect(listener).not.toHaveBeenCalled();
   });
 
   it("should restore a saved side and a saved music choice", () => {
-    storage.setItem(SIDE_KEY, "light");
+    storage.setItem(SIDE_KEY, "dark");
     storage.setItem(MUSIC_KEY, "off");
     sideStore.hydrate();
-    expect(sideStore.get()).toEqual({ side: "light", music: false });
+    expect(sideStore.get()).toEqual({ side: "dark", music: false });
   });
 
   it("should paint a restored side even when the head script did not run", () => {
-    storage.setItem(SIDE_KEY, "light");
+    storage.setItem(SIDE_KEY, "dark");
     sideStore.hydrate();
-    expect(document.documentElement.dataset.side).toBe("light");
+    expect(document.documentElement.dataset.side).toBe("dark");
   });
 
   it("should ignore a corrupted saved side", () => {
     storage.setItem(SIDE_KEY, "purple");
     sideStore.hydrate();
-    expect(sideStore.get().side).toBe("dark");
+    expect(sideStore.get().side).toBe("light");
   });
 
   it("should remember the music switch", () => {

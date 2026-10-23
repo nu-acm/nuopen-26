@@ -7,7 +7,7 @@ export const MUSIC_KEY = "nuopen:music";
 // Runs inline in <head> so the saved side is painted before React hydrates.
 export const SIDE_SCRIPT = `try{var s=localStorage.getItem("${SIDE_KEY}");if(s==="light"||s==="dark")document.documentElement.dataset.side=s}catch(e){}`;
 
-const INITIAL: SideState = { side: "dark", music: true };
+const INITIAL: SideState = { side: "light", music: true };
 
 let state: SideState = INITIAL;
 const listeners = new Set<() => void>();

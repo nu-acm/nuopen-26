@@ -38,15 +38,15 @@ describe("Rules", () => {
     expect(items.slice(0, -1).some((item) => item.classList.contains("rule-punch"))).toBe(false);
   });
 
-  it("should head the rules as the Imperial code on the dark side", () => {
+  it("should head the rules as the Jedi code on the light side", () => {
     render(<Rules />);
-    expect(screen.getByRole("heading", { level: 2 }).textContent).toBe("The Imperial code");
-  });
-
-  it("should switch to the Jedi code when the visitor turns to the light side", () => {
-    render(<Rules />);
-    act(() => sideStore.choose("light"));
     expect(screen.getByRole("heading", { level: 2 }).textContent).toBe("The Jedi code");
     expect(screen.getByText(/rank of Master/)).toBeTruthy();
+  });
+
+  it("should switch to the Imperial code when the visitor turns to the dark side", () => {
+    render(<Rules />);
+    act(() => sideStore.choose("dark"));
+    expect(screen.getByRole("heading", { level: 2 }).textContent).toBe("The Imperial code");
   });
 });

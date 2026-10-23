@@ -45,13 +45,14 @@ test.describe("NU Open landing", () => {
     await expect(page.locator("#rules")).toBeFocused({ timeout: 4000 });
   });
 
-  test("should switch to the light side and remember it", async ({ page }) => {
+  test("should greet a first visit on the light side, then switch to the dark side and remember it", async ({ page }) => {
     await skipIntro(page);
     await page.goto("/");
-    await page.locator("[data-site-header]").getByRole("button", { name: "Light side" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-side", "light");
+    await page.locator("[data-site-header]").getByRole("button", { name: "Dark side" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-side", "dark");
     await page.reload();
-    await expect(page.locator("html")).toHaveAttribute("data-side", "light");
+    await expect(page.locator("html")).toHaveAttribute("data-side", "dark");
   });
 
   test("should open an answer in the archives", async ({ page }) => {

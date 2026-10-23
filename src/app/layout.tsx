@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      data-side="dark"
+      data-side="light"
       // The pre-paint script may change data-side before hydration.
       suppressHydrationWarning
       className={`${logo.variable} ${display.variable} ${body.variable} ${mono.variable} ${crawl.variable}`}

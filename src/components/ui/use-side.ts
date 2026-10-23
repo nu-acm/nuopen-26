@@ -4,7 +4,7 @@ import { useEffect, useSyncExternalStore } from "react";
 
 import { sideStore, type SideState } from "@/lib/side";
 
-const SERVER: SideState = { side: "dark", music: true };
+const SERVER: SideState = { side: "light", music: true };
 
 export function useSide<T>(select: (s: SideState) => T): T {
   return useSyncExternalStore(

@@ -65,9 +65,9 @@ describe("Soundtrack", () => {
     vi.unstubAllGlobals();
   });
 
-  it("should play the dark side's track looped", async () => {
+  it("should play the light side's track looped", async () => {
     const { TRACKS } = await mount();
-    expect(audios[0].src).toBe(TRACKS.dark);
+    expect(audios[0].src).toBe(TRACKS.light);
     expect(audios[0].loop).toBe(true);
     expect(audios[0].play).toHaveBeenCalled();
   });
@@ -121,7 +121,7 @@ describe("Soundtrack", () => {
     expect(audios[0].play).not.toHaveBeenCalled();
     await act(async () => void dispatchEvent(new Event(INTRO_TITLE)));
     expect(audios[0].play).toHaveBeenCalled();
-    expect(audios[0].currentTime).toBe(FIRST_NOTE.dark);
+    expect(audios[0].currentTime).toBe(FIRST_NOTE.light);
     delete document.documentElement.dataset.intro;
   });
 

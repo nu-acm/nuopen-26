@@ -45,26 +45,26 @@ describe("SideChoice", () => {
     expect(screen.getByRole("button", { name: /light side/i })).toBeTruthy();
   });
 
-  it("should press the dark side by default", () => {
+  it("should press the light side by default", () => {
     render(<SideChoice />);
-    expect(pressed(/dark side/i)).toBe("true");
-    expect(pressed(/light side/i)).toBe("false");
-  });
-
-  it("should tint the page and press the light side when it is chosen", () => {
-    render(<SideChoice />);
-    fireEvent.click(screen.getByRole("button", { name: /light side/i }));
-    expect(document.documentElement.dataset.side).toBe("light");
     expect(pressed(/light side/i)).toBe("true");
     expect(pressed(/dark side/i)).toBe("false");
   });
 
-  it("should return to the dark side when it is chosen again", () => {
+  it("should tint the page and press the dark side when it is chosen", () => {
     render(<SideChoice />);
-    fireEvent.click(screen.getByRole("button", { name: /light side/i }));
     fireEvent.click(screen.getByRole("button", { name: /dark side/i }));
     expect(document.documentElement.dataset.side).toBe("dark");
     expect(pressed(/dark side/i)).toBe("true");
+    expect(pressed(/light side/i)).toBe("false");
+  });
+
+  it("should return to the light side when it is chosen again", () => {
+    render(<SideChoice />);
+    fireEvent.click(screen.getByRole("button", { name: /dark side/i }));
+    fireEvent.click(screen.getByRole("button", { name: /light side/i }));
+    expect(document.documentElement.dataset.side).toBe("light");
+    expect(pressed(/light side/i)).toBe("true");
   });
 
   it("should place the saber between the dark and light cards", () => {
