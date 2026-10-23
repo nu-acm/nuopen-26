@@ -1,0 +1,176 @@
+.side-choice {
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: calc(var(--header-h) + 24px) clamp(28px, 5vh, 56px);
+}
+
+.side-copy,
+.side-row {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.side-copy {
+  text-align: center;
+}
+
+.side-copy .kicker {
+  justify-content: center;
+}
+
+/* One line on a laptop so the copy, the saber and both cards fit a 1440x900 screen. */
+.side-copy .side-title {
+  margin-top: 18px;
+  font-size: clamp(2.5rem, min(5.4vw, 9vh), 5.25rem);
+  line-height: 1.02;
+}
+
+.side-copy .lead {
+  max-width: 52rem;
+  margin: 16px auto 0;
+  font-size: clamp(1rem, 1.3vw, 1.125rem);
+}
+
+.side-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 14px;
+  margin-top: clamp(24px, 4vh, 40px);
+}
+
+.side-band {
+  position: relative;
+  order: -1;
+  grid-column: 1 / -1;
+  height: clamp(260px, 38svh, 340px);
+}
+
+.side-band::before {
+  content: "";
+  position: absolute;
+  inset: 4% 0;
+  background: radial-gradient(closest-side, var(--saber-soft), transparent);
+  pointer-events: none;
+}
+
+.side-stage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.side-option {
+  --tick: var(--ink-3);
+  display: flex;
+  min-height: 150px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 18px 20px;
+  background-color: rgb(9 12 21 / 0.82);
+  text-align: left;
+  transition:
+    border-color 0.35s var(--ease-out),
+    background-color 0.35s var(--ease-out),
+    box-shadow 0.35s var(--ease-out);
+}
+
+.side-option:hover {
+  border-color: var(--line-2);
+}
+
+.side-option[aria-pressed="true"] {
+  --tick: var(--blade);
+  border-color: var(--blade);
+  background-color: color-mix(in srgb, var(--blade) 14%, rgb(9 12 21 / 0.82));
+  box-shadow:
+    0 0 0 1px var(--blade),
+    0 0 26px var(--blade-glow),
+    inset 0 0 30px color-mix(in srgb, var(--blade) 14%, transparent);
+}
+
+.side-option-title {
+  font-size: clamp(1.25rem, 3.4vw, 2.5rem);
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.side-facts {
+  display: grid;
+  width: 100%;
+  gap: 10px;
+}
+
+.side-fact {
+  display: grid;
+  gap: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 0.975rem;
+  line-height: 1.3;
+}
+
+/* A blade line in each card's own colour, dim until the card is chosen. */
+.side-bar {
+  align-self: stretch;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--blade);
+  opacity: 0.55;
+  box-shadow: 0 0 6px var(--blade-glow);
+  transition:
+    background-color 0.35s var(--ease-out),
+    box-shadow 0.35s var(--ease-out),
+    opacity 0.35s var(--ease-out);
+}
+
+.side-option[aria-pressed="true"] .side-bar {
+  opacity: 1;
+  background: var(--core);
+  box-shadow: 0 0 4px var(--blade), 0 0 12px var(--blade-glow), 0 0 28px var(--blade-glow);
+}
+
+@media (min-width: 900px) {
+  .side-row {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 300px) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(28px, 3vw, 44px);
+    height: clamp(340px, calc(100svh - 360px), 560px);
+  }
+
+  .side-band {
+    order: 0;
+    grid-column: auto;
+    align-self: stretch;
+    height: auto;
+  }
+
+  /* Reaches into the empty gaps above and below the cards, never as far as the lead (row margin is 24px at least). */
+  .side-stage {
+    inset: -24px 0;
+  }
+
+  .side-option {
+    min-height: 220px;
+    gap: 18px;
+    padding: 28px 28px 30px;
+  }
+
+  .side-facts {
+    gap: 14px;
+  }
+
+  .side-fact {
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: 14px;
+    padding-top: 12px;
+  }
+}

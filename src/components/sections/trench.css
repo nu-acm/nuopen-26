@@ -1,0 +1,92 @@
+.trench {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Below 900px there is no TIE: a hidden host never starts its WebGL context, which phones cannot spare. */
+.trench-stage {
+  display: none;
+}
+
+.trench-floor {
+  --advance: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 60%;
+  overflow: hidden;
+  perspective: 360px;
+  perspective-origin: 50% 0;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to top, #000 35%, transparent);
+  mask-image: linear-gradient(to top, #000 35%, transparent);
+}
+
+.trench-floor::before {
+  content: "";
+  position: absolute;
+  top: -150%;
+  bottom: 0;
+  left: -50%;
+  right: -50%;
+  transform-origin: 50% 100%;
+  transform: rotateX(72deg);
+  background-image:
+    linear-gradient(to right, transparent calc(100% - 1px), color-mix(in srgb, var(--saber) 50%, transparent)),
+    linear-gradient(to bottom, transparent calc(100% - 1px), var(--line-2));
+  background-size: 96px 100%, 100% 56px;
+  background-position: 0 0, 0 calc(var(--advance) * 560px);
+}
+
+.trench-inner {
+  z-index: 1;
+}
+
+.trench-copy {
+  max-width: 36rem;
+}
+
+.trench-battle {
+  color: var(--saber);
+  text-shadow: 0 0 28px var(--saber-glow);
+}
+
+.trench-count {
+  margin-top: clamp(32px, 5vh, 48px);
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.trench-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: clamp(28px, 4vh, 40px);
+}
+
+.trench-actions > a {
+  height: 60px;
+}
+
+.trench-cta {
+  padding-inline: 36px;
+  font-size: 0.9375rem;
+}
+
+@media (min-width: 900px) {
+  .trench {
+    min-height: 100svh;
+  }
+
+  .trench-stage {
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+}

@@ -1,0 +1,151 @@
+.hero {
+  --stage-h: min(620px, 68svh);
+  min-height: 100svh;
+}
+
+/* Phones keep the same ship in a shorter sky, so the title and the info strip still fit the screen. */
+@media (max-width: 639px) {
+  .hero {
+    --stage-h: 42svh;
+  }
+}
+
+/* The actor places the ship relative to this box, so its top sets where the ship sits. */
+.hero-stage {
+  top: var(--header-h);
+  height: var(--stage-h);
+}
+
+.hero-vignette {
+  background:
+    radial-gradient(120% 70% at 50% 0%, transparent 40%, rgb(3 4 10 / 0.55) 100%),
+    linear-gradient(to bottom, transparent 55%, rgb(3 4 10 / 0.85) 100%);
+}
+
+.hero-copy {
+  padding-top: calc(var(--header-h) + var(--stage-h) * 0.36 + clamp(8px, 2vh, 20px));
+}
+
+.hero-episode {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.8125rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.hero-episode::before,
+.hero-episode::after {
+  content: "";
+  width: 36px;
+  height: 1px;
+  background: var(--ink-3);
+}
+
+.hero-title {
+  margin-top: clamp(10px, 1.6vh, 16px);
+  font-size: clamp(3.4rem, min(14.5vw, 18vh), 12.5rem);
+  line-height: 0.84;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  -webkit-text-stroke-width: max(1.5px, 0.011em);
+  filter: drop-shadow(0 0 22px rgb(255 232 31 / 0.18));
+  will-change: transform;
+}
+
+.hero-sub {
+  margin-top: clamp(12px, 2vh, 20px);
+  font-size: clamp(1.05rem, min(1.9vw, 3.2vh), 1.75rem);
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  /* Tracking adds space after the last letter too; this pulls the line back to true centre. */
+  margin-right: -0.32em;
+  color: var(--ink);
+}
+
+.hero-strip {
+  margin-top: auto;
+  padding: clamp(24px, 4vh, 40px) var(--gutter) max(20px, env(safe-area-inset-bottom));
+}
+
+.hero-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-cell dd {
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+@media (min-width: 640px) {
+  .hero-cell {
+    padding: 16px 24px 2px 0;
+    border-bottom: 0;
+  }
+  .hero-cell + .hero-cell {
+    padding-left: 24px;
+    border-left: 1px solid var(--line);
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .hero-cell:nth-child(3) {
+    border-left: 0;
+    padding-left: 0;
+    border-top: 1px solid var(--line);
+    margin-top: 14px;
+  }
+}
+
+html[data-intro="1"] [data-hero-title],
+html[data-intro="1"] [data-hero-rest],
+html[data-intro="1"] [data-site-header] {
+  opacity: 0;
+}
+
+html[data-intro="1"]:not([data-intro-live]) [data-hero-title],
+html[data-intro="1"]:not([data-intro-live]) [data-hero-rest],
+html[data-intro="1"]:not([data-intro-live]) [data-site-header] {
+  animation: intro-failsafe-show 0.6s 9s forwards;
+}
+
+@keyframes intro-failsafe-show {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 479px) {
+  .hero-copy .btn,
+  .hero-copy .btn-ghost {
+    width: min(100%, 300px);
+  }
+}
+
+/* Phones: a one-line kicker without the rules, and a tighter info strip, so the hero fits 844px. */
+@media (max-width: 639px) {
+  .hero-episode {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+  }
+
+  .hero-episode::before,
+  .hero-episode::after {
+    display: none;
+  }
+
+  .hero-strip {
+    padding-top: 20px;
+  }
+
+  .hero-cell {
+    padding-block: 8px;
+  }
+}
