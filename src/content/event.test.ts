@@ -8,6 +8,10 @@ const minutes = (hhmm: string) => {
 };
 
 describe("EVENT content", () => {
+  it("should show the confirmed ₸1 200 000 prize pool", () => {
+    expect(EVENT.prize.text).toBe("₸1 200 000");
+  });
+
   it("should start the contest before it ends, five hours apart", () => {
     const start = Date.parse(EVENT.contest.start);
     const end = Date.parse(EVENT.contest.end);

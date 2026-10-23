@@ -1,7 +1,7 @@
 import { formatMoney } from "@/lib/format";
 
 const EMAIL = "acmsc@nu.edu.kz";
-const PRIZE = { amount: 1_000_000, currency: "₸" }; // placeholder: last year's pool until sponsors confirm 2026
+const PRIZE = { amount: 1_200_000, currency: "₸" };
 const PRIZE_TEXT = formatMoney(PRIZE.amount, PRIZE.currency);
 
 export const EVENT = {

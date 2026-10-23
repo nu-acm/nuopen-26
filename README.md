@@ -32,8 +32,6 @@ for the end-to-end flow (needs the server on :3300).
 
 These are placeholders in `src/content/event.ts`:
 
-- **Prize pool**: shows last year's ₸1 000 000. The 2026 budget lists about $2,163 in cash prizes. Last year's
-  winner boards in the photo read 300 000 / 200 000 / 100 000 (₸600 000 in all), so check which figure is right.
 - **Key dates**: registration opens 23 Oct, closes 3 Nov, confirmation 5 Nov.
 - **Agenda**: last year's running order (check-in 09:00, contest 11:00–16:00, closing 17:00).
 - **`registerHref`**: `/register`, a page that does not exist yet. Until it does, the link lands on the themed 404 (`src/app/not-found.tsx`).
