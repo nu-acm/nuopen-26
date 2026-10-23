@@ -4,6 +4,7 @@ import { approachDistance, screenX } from "@/lib/deathstar-shot";
 import { damp } from "@/lib/scene-path";
 import { tieFlight } from "@/lib/tie-flight";
 
+import { EFFECTS, playEffect } from "../ui/soundtrack";
 import { disposeTree, loadModel } from "./load-model";
 import type { StageActor, StageContext } from "./use-stage";
 
@@ -51,5 +52,6 @@ export function tieActor({ scene, camera, reduced, disposed }: StageContext, app
       ship.position.set(screenX(across, dist, camera.fov, camera.aspect), (1 - arrive) * DIVE_LIFT + pose.bob, -dist);
       ship.rotation.set(FACING.pitch, FACING.yaw + pose.yaw, pose.roll);
     },
+    hit: { target: ship, onHit: () => playEffect(EFFECTS.blaster) },
   };
 }

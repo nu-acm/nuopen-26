@@ -8,8 +8,10 @@ import { sideStore, type Side } from "@/lib/side";
 
 import { useSide } from "./use-side";
 
-// shortcut: the film scores are Lucasfilm's and kept out of git (public/audio is ignored); ship licensed tracks before going public.
+// shortcut: the film scores are Lucasfilm's, published at the organisers' own risk; swap in licensed tracks if a takedown comes.
 export const TRACKS: Record<Side, string> = { dark: "/audio/imperial-march.m4a", light: "/audio/main-theme.m4a" };
+export const EFFECTS = { blaster: "/audio/blaster.mp3", swing: "/audio/saber-swing.mp3" } as const;
+const EFFECT_LEVEL = 0.5;
 const VOLUME = 0.22;
 const FADE_S = 1.2;
 const CUE_FADE_S = 0.15;
@@ -55,6 +57,31 @@ function fadeIn(track: Track, duration = FADE_S * 2): Promise<void> {
   if (track.audio.paused) track.level = track.gain.gain.value = 0;
   fade(track, VOLUME, duration);
   return track.audio.play();
+}
+
+const effects = new Map<string, HTMLAudioElement>();
+
+/** A short sound for a click on a 3D model, silent while the visitor has the sound muted. */
+export function playEffect(url: string) {
+  if (!sideStore.get().music) return;
+  let audio = effects.get(url);
+  try {
+    if (!audio) {
+      const ctx = audioContext();
+      audio = new Audio(url);
+      const gain = ctx.createGain();
+      gain.gain.value = EFFECT_LEVEL;
+      ctx.createMediaElementSource(audio).connect(gain).connect(ctx.destination);
+      effects.set(url, audio);
+    }
+  } catch (error) {
+    console.warn("Sound effect skipped: Web Audio is unavailable", error);
+    return;
+  }
+  void context?.resume();
+  if (audio.error) audio.load();
+  audio.currentTime = 0;
+  audio.play().catch((error) => console.warn("Sound effect failed to play", url, error));
 }
 
 /** Background score: the Imperial March on the dark side, the Main Theme on the light side. */

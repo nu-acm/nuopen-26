@@ -44,8 +44,5 @@ yarn-error.log*
 next-env.d.ts
 
 
-# Film music is Lucasfilm's: local preview only, never commit or deploy it.
-/public/audio/
-
 # local screenshots
 /shots/

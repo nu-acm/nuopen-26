@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { SABER_SIZE, beginSwap, colourDue, fitHeight, swapDone, swapLength, type Swap } from "@/lib/saber";
 import { damp } from "@/lib/scene-path";
 
+import { EFFECTS, playEffect } from "../ui/soundtrack";
 import { disposeTree, loadModel } from "./load-model";
 import type { StageActor, StageContext } from "./use-stage";
 
@@ -177,5 +178,6 @@ export function saberActor({ scene, camera, reduced, disposed }: StageContext, h
     },
     resize: place,
     dispose: () => removeEventListener("pointermove", onPointer),
+    hit: { target: lean, onHit: () => playEffect(EFFECTS.swing) },
   };
 }

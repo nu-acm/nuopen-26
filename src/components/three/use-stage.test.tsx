@@ -154,6 +154,34 @@ describe("useStage", () => {
     expect(renderers[0].setPixelRatio).toHaveBeenLastCalledWith(1.5);
   });
 
+  it("should call the actor's hit handler only when a click lands on its target", async () => {
+    const { BoxGeometry, Mesh, MeshBasicMaterial } = await import("three");
+    const onHit = vi.fn();
+    render(
+      <Stage
+        build={({ scene }) => {
+          const box = new Mesh(new BoxGeometry(1, 1, 1), new MeshBasicMaterial());
+          box.position.z = -5;
+          scene.add(box);
+          return { update() {}, hit: { target: box, onHit } };
+        }}
+      />,
+    );
+    nearScreen();
+    renderers[0].domElement.getBoundingClientRect = () => ({ left: 0, top: 0, width: 400, height: 400 }) as DOMRect;
+    act(() => void dispatchEvent(new MouseEvent("click", { clientX: 10, clientY: 10 })));
+    expect(onHit).not.toHaveBeenCalled();
+    act(() => void dispatchEvent(new MouseEvent("click", { clientX: 200, clientY: 200 })));
+    expect(onHit).toHaveBeenCalledTimes(1);
+    const button = document.body.appendChild(document.createElement("button"));
+    act(() => void button.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX: 200, clientY: 200 })));
+    expect(onHit).toHaveBeenCalledTimes(1);
+    button.remove();
+    farFromScreen();
+    act(() => void dispatchEvent(new MouseEvent("click", { clientX: 200, clientY: 200 })));
+    expect(onHit).toHaveBeenCalledTimes(1);
+  });
+
   it("should release the canvas when the scene fails to build", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     render(

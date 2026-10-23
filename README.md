@@ -44,8 +44,9 @@ Also:
   Set it in the server's environment if the domain changes.
 - **Partner logos** are typeset wordmarks. Swap in SVG logos in `sections/allies.tsx` when you have them.
 - **ACM chapter badge** in the footer is a redrawn SVG (`ui/acm-mark.tsx`). Check it against the official badge.
-- **Music**: the Imperial March and the Main Theme belong to Lucasfilm. `public/audio/` is git-ignored,
-  so the deploy ships without sound until licensed tracks are added. The sound button hides itself then.
+- **Music and effects** (`public/audio/`): the Imperial March and the Main Theme belong to Lucasfilm and ship
+  at the organisers' own risk; swap in licensed tracks if a takedown comes. Clicking the TIE fighter fires
+  `blaster.mp3`, clicking the lightsaber plays `saber-swing.mp3` (freesound community). Muting silences both.
 - **3D model licences**: the Death Star (CC BY-NC-ND) and Vader (CC BY-NC-SA) are non-commercial.
   That fits a free student event; credits are on `/credits`, linked from the footer, as the licences require.
   Anakin and the TIE fighter are CC BY 4.0: credit plus a note that they were changed, both on `/credits`.

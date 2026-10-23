@@ -5,6 +5,8 @@ import { describe, expect, it, vi } from "vitest";
 import { tieActor } from "./tie";
 
 const loads = vi.hoisted(() => [] as string[]);
+const playEffect = vi.hoisted(() => vi.fn());
+vi.mock("../ui/soundtrack", () => ({ playEffect, EFFECTS: { blaster: "/audio/blaster.mp3", swing: "/audio/saber-swing.mp3" } }));
 vi.mock("./load-model", () => ({
   loadModel: (url: string) => {
     loads.push(url);
@@ -41,6 +43,14 @@ describe("tieActor", () => {
 
   it("should skip the dive and hold position when motion is reduced", () => {
     expect(fly(0, true).z).toBeCloseTo(fly(1).z, 1);
+  });
+
+  it("should fire the blaster when the visitor clicks the TIE fighter", () => {
+    const scene = new THREE.Scene();
+    const actor = tieActor({ scene, camera: new THREE.PerspectiveCamera(), reduced: false, disposed: () => false }, { progress: 1 });
+    expect(actor.hit?.target).toBe(scene.children.find((o) => o instanceof THREE.Group));
+    actor.hit?.onHit();
+    expect(playEffect).toHaveBeenCalledWith("/audio/blaster.mp3");
   });
 
   it("should pick up where the scroll already is when the stage is rebuilt, instead of diving in again", () => {

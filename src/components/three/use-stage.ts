@@ -23,6 +23,8 @@ export type StageActor = {
   /** Resize hook: width and height in CSS pixels. */
   resize?: (width: number, height: number) => void;
   dispose?: () => void;
+  /** A click that lands on `target`'s meshes calls `onHit`. */
+  hit?: { target: THREE.Object3D; onHit: () => void };
 };
 
 /**
@@ -86,6 +88,18 @@ export function useStage(host: RefObject<HTMLElement | null>, build: (ctx: Stage
         camera.updateProjectionMatrix();
         actor.resize?.(w, h);
       };
+      const ray = new THREE.Raycaster();
+      const onClick = (e: MouseEvent) => {
+        const box = renderer.domElement.getBoundingClientRect();
+        if (!actor.hit || !box.width || !box.height || (e.target as Element).closest?.("a, button")) return;
+        const at = new THREE.Vector2(((e.clientX - box.left) / box.width) * 2 - 1, 1 - ((e.clientY - box.top) / box.height) * 2);
+        if (Math.abs(at.x) > 1 || Math.abs(at.y) > 1) return;
+        actor.hit.target.updateWorldMatrix(true, true);
+        ray.setFromCamera(at, camera);
+        if (ray.intersectObject(actor.hit.target, true).length > 0) actor.hit.onHit();
+      };
+      if (actor.hit) addEventListener("click", onClick);
+
       const sizer = new ResizeObserver(resize);
       sizer.observe(el);
       resize();
@@ -124,6 +138,7 @@ export function useStage(host: RefObject<HTMLElement | null>, build: (ctx: Stage
       teardown = () => {
         alive = false;
         cancelAnimationFrame(frame);
+        removeEventListener("click", onClick);
         watcher.disconnect();
         sizer.disconnect();
         actor.dispose?.();

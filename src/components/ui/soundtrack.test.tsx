@@ -134,3 +134,48 @@ describe("Soundtrack", () => {
     expect(sideStore.get().music).toBe(false);
   });
 });
+
+describe("playEffect", () => {
+  beforeEach(() => {
+    audios.length = 0;
+    gains.length = 0;
+    vi.stubGlobal("Audio", FakeAudio);
+    vi.stubGlobal("AudioContext", FakeContext);
+  });
+  afterEach(() => vi.unstubAllGlobals());
+
+  async function load() {
+    vi.resetModules();
+    const { sideStore } = await import("@/lib/side");
+    const sound = await import("./soundtrack");
+    sideStore.reset();
+    return { sideStore, ...sound };
+  }
+
+  it("should play the effect from the start each time through one reused gain node", async () => {
+    const { playEffect, EFFECTS } = await load();
+    playEffect(EFFECTS.blaster);
+    audios[0].currentTime = 0.4;
+    playEffect(EFFECTS.blaster);
+    expect(audios).toHaveLength(1);
+    expect(audios[0].src).toBe(EFFECTS.blaster);
+    expect(audios[0].currentTime).toBe(0);
+    expect(audios[0].play).toHaveBeenCalledTimes(2);
+    expect(gains).toHaveLength(1);
+  });
+
+  it("should reload an effect whose file failed to load before", async () => {
+    const { playEffect, EFFECTS } = await load();
+    playEffect(EFFECTS.blaster);
+    audios[0].error = { code: 4 };
+    playEffect(EFFECTS.blaster);
+    expect(audios[0].load).toHaveBeenCalledTimes(1);
+  });
+
+  it("should stay silent when the visitor muted the sound", async () => {
+    const { playEffect, EFFECTS, sideStore } = await load();
+    sideStore.toggleMusic();
+    playEffect(EFFECTS.swing);
+    expect(audios).toHaveLength(0);
+  });
+});
