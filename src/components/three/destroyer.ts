@@ -9,6 +9,8 @@ import type { StageActor, StageContext } from "./use-stage";
 /** `ready` is 0 while the intro still covers the hero; the fly-in starts once it is 1 and sets `landed` when done. */
 export type Flight = { scroll: number; ready: number; landed?: boolean };
 
+export const DESTROYER_MODEL = "/models/destroyer.glb";
+
 const ENTRY_S = 5.5;
 const DRIFT = 0.06;
 const MAX_DRIFT = 6;
@@ -96,7 +98,7 @@ export function destroyerActor({ scene, camera, reduced, disposed }: StageContex
   // The model's bow points down +z; turned around it flies away from the camera.
   ship.rotation.set(0.08, Math.PI, 0);
 
-  loadModel("/models/destroyer.glb", 1)
+  loadModel(DESTROYER_MODEL, 1)
     .then((m) => {
       if (disposed()) {
         disposeTree(m.root);

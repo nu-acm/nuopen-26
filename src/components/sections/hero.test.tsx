@@ -10,6 +10,7 @@ const { ship } = vi.hoisted(() => ({ ship: { flight: { ready: -1 } } }));
 
 vi.mock("../three/use-stage", () => ({ useStage: (_host: unknown, build: (ctx: unknown) => unknown) => build({}) }));
 vi.mock("../three/destroyer", () => ({
+  DESTROYER_MODEL: "/models/destroyer.glb",
   destroyerActor: (_ctx: unknown, flight: { ready: number }) => {
     ship.flight = flight;
     return { update() {} };

@@ -2,7 +2,7 @@ import * as THREE from "three";
 
 import { framingDistance, shipPose, transitFrame } from "@/lib/transit";
 
-import { addEngineGlow } from "./destroyer";
+import { addEngineGlow, DESTROYER_MODEL } from "./destroyer";
 import { disposeTree, loadModel } from "./load-model";
 import type { StageActor, StageContext } from "./use-stage";
 
@@ -59,7 +59,7 @@ export function jumpActor({ scene, camera, reduced, disposed }: StageContext, tr
     ahead.set(0, 0, 0).sub(camera.position).normalize();
   };
 
-  loadModel("/models/destroyer.glb", 1)
+  loadModel(DESTROYER_MODEL, 1)
     .then((m) => {
       if (disposed()) {
         disposeTree(m.root);

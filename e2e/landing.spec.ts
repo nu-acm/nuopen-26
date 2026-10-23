@@ -23,6 +23,11 @@ test.describe("NU Open landing", () => {
     await expect(page.locator("html")).not.toHaveAttribute("data-intro", "1");
   });
 
+  test("should start downloading the hero ship together with the page", async ({ request }) => {
+    const html = await (await request.get("/")).text();
+    expect(html).toMatch(/<link rel="preload" href="\/models\/destroyer\.glb" as="fetch"/);
+  });
+
   test("should render every section of the story in order", async ({ page }) => {
     await skipIntro(page);
     await page.goto("/");

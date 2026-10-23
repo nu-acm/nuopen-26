@@ -11,6 +11,7 @@ const gains: { gain: { value: number } }[] = [];
 
 class FakeAudio {
   loop = false;
+  preload = "auto";
   volume = 1;
   paused = true;
   currentTime = 0;
@@ -69,6 +70,11 @@ describe("Soundtrack", () => {
     expect(audios[0].src).toBe(TRACKS.dark);
     expect(audios[0].loop).toBe(true);
     expect(audios[0].play).toHaveBeenCalled();
+  });
+
+  it("should not download the score until it starts playing, so it never slows the page", async () => {
+    await mount();
+    expect(audios[0].preload).toBe("none");
   });
 
   it("should fade through a gain node, since iOS ignores the element's volume", async () => {

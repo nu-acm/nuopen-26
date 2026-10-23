@@ -3,6 +3,7 @@
 import "./hero.css";
 
 import { useEffect, useRef } from "react";
+import { preload } from "react-dom";
 
 import { EVENT } from "@/content/event";
 import { INTRO_DONE } from "@/lib/intro";
@@ -10,7 +11,7 @@ import { INTRO_DONE } from "@/lib/intro";
 import { gsap } from "../motion/gsap";
 import { useGsap } from "../motion/use-gsap";
 import { useJump } from "../space/use-jump";
-import { destroyerActor, type Flight } from "../three/destroyer";
+import { DESTROYER_MODEL, destroyerActor, type Flight } from "../three/destroyer";
 import { useStage } from "../three/use-stage";
 import { Countdown } from "../ui/countdown";
 
@@ -19,6 +20,7 @@ export function Hero() {
   const stage = useRef<HTMLDivElement>(null);
   const flight = useRef<Flight>({ scroll: 0, ready: 0 });
   const jump = useJump();
+  preload(DESTROYER_MODEL, { as: "fetch", crossOrigin: "anonymous" });
 
   useStage(stage, (ctx) => destroyerActor(ctx, flight.current), 42);
 

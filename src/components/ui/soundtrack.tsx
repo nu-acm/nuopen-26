@@ -8,7 +8,6 @@ import { sideStore, type Side } from "@/lib/side";
 
 import { useSide } from "./use-side";
 
-// shortcut: the film scores are Lucasfilm's, published at the organisers' own risk; swap in licensed tracks if a takedown comes.
 export const TRACKS: Record<Side, string> = { dark: "/audio/imperial-march.m4a", light: "/audio/main-theme.m4a" };
 export const EFFECTS = { blaster: "/audio/blaster.mp3", swing: "/audio/saber-swing.mp3" } as const;
 const EFFECT_LEVEL = 0.5;
@@ -36,7 +35,7 @@ function audioContext() {
 
 function createTrack(side: Side): Track {
   const ctx = audioContext();
-  const audio = Object.assign(new Audio(TRACKS[side]), { loop: true, onerror: () => sideStore.setMusic(false) });
+  const audio = Object.assign(new Audio(), { preload: "none", loop: true, src: TRACKS[side], onerror: () => sideStore.setMusic(false) });
   const gain = ctx.createGain();
   gain.gain.value = 0;
   ctx.createMediaElementSource(audio).connect(gain).connect(ctx.destination);
