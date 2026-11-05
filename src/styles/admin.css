@@ -1,0 +1,546 @@
+/* Actual NUOPEN admin registry appearance, mapped to WHD's existing controls.
+   WHD keeps its sorting, column visibility, eligibility and attendance workflows. */
+.admin-page {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--space);
+}
+.admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgb(3 4 10 / 0.88);
+  backdrop-filter: blur(14px);
+}
+.admin-header-inner {
+  min-height: 88px;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 20px var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.admin-brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  min-height: 44px;
+  padding-top: 12px;
+  flex-shrink: 0;
+  font-size: 1.35rem;
+}
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+.admin-header-actions > .whd-button {
+  min-height: 44px;
+  font-size: 0.8125rem;
+  border-radius: 0;
+}
+.admin-nav-wrap {
+  max-width: 1344px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  border-bottom: 1px solid var(--line);
+}
+.admin-nav {
+  display: flex;
+  gap: 32px;
+  overflow-x: auto;
+}
+.admin-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 70px;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-2);
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.admin-nav-link:hover {
+  color: var(--saber);
+}
+.admin-nav-link.admin-nav-active {
+  border-color: var(--saber);
+  color: var(--ink);
+  background: transparent;
+  box-shadow: none;
+}
+.admin-main {
+  width: 100%;
+  max-width: 1344px;
+  min-width: 0;
+  margin-inline: auto;
+  padding: clamp(48px, 7vw, 96px) var(--gutter) 96px;
+  flex: 1;
+}
+.admin-main > div {
+  min-width: 0;
+}
+.admin-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+.admin-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 4vw, 3.8rem);
+  font-weight: 500;
+  line-height: 1.06;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  overflow-wrap: anywhere;
+}
+.admin-heading > p,
+.admin-heading > div > p {
+  max-width: 650px;
+  margin-top: 16px;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+.admin-heading-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  max-width: 52%;
+}
+.admin-heading-actions .whd-button {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+.admin-checkin-stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.admin-stat {
+  --tick: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background:
+    linear-gradient(var(--tick), var(--tick)) top left / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top left / 1px 10px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top right / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top right / 1px 10px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom left / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom left / 1px 10px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom right / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom right / 1px 10px no-repeat,
+    rgb(9 12 21 / 0.55);
+  transition:
+    border-color 200ms,
+    background-color 200ms;
+}
+.admin-stat .whd-stat-content {
+  padding: 24px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+.admin-stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+.admin-stat-value {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4.5vw, 4rem);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.02;
+}
+.admin-stat:nth-child(3) .admin-stat-value {
+  color: #e9c977;
+}
+.admin-stat:nth-child(4) .admin-stat-value {
+  color: var(--holo);
+}
+.admin-stat-detail {
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.admin-registry {
+  min-width: 0;
+  border: 1px solid var(--line);
+  background-color: rgb(3 4 10 / 0.72);
+}
+.admin-registry-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-inline: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.admin-registry .whd-tabs-list {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.admin-registry .whd-tab {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-height: 68px;
+  padding: 0;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-3);
+  background: transparent;
+  font-size: 0.875rem;
+}
+.admin-registry .whd-tab[data-active] {
+  color: var(--ink);
+  border-color: var(--saber);
+  background: transparent;
+  box-shadow: none;
+}
+.admin-toolbar {
+  display: flex;
+  gap: 12px;
+  padding: 20px 24px;
+}
+.admin-toolbar .whd-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  font-size: 0.8125rem;
+}
+.admin-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 24px 20px;
+}
+.admin-column-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+}
+.admin-column-controls > .whd-button {
+  font-size: 0.75rem;
+}
+.admin-page .whd-column-group {
+  min-width: 0;
+  max-width: 100%;
+}
+.admin-page .whd-column-toggle {
+  max-width: 100%;
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  line-height: 1.6;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.admin-page .whd-segmented {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--line-2);
+  padding: 0;
+  max-width: 100%;
+}
+.admin-page .whd-toggle {
+  border-radius: 0;
+  font-size: 0.75rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.admin-count {
+  margin: 0;
+  padding: 8px 24px 16px;
+  color: var(--ink-3);
+  font-size: 0.6875rem;
+}
+.admin-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.admin-page .whd-table {
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.8125rem;
+}
+.admin-page .whd-table-header {
+  background: rgb(236 233 225 / 0.025);
+}
+.admin-page .whd-table-header .whd-table-head {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  font-weight: 400;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.admin-page .whd-table-head .whd-button {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+.admin-page :is(.whd-table-head, .whd-table-cell) {
+  padding: 18px 16px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+.admin-page :is(.whd-table-head, .whd-table-cell):first-child {
+  padding-left: 24px;
+}
+.admin-page :is(.whd-table-head, .whd-table-cell):last-child {
+  padding-right: 24px;
+}
+.admin-page .whd-table-row {
+  border-top: 0;
+  color: var(--ink-2);
+}
+.admin-page .whd-table-cell:first-child {
+  color: var(--ink);
+  font-weight: 500;
+}
+.admin-page .whd-table-cell[data-tone='muted'] {
+  color: var(--ink-3);
+}
+.admin-page .whd-table-cell[data-tone='slug'] {
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+}
+.admin-page .whd-table-cell .whd-button {
+  font-size: 0.8125rem;
+}
+.admin-page .whd-empty {
+  padding: 64px 24px;
+  font-size: 0.875rem;
+  color: var(--ink-3);
+}
+/* Source-sized check marks retain WHD's accessible 44px target and state wiring. */
+.admin-page .whd-checkbox {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--space);
+}
+.admin-page .whd-checkbox::before {
+  content: '';
+  position: absolute;
+  inset: 13px;
+  border: 1px solid var(--line-2);
+  background: var(--space);
+}
+.admin-page .whd-checkbox[data-checked]::before {
+  border-color: var(--saber);
+  background: var(--saber);
+}
+.admin-page .whd-checkbox svg {
+  position: relative;
+  width: 14px;
+  height: 14px;
+}
+.whd-confirm-popup {
+  max-width: 520px;
+  padding: 32px;
+  border: 1px solid var(--line-2);
+  border-radius: 0;
+  background: var(--space-2);
+}
+.whd-confirm-popup .whd-popup-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.whd-confirm-popup .whd-popup-description {
+  margin-top: 20px;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.whd-confirm-popup .whd-popup-actions {
+  gap: 16px;
+  margin-top: 28px;
+}
+.whd-confirm-popup .whd-button-destructive {
+  min-height: 48px;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 0;
+  background: var(--destructive);
+  color: var(--space);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: normal;
+}
+.whd-confirm-popup .whd-button-destructive:hover {
+  filter: brightness(1.08);
+}
+@media (hover: hover) and (pointer: fine) {
+  .admin-stat:hover {
+    border-color: var(--saber);
+    background-color: var(--saber-soft);
+  }
+  .admin-page .whd-table-body .whd-table-row:hover,
+  .admin-page tbody .whd-table-row:hover {
+    background: rgb(236 233 225 / 0.025);
+  }
+}
+@media (max-width: 1050px) {
+  .admin-stat .whd-stat-content {
+    padding: 20px 16px;
+  }
+  .admin-heading {
+    align-items: flex-start;
+  }
+}
+@media (max-width: 700px) {
+  .admin-heading {
+    flex-direction: column;
+  }
+  .admin-heading-actions {
+    width: 100%;
+    max-width: none;
+    justify-content: flex-start;
+  }
+  .admin-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 28px;
+    gap: 12px;
+  }
+  .admin-stat .whd-stat-content {
+    gap: 14px;
+  }
+  .admin-stat-label {
+    font-size: 0.5625rem;
+  }
+  .admin-stat-detail {
+    font-size: 0.625rem;
+  }
+  .admin-registry-header {
+    flex-wrap: wrap;
+    gap: 0;
+    padding-inline: 16px;
+  }
+  .admin-registry .whd-tabs-list {
+    gap: 20px;
+  }
+  .admin-registry .whd-tab {
+    min-height: 60px;
+    font-size: 0.8125rem;
+  }
+  .admin-toolbar {
+    flex-wrap: wrap;
+    padding: 16px;
+  }
+  .admin-toolbar .whd-input {
+    font-size: 1rem;
+  }
+  .admin-controls {
+    padding-inline: 16px;
+  }
+  .admin-count {
+    padding-inline: 16px;
+  }
+}
+@media (max-width: 680px) {
+  .admin-header-inner {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    min-height: 76px;
+    padding-block: 16px;
+    gap: 12px;
+    align-items: start;
+  }
+  .admin-brand {
+    gap: 8px;
+    font-size: 1.05rem;
+  }
+  .admin-brand .site-brand-edition {
+    display: none;
+  }
+  .admin-header-actions {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: end;
+    gap: 4px 8px;
+  }
+  .admin-header-actions > [data-slot='button']:first-child {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: end;
+  }
+  .admin-header-actions .whd-language-toggle {
+    padding-inline: 6px;
+  }
+  .admin-header-actions > .whd-button {
+    font-size: 0.75rem;
+  }
+  .admin-nav {
+    gap: 28px;
+  }
+  .admin-nav-link {
+    min-height: 60px;
+    font-size: 0.8125rem;
+  }
+  .admin-main {
+    padding-top: 40px;
+    padding-bottom: 64px;
+  }
+  .whd-confirm-popup {
+    padding: 24px;
+  }
+  .whd-confirm-popup .whd-popup-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-page *,
+  .admin-page *::before,
+  .admin-page *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,116 @@
+.nuopen-landing {
+  /* On phones the figure's shoulders span the whole width, so both edges fade out. */
+  .rules-stage {
+    position: relative;
+    height: min(52svh, 440px);
+    margin-inline: calc(var(--gutter) * -1);
+    mask-image:
+      radial-gradient(ellipse 58% 60% at 50% 42%, #000 58%, transparent 100%),
+      linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+    mask-composite: intersect;
+  }
+
+  .rules-copy {
+    min-width: 0;
+  }
+
+  .rules-head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .rules-aside {
+    margin-top: 6px;
+    color: var(--ink-2);
+    font-size: 0.95rem;
+  }
+
+  .rules-list {
+    list-style: none;
+    margin: clamp(40px, 7vh, 64px) 0 0;
+    padding: 0;
+  }
+
+  .rule {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: 12px;
+    padding-block: 26px;
+    border-top: 1px solid var(--line);
+  }
+
+  .rule:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .rule-num {
+    padding-top: 0.5em;
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+  }
+
+  .rule-title {
+    margin: 0 0 10px;
+    color: var(--ink);
+    line-height: 1.08;
+  }
+
+  .rule-text {
+    color: var(--ink-2);
+  }
+
+  .rule.rule-punch {
+    --tick: var(--saber);
+    margin-top: 22px;
+    padding: 26px 24px;
+    border: 1px solid var(--saber-soft);
+    box-shadow: 0 0 46px -14px var(--saber-glow);
+  }
+
+  .rule-punch .rule-num,
+  .rule-punch .rule-title {
+    color: var(--saber);
+  }
+
+  .rule-punch .rule-title {
+    text-shadow: 0 0 18px var(--saber-glow);
+  }
+
+  .rule-punch .rule-text {
+    color: var(--ink);
+  }
+
+  @media (min-width: 640px) {
+    .rule {
+      grid-template-columns: 3.5rem minmax(0, 1fr);
+    }
+  }
+
+  /* The figure comes first in the DOM for phones; row 1 pins both columns side by side. */
+  @media (min-width: 1024px) {
+    .rules {
+      padding-block: 0;
+    }
+
+    /* Bleeds to the viewport's right edge: a 6-column stage is too narrow to frame the bust's shoulders. */
+    .rules-stage {
+      grid-row: 1;
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      margin-inline: 0 calc(-1 * (max(0px, (100vw - 1240px) / 2) + var(--gutter)));
+      align-self: start;
+      mask-image:
+        radial-gradient(ellipse 58% 60% at 50% 42%, #000 58%, transparent 100%),
+        linear-gradient(to right, transparent, #000 16%);
+    }
+
+    .rules-copy {
+      grid-row: 1;
+      padding-block: clamp(96px, 14vh, 180px);
+    }
+  }
+}

@@ -1,0 +1,50 @@
+.nuopen-landing {
+  .navigation-jump {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    overflow: hidden;
+    contain: strict;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+      ellipse at center,
+      color-mix(in srgb, var(--holo) 12%, var(--space)),
+      var(--space) 65%
+    );
+  }
+  .navigation-jump[hidden] {
+    display: none;
+  }
+  .navigation-jump[data-active] {
+    will-change: opacity;
+  }
+  .navigation-jump-stars {
+    contain: strict;
+    position: absolute;
+    inset: 0;
+  }
+  .navigation-jump[data-active] .navigation-jump-stars {
+    will-change: transform, opacity;
+  }
+  .navigation-jump-stars i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 2px;
+    width: var(--length);
+    transform-origin: 0 50%;
+    transform: rotate(var(--angle)) translateX(var(--distance));
+    background: linear-gradient(90deg, transparent, var(--holo) 65%, var(--ink));
+  }
+  @media (max-width: 600px) {
+    .navigation-jump-stars i:nth-child(even) {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .navigation-jump {
+      display: none !important;
+    }
+  }
+}

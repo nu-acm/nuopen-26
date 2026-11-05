@@ -1,0 +1,155 @@
+/* NUOPEN account header/footer geometry; WHD actions and authentication stay intact. */
+.auth-header,
+.account-page .auth-header {
+  background: rgb(3 4 10 / 0.88);
+  backdrop-filter: blur(14px);
+  border-color: var(--line);
+}
+.auth-header .auth-header-inner,
+.account-page .auth-header-inner {
+  min-height: 88px;
+  height: auto;
+  max-width: 1440px;
+  padding: 20px var(--gutter);
+  gap: 24px;
+}
+.auth-header-inner > a {
+  gap: 12px;
+  font-size: 1.35rem;
+  flex-shrink: 0;
+  align-items: baseline;
+  padding-top: 12px;
+}
+.auth-header-actions {
+  min-width: 0;
+  gap: 20px;
+}
+.auth-header-email {
+  color: var(--ink-2);
+  font-size: 0.8125rem;
+}
+.auth-header-help {
+  color: var(--ink-2);
+}
+.auth-header-help a:hover {
+  color: var(--saber);
+}
+.account-page {
+  isolation: isolate;
+}
+.account-footer {
+  max-width: 1344px;
+  width: 100%;
+  margin: auto auto 0;
+  padding: 24px var(--gutter);
+  border-top: 1px solid var(--line);
+  color: var(--ink-3);
+  font-size: 0.8125rem;
+}
+.account-footer a:hover {
+  color: var(--saber);
+}
+@media (max-width: 679px) {
+  .auth-header .auth-header-inner,
+  .account-page .auth-header-inner {
+    gap: 12px;
+    padding-block: 16px;
+  }
+  .auth-header-inner > a {
+    gap: 8px;
+    font-size: 1.05rem;
+  }
+  .auth-header-actions {
+    gap: 8px;
+  }
+  .auth-header-inner .whd-language-toggle {
+    padding-inline: 6px;
+  }
+  .auth-header .site-brand-edition {
+    display: none;
+  }
+  .account-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.account-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: clip;
+  color: var(--saber);
+}
+.account-flyby {
+  position: absolute;
+  left: 0;
+  width: clamp(70px, 9vw, 140px);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.account-flyby svg {
+  display: block;
+  width: 100%;
+  filter: drop-shadow(0 0 5px var(--saber-soft));
+}
+.account-flyby--tie {
+  top: 22%;
+  animation: tie-patrol 26s linear infinite;
+}
+.account-flyby--xwing {
+  top: 70%;
+  animation: xwing-patrol 31s 3s linear infinite;
+}
+.account-laser {
+  position: absolute;
+  top: 50%;
+  left: -60%;
+  height: 1px;
+  width: 46%;
+  background: var(--saber);
+  box-shadow: 0 0 6px var(--saber);
+}
+
+@keyframes tie-patrol {
+  0% {
+    opacity: 0;
+    transform: translate3d(105vw, -8vh, 0) rotate(-14deg) scale(0.6);
+  }
+  3% {
+    opacity: 0.35;
+  }
+  22% {
+    opacity: 0.35;
+  }
+  26%,
+  100% {
+    opacity: 0;
+    transform: translate3d(-20vw, 15vh, 0) rotate(10deg) scale(0.85);
+  }
+}
+
+@keyframes xwing-patrol {
+  0% {
+    opacity: 0;
+    transform: translate3d(-20vw, 12vh, 0) rotate(20deg) scale(0.8);
+  }
+  3% {
+    opacity: 0.25;
+  }
+  21% {
+    opacity: 0.25;
+  }
+  25%,
+  100% {
+    opacity: 0;
+    transform: translate3d(110vw, -22vh, 0) rotate(-20deg) scale(0.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .account-atmosphere {
+    display: none;
+  }
+}

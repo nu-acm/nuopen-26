@@ -1,0 +1,496 @@
+/* NUOPEN's implemented account shell and mission-control layout, using WHD components. */
+.auth-header {
+  position: relative;
+  top: auto;
+  z-index: 50;
+  width: 100%;
+  border: 0;
+}
+.auth-header .auth-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 88px;
+  height: auto;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 20px var(--gutter);
+  gap: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.auth-header-inner > .account-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-top: 0;
+  min-height: 44px;
+}
+.auth-header .site-brand-wordmark,
+.admin-header .site-brand-wordmark {
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-variation-settings: 'wdth' 125;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 1.35rem;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+}
+.auth-header .site-brand-edition {
+  display: inline;
+  color: var(--saber);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+}
+.auth-header .auth-header-actions,
+.account-header-tools,
+.account-header-secondary {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 32px;
+}
+.account-header-tools {
+  gap: 12px;
+}
+.account-back {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.account-back:hover {
+  color: var(--saber);
+}
+.account-nav-wrap {
+  width: 100%;
+  max-width: 1344px;
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+  border-bottom: 1px solid var(--line);
+}
+.account-nav {
+  display: flex;
+  gap: 32px;
+}
+.account-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 70px;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-2);
+  font-size: 0.875rem;
+}
+.account-nav a[aria-current='page'] {
+  border-color: var(--saber);
+  color: var(--ink);
+}
+.account-nav a > span {
+  color: var(--saber);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+}
+.account-nav a:hover {
+  color: var(--ink);
+}
+.account-page .account-footer-brand {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.dashboard-main {
+  max-width: 1344px;
+  width: 100%;
+  margin-inline: auto;
+  padding: clamp(48px, 7vw, 96px) var(--gutter) 96px;
+  min-height: 72svh;
+}
+.dashboard-welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+.dashboard-welcome h1 {
+  font-size: clamp(2.6rem, 4.7vw, 4.5rem);
+  line-height: 1.06;
+  letter-spacing: 0.025em;
+}
+.dashboard-welcome h1 span {
+  color: var(--saber);
+}
+.account-dashboard-lead {
+  margin-top: 24px;
+  max-width: 650px;
+  font-size: 1.0625rem;
+  color: var(--ink-2);
+}
+.dashboard-event {
+  display: grid;
+  flex-shrink: 0;
+  gap: 10px;
+  text-align: right;
+  padding-bottom: 6px;
+}
+.dashboard-event > span:first-child {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  color: var(--saber);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.dashboard-event strong {
+  font-family: var(--font-display);
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 1.3rem;
+}
+.dashboard-event > span:last-child {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+.dashboard-columns {
+  margin-top: 24px;
+}
+.account-page .account-readiness-body {
+  padding: 28px 24px 12px;
+}
+.account-readiness-body h2 {
+  font-size: 1.5rem;
+}
+.readiness-list {
+  margin-top: 20px;
+}
+.readiness-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-block: 20px;
+  font-size: 0.8125rem;
+}
+.readiness-list li > span {
+  font-family: var(--font-mono);
+  color: var(--ink-3);
+  font-size: 0.625rem;
+}
+.readiness-list li > div {
+  flex: 1;
+  min-width: 0;
+}
+.readiness-list small {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+.readiness-list b {
+  color: var(--saber);
+  font-weight: 400;
+}
+.readiness-list li[data-ready='false'] {
+  color: var(--ink-3);
+}
+.readiness-list a:hover {
+  color: var(--saber);
+}
+.dashboard-brief {
+  padding-inline: 16px;
+  color: var(--ink-3);
+  font-size: 0.875rem;
+  line-height: 1.8;
+}
+.dashboard-brief h2 {
+  font-size: 1.65rem;
+  color: var(--ink);
+}
+.dashboard-brief p:not(.account-eyebrow) {
+  margin-top: 16px;
+}
+.account-text-button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.8125rem;
+  color: var(--saber);
+}
+.dashboard-brief .account-text-button {
+  margin-top: 12px;
+}
+.account-no-team-grid {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.account-no-team-grid .account-team-form {
+  margin-top: 0;
+}
+.account-page .account-team-heading {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 24px;
+}
+.account-team-heading > div {
+  min-width: 0;
+}
+.account-team-count {
+  white-space: nowrap;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  padding-top: 32px;
+}
+.account-team-count strong {
+  color: var(--saber);
+  font-size: 1.6rem;
+  font-weight: 400;
+}
+.account-team-subheading {
+  margin-top: 14px;
+}
+.account-team-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--saber);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.account-team-badge i {
+  display: block;
+  width: 5px;
+  height: 5px;
+  margin-inline: 5px;
+  background: var(--saber);
+}
+.account-profile-panels {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.account-profile-layout .account-page-heading h1 {
+  white-space: pre-line;
+}
+.profile-verified-email {
+  grid-column: 1 / -1;
+}
+.profile-help {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  max-width: 360px;
+  color: var(--ink-3);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+.profile-help .account-eyebrow {
+  margin-bottom: 12px;
+}
+.account-session-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+  min-width: 0;
+}
+.account-session-panel > div {
+  min-width: 0;
+}
+.account-session-panel h2 {
+  font-size: 1rem;
+}
+.account-session-panel p {
+  overflow-wrap: anywhere;
+  color: var(--ink-3);
+  font-size: 0.8125rem;
+  margin-top: 6px;
+}
+.account-session-panel .account-session-error {
+  width: 100%;
+  color: var(--destructive);
+}
+@media (max-width: 1100px) {
+  .auth-header .auth-header-actions,
+  .account-header-secondary {
+    gap: 16px;
+  }
+}
+@media (max-width: 900px) {
+  .dashboard-event {
+    display: none;
+  }
+  .profile-help {
+    display: none;
+  }
+}
+@media (max-width: 780px) {
+  .auth-header .auth-header-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+  .auth-header .auth-header-actions {
+    display: contents;
+  }
+  .account-header-tools {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    gap: 4px;
+  }
+  .account-header-secondary {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .auth-header .account-brand {
+    gap: 6px;
+  }
+  .auth-header .site-brand-wordmark {
+    font-size: 1.05rem;
+  }
+  .auth-header .site-brand-edition {
+    font-size: 0.625rem;
+  }
+  .account-header-tools [role='group'] button {
+    min-width: 52px;
+    padding-inline: 10px;
+    font-size: 0.625rem;
+  }
+}
+@media (max-width: 680px) {
+  .account-nav {
+    gap: 28px;
+  }
+  .account-nav a {
+    min-height: 60px;
+  }
+  .dashboard-main {
+    padding-top: 40px;
+    padding-bottom: 64px;
+  }
+  .dashboard-sidebar {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .dashboard-brief {
+    padding-inline: 4px;
+  }
+  .account-dashboard-lead {
+    font-size: 0.9375rem;
+    margin-top: 18px;
+  }
+  .account-team-count {
+    padding-top: 28px;
+  }
+  .account-team-count strong {
+    font-size: 1.3rem;
+  }
+}
+
+/* The source has one HUD frame per create/join panel. */
+.account-page .account-no-team-grid .account-team-card > .account-no-team-content {
+  padding: 24px var(--card-spacing) var(--card-spacing);
+}
+.account-no-team-grid .account-team-form {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+.auth-header .site-brand-wordmark {
+  white-space: nowrap;
+}
+@media (max-width: 400px) {
+  .auth-header .site-brand-edition {
+    display: none;
+  }
+}
+
+.admin-header .site-brand-wordmark {
+  white-space: nowrap;
+}
+@media (max-width: 680px) {
+  .admin-header .site-brand-wordmark {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .admin-header-inner {
+    grid-template-columns: 1fr;
+  }
+  .admin-brand {
+    padding-top: 0;
+  }
+  .admin-header-actions {
+    justify-content: space-between;
+  }
+}
+
+/* Keep translated navigation and long names inside their available columns. */
+.account-nav a {
+  min-width: 0;
+}
+.account-nav a > span {
+  flex-shrink: 0;
+}
+.account-nav {
+  flex-wrap: wrap;
+}
+.account-page .account-team-heading {
+  flex-wrap: wrap;
+}
+.account-team-heading > div {
+  flex: 1 1 200px;
+}
+.account-team-count {
+  flex-shrink: 0;
+}
+.account-session-panel > div,
+.account-team-danger {
+  max-width: 100%;
+}
+.account-team-form > .whd-button span {
+  min-width: 0;
+}
+@media (max-width: 680px) {
+  :is(html:lang(ru), html:lang(kk)) .dashboard-welcome h1 {
+    font-size: clamp(2rem, 8.5vw, 2.75rem);
+  }
+  .account-team-heading > div {
+    flex-basis: 160px;
+  }
+  .account-team-count {
+    padding-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pilot-name {
+    animation: pilot-name-reveal 500ms ease-out both;
+  }
+}
+@keyframes pilot-name-reveal {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}

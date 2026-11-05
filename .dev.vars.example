@@ -1,0 +1,32 @@
+# Cloudflare Workers secrets for local development.
+# Loaded by Wrangler during `vp dev`. Copy to .dev.vars and fill in.
+
+# Where the app is served from.
+# local: http://localhost:3000   remote: https://whd.nuacmw.kz
+BETTER_AUTH_URL=http://localhost:3000
+
+# Any long random string. Generate one with: openssl rand -base64 32
+BETTER_AUTH_SECRET=
+
+# ISO 8601 instant when registration closes. Leave blank to use the event deadline.
+# The landing page counts down to it. Afterwards onboarding, CV changes and
+# team create/join/leave/kick are blocked, and every page says registration is closed.
+# REGISTRATION_DEADLINE=2026-11-12T23:59:59+05:00
+
+# Contest access on the dashboard of finalized teams. wrangler.jsonc sets the production
+# values; override them here, e.g. to point the upload button at a local proctoring dev server.
+# CF_LOGIN_PREFIX=team
+# PROCTORING_URL=http://localhost:5173
+# CONTEST_START=2026-11-14T12:00:00+05:00
+
+# Google Apps Script webhook used to deliver OTP emails and store CVs.
+# Leave blank in development — OTP codes are printed to the server console.
+GAS_URL=
+GAS_SECRET=
+
+# Optional "Sign in with Google".
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+# Comma-separated emails allowed into /admin and /checkin.
+ADMIN_EMAILS=

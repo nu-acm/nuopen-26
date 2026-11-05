@@ -1,0 +1,147 @@
+/* WHD-only documents use NUOPEN's implemented editorial/credits typography. */
+.legal-main {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding: 96px var(--gutter);
+  flex: 1;
+}
+.account-page .legal-title {
+  max-width: 20ch;
+  font-size: clamp(2.4rem, 4.6vw, 4.5rem);
+  line-height: 1.02;
+}
+.legal-updated {
+  margin-top: 20px;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+}
+.legal-sections {
+  max-width: 52rem;
+  margin-top: clamp(40px, 7vh, 64px);
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 1rem;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.legal-section {
+  padding-block: 28px;
+  border-top: 1px solid var(--line);
+}
+.account-page .legal-section h2 {
+  margin-bottom: 16px;
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+.legal-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 40px;
+  color: var(--ink-2);
+  font-size: 0.8125rem;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.legal-back:hover {
+  color: var(--saber);
+}
+/* NUOPEN's actual 404 ghost numeral/composition, retaining WHD navigation and copy. */
+.system-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  min-height: 72svh;
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding: 96px var(--gutter);
+}
+.system-code {
+  position: absolute;
+  right: var(--gutter);
+  top: 50%;
+  translate: 0 -50%;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(9rem, 26vw, 24rem);
+  font-weight: 500;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line-2);
+  pointer-events: none;
+  user-select: none;
+}
+.system-copy {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 24px;
+  width: 100%;
+}
+.system-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-2);
+  letter-spacing: 0.16em;
+}
+.account-page .system-copy h1 {
+  max-width: 16ch;
+  font-size: clamp(2.125rem, 4.6vw, 4.5rem);
+  line-height: 1.02;
+}
+.system-lead {
+  max-width: 34rem;
+  color: var(--ink-2);
+  font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+  line-height: 1.7;
+}
+.system-copy > .whd-button {
+  margin-top: 8px;
+  white-space: normal;
+}
+.system-copy > div {
+  width: min(100%, 520px);
+}
+.faq-page {
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+}
+.faq-page main {
+  flex: 1;
+}
+.faq-page-footer > div {
+  flex-wrap: wrap;
+}
+.faq-page-footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  overflow-wrap: anywhere;
+}
+.faq-page-footer a:hover {
+  color: var(--saber);
+}
+@media (max-width: 767px) {
+  .system-code {
+    display: none;
+  }
+}
+@media (max-width: 680px) {
+  .legal-main {
+    padding-top: 40px;
+    padding-bottom: 64px;
+  }
+  .system-page {
+    padding-block: 64px;
+  }
+  .account-page .legal-title {
+    font-size: 2.75rem;
+  }
+}

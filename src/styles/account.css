@@ -1,0 +1,1121 @@
+/* NUOPEN's implemented account layouts, mapped to existing WHD component names.
+   OTP, profile validation, team permissions and all mutations remain WHD-owned. */
+.account-page {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--space);
+}
+.account-page :is(h1, h2, h3) {
+  overflow-wrap: anywhere;
+}
+.account-page .auth-header-email {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.account-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 20px;
+  color: var(--saber);
+  font-size: 0.625rem;
+}
+.account-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px 32px;
+}
+.account-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+.account-footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.account-page a:focus-visible {
+  outline: 2px solid var(--saber);
+  outline-offset: 5px;
+}
+.account-page [data-slot='card'] {
+  --card-spacing: clamp(24px, 3vw, 40px);
+  min-width: 0;
+  border-color: var(--line-2);
+  transition:
+    border-color 300ms,
+    box-shadow 300ms;
+}
+.account-page [data-slot='card']:focus-within,
+.account-team-form:focus-within {
+  border-color: var(--saber);
+  box-shadow: 0 0 30px var(--saber-soft);
+}
+.account-page [data-slot='field'] {
+  gap: 9px;
+  min-width: 0;
+}
+.account-page [data-slot='field-label'] {
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+.account-page [data-slot='field-description'] {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+.account-page [data-slot='field-error'] {
+  font-size: 0.875rem;
+}
+.account-page :is(input:not([data-input-otp]), select):focus {
+  box-shadow:
+    0 0 0 1px var(--saber),
+    0 0 20px var(--saber-soft);
+}
+.account-page .whd-input-group input[data-variant='group'] {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.account-page .whd-input-group:focus-within {
+  box-shadow: 0 0 20px var(--saber-soft);
+}
+.account-page input[readonly] {
+  color: var(--ink-2);
+}
+.account-page .whd-button {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.account-page .whd-button-secondary {
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  min-height: 50px;
+}
+.account-button-arrow {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.account-section-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--saber);
+}
+
+/* Registration: original story, SVG targeting display and separate contact panel. */
+.account-login-grid,
+.account-profile-layout,
+.dashboard-main {
+  width: 100%;
+  max-width: 1344px;
+  margin-inline: auto;
+  padding: clamp(48px, 7vw, 96px) var(--gutter) 96px;
+  flex: 1;
+}
+.account-login-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(40px, 8vw, 120px);
+}
+.login-visual {
+  min-width: 0;
+}
+.login-visual-copy h2 {
+  font-size: clamp(3rem, 5.5vw, 5rem);
+  line-height: 1.02;
+  letter-spacing: 0.025em;
+}
+.login-visual-copy > span {
+  display: block;
+  max-width: 420px;
+  font-size: 1.0625rem;
+  margin-top: 24px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.mission-art {
+  color: var(--saber);
+  margin-top: 24px;
+}
+.mission-art svg {
+  width: 100%;
+  max-height: 245px;
+}
+.mission-orbit,
+.mission-radar {
+  transform-origin: 200px 160px;
+}
+.mission-orbit {
+  animation: account-radar-orbit 45s linear infinite;
+}
+.mission-radar {
+  animation: account-radar-orbit 9s linear infinite;
+}
+.registration-steps {
+  display: grid;
+  gap: 14px;
+  padding-top: 24px;
+  margin-top: 8px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 0.875rem;
+}
+.registration-steps li {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.registration-steps span {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--saber);
+}
+.login-event {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  padding-top: 24px;
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-3);
+  font-size: 0.75rem;
+}
+.login-event span {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+.login-event svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: var(--saber);
+}
+.account-page .account-login-card {
+  margin-top: 8px;
+  padding: 40px var(--card-spacing);
+}
+.account-login-card > .account-login-header,
+.account-login-card > .account-login-content {
+  padding: 0;
+}
+.account-login-card h1 {
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.15;
+}
+.account-form-subtitle {
+  margin-top: 16px;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+.account-login-card > .account-login-content {
+  margin-top: 32px;
+}
+.account-login-content .whd-field-group {
+  gap: 24px;
+}
+.account-form-divider {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-block: 24px;
+}
+.account-otp-actions {
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.account-otp-actions button {
+  min-height: 44px;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-size: 0.8125rem;
+}
+
+/* Profile: reference two-column heading/form; WHD's additional fields stay intact. */
+.account-profile-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+  gap: clamp(32px, 6vw, 88px);
+  align-items: start;
+}
+.account-page-heading h1 {
+  font-size: clamp(2.6rem, 4.7vw, 4.5rem);
+  line-height: 1.06;
+  letter-spacing: 0.025em;
+}
+.account-profile-subtitle {
+  margin-top: 24px;
+  max-width: 650px;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.account-page .account-profile-panel {
+  max-width: none;
+}
+.account-page .account-profile-panel > [data-slot='card-content'] {
+  padding: var(--card-spacing);
+}
+.account-profile-form > .whd-field-group {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+}
+.account-profile-form .account-consent,
+.account-profile-form .whd-field-group > :is(button, [role='alert']) {
+  grid-column: 1 / -1;
+}
+.account-profile-form .account-consent {
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+}
+.account-consent > div:first-child {
+  align-items: flex-start;
+}
+.account-consent .whd-field-label {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.account-consent .whd-checkbox {
+  margin-top: 12px;
+  flex-shrink: 0;
+}
+
+/* Mission control: source heading, crew panel and readiness sidebar. */
+.dashboard-welcome {
+  margin-bottom: 32px;
+}
+.dashboard-welcome h1 {
+  font-size: clamp(2.6rem, 4.7vw, 4.5rem);
+  line-height: 1.06;
+  letter-spacing: 0.025em;
+}
+.account-profile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 24px;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.account-profile-link:hover {
+  color: var(--saber);
+}
+.dashboard-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 32px;
+  align-items: start;
+}
+.dashboard-team-column,
+.dashboard-sidebar {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.dashboard-sidebar {
+  gap: 40px;
+}
+.dashboard-stats {
+  padding: 8px 24px;
+  border: 1px solid var(--line-2);
+  background: rgb(9 12 21 / 0.55);
+}
+.account-page .dashboard-stat {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.dashboard-stat + .dashboard-stat {
+  border-top: 1px solid var(--line);
+}
+.account-page .dashboard-stat-content {
+  position: relative;
+  padding: 20px 0 20px 28px;
+}
+.dashboard-stat-icon {
+  position: absolute;
+  left: 0;
+  top: 24px;
+  width: 14px;
+  height: 14px;
+  color: var(--saber);
+}
+.dashboard-stat-label {
+  font-size: 0.8125rem;
+  color: var(--ink);
+}
+.dashboard-stat-value {
+  margin-top: 8px;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+}
+.dashboard-stat-detail {
+  margin-top: 5px;
+  color: var(--ink-3);
+  font-size: 0.6875rem;
+  line-height: 1.7;
+}
+.account-page [data-slot='card'] > :is(.whd-team-header, .whd-cv-header, .whd-no-team-header) {
+  padding: var(--card-spacing) var(--card-spacing) 0;
+}
+.account-page
+  [data-slot='card']
+  > :is(.whd-team-header, .whd-cv-header, .whd-no-team-header):only-child {
+  padding-bottom: var(--card-spacing);
+}
+.account-page .whd-team-header {
+  gap: 0;
+}
+.account-page .account-team-card > .account-team-content {
+  padding: 24px var(--card-spacing) var(--card-spacing);
+}
+.account-page .account-team-card:has(> [data-slot='card-footer']) > .account-team-content {
+  padding-bottom: 0;
+}
+.account-team-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.account-team-heading,
+.account-card-heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  justify-content: space-between;
+  align-items: center;
+}
+.account-team-name {
+  font-size: clamp(1.75rem, 3vw, 2.6rem);
+  line-height: 1.15;
+  min-width: 0;
+  flex: 1;
+}
+.account-card-title {
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.15;
+}
+.account-status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-3);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+.account-status-tag.is-complete {
+  color: var(--saber);
+}
+.account-members {
+  border-top: 1px solid var(--line);
+}
+.account-member {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  padding-block: 24px;
+  border-bottom: 1px solid var(--line);
+  animation: account-crew-arrive 450ms var(--ease-out) both;
+}
+.account-member:nth-child(2) {
+  animation-delay: 80ms;
+}
+.account-member:nth-child(3) {
+  animation-delay: 160ms;
+}
+.account-member-slot {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--ink-3);
+}
+.account-member-avatar {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border: 1px solid var(--saber);
+  color: var(--saber);
+  background: var(--saber-soft);
+  font-size: 1.25rem;
+  transition:
+    box-shadow 250ms,
+    transform 250ms;
+}
+.account-member-name {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+.account-member-role {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.account-member-empty {
+  opacity: 0.65;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}
+.account-member-empty .account-member-avatar {
+  border-style: dashed;
+  border-color: var(--line-2);
+  color: var(--ink-3);
+  background: transparent;
+}
+.account-member > .whd-button {
+  font-size: 0.6875rem;
+  border-radius: 0;
+}
+.account-invite {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+}
+.account-invite label {
+  font-size: 1.25rem;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.account-invite-input {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+.account-page .account-invite-input input {
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+.account-invite > p {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.account-page .whd-team-footer {
+  padding: 28px var(--card-spacing) var(--card-spacing);
+}
+.account-team-danger {
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+}
+.account-team-danger > .whd-button {
+  background: transparent;
+  color: var(--destructive);
+  box-shadow: none;
+  padding-inline: 16px;
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Both existing create/join forms get the reference's separate framed surfaces. */
+.account-page .account-team-card:has(.account-team-forms) {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.account-page .account-team-card:has(.account-team-forms) > .whd-no-team-header {
+  padding: 0 0 24px;
+}
+.account-page .account-team-card > .account-no-team-content {
+  padding: 0;
+}
+.account-team-forms {
+  display: grid;
+  gap: 24px;
+}
+.account-team-form {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: var(--card-spacing);
+  border: 1px solid var(--line-2);
+  background: rgb(9 12 21 / 0.55);
+  transition:
+    border-color 300ms,
+    box-shadow 300ms;
+}
+.account-team-form h3 {
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.15;
+}
+.account-team-form > .whd-button {
+  width: 100%;
+  min-height: 50px;
+}
+.account-team-form > .whd-button span {
+  flex: 1;
+}
+
+/* WHD-only CV/contest controls retain every state, using the reference's sidebar surfaces. */
+.account-page .dashboard-sidebar .account-cv-card {
+  --card-spacing: 24px;
+}
+.account-page .account-cv-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px var(--card-spacing);
+}
+.account-cv-card .whd-cv-header {
+  gap: 16px;
+}
+.account-cv-card .account-card-title {
+  font-size: 1.5rem;
+}
+.account-cv-upload {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+.file-upload {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 14px;
+  min-width: 0;
+  border: 1px dashed var(--line-2);
+  background: var(--space);
+  text-align: center;
+  transition:
+    border-color 200ms,
+    background-color 200ms;
+}
+.file-upload:not(.is-disabled):hover,
+.file-upload:focus-within {
+  border-color: var(--saber);
+}
+.file-upload.is-dragging {
+  border-color: var(--saber);
+  background: var(--saber-soft);
+  box-shadow: inset 0 0 24px var(--saber-soft);
+}
+.file-upload-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line-2);
+  color: var(--saber);
+}
+.file-upload-icon > svg {
+  width: 22px;
+  height: 22px;
+}
+.file-upload-title {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.file-upload-hint,
+.file-upload-feedback {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+.file-upload-feedback {
+  max-width: 100%;
+}
+.file-upload-feedback:empty {
+  display: none;
+}
+.file-upload-file {
+  overflow-wrap: anywhere;
+}
+.file-upload-file > svg {
+  display: inline;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.file-upload-error {
+  color: var(--destructive);
+}
+.account-page .file-upload > .whd-button {
+  max-width: 100%;
+  min-height: 44px;
+  margin-top: 6px;
+  font-size: 0.6875rem;
+  padding-inline: 12px;
+}
+.file-upload-spinner {
+  animation: cv-upload-spin 1s linear infinite;
+}
+.account-feedback {
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  border: 1px solid var(--line-2);
+  border-left: 2px solid var(--saber);
+  background: var(--space-2);
+  font-size: 0.875rem;
+}
+.account-feedback-error {
+  border-left-color: var(--destructive);
+  color: var(--destructive);
+}
+.account-feedback-success {
+  color: var(--holo);
+}
+
+/* Invitation keeps WHD's exact status/redirect rules inside the existing source panel. */
+.account-invitation-layout {
+  width: 100%;
+  max-width: 716px;
+  flex: 1;
+  margin-inline: auto;
+  padding: clamp(48px, 7vw, 96px) var(--gutter) 96px;
+  text-align: center;
+}
+.account-page .account-invitation-panel {
+  padding: 48px var(--card-spacing);
+}
+.account-page
+  .account-invitation-panel
+  > :is([data-slot='card-header'], [data-slot='card-content']) {
+  padding: 0;
+}
+.account-invitation-panel h1 {
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  line-height: 1.12;
+}
+.account-invitation-panel .whd-auth-description {
+  margin-top: 24px;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+.account-page .account-invitation-panel > [data-slot='card-content'] {
+  margin-top: 28px;
+}
+.invitation-symbol {
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--saber);
+  outline: 1px solid var(--line);
+  outline-offset: 8px;
+  width: 64px;
+  height: 64px;
+  font-family: var(--font-mono);
+  color: var(--saber);
+  margin: 0 auto 36px;
+  box-shadow: 0 0 30px var(--saber-soft);
+}
+
+@keyframes account-radar-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes cv-upload-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes account-crew-arrive {
+  from {
+    opacity: 0.25;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes account-hologram-arrive {
+  from {
+    opacity: 0.25;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .account-login-grid,
+  .account-profile-layout,
+  .dashboard-main,
+  .account-invitation-layout {
+    animation: account-hologram-arrive 450ms var(--ease-out) both;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .account-member:hover .account-member-avatar {
+    box-shadow: 0 0 16px var(--saber-glow);
+    transform: translateY(-2px);
+  }
+}
+@media (max-width: 1100px) {
+  .account-page .auth-header-email {
+    display: none;
+  }
+  .dashboard-columns {
+    grid-template-columns: minmax(0, 1fr) 270px;
+    gap: 24px;
+  }
+}
+@media (max-width: 900px) {
+  .account-login-grid {
+    gap: 32px;
+  }
+  .login-visual-copy h2 {
+    font-size: 3.2rem;
+  }
+  .account-profile-layout {
+    grid-template-columns: 1fr;
+  }
+  .account-page-heading {
+    max-width: 600px;
+  }
+  .dashboard-columns {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-sidebar {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+@media (max-width: 680px) {
+  .account-login-grid,
+  .account-profile-layout,
+  .dashboard-main,
+  .account-invitation-layout {
+    padding-top: 40px;
+    padding-bottom: 64px;
+  }
+  .account-login-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  .login-visual-copy h2 {
+    font-size: clamp(2.5rem, 12vw, 3.2rem);
+    max-width: 420px;
+  }
+  .login-visual-copy > span {
+    font-size: 0.9375rem;
+    margin-top: 18px;
+  }
+  .mission-art,
+  .registration-steps,
+  .login-event {
+    display: none;
+  }
+  .account-page [data-slot='card'] {
+    --card-spacing: 20px;
+  }
+  .account-page .account-login-card {
+    margin: 0;
+    padding-block: 28px;
+  }
+  .account-profile-form > .whd-field-group {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .account-page :is(input:not([type='file']):not([data-input-otp]), select) {
+    font-size: 1rem;
+  }
+  .account-profile-layout {
+    gap: 32px;
+  }
+  .account-page-heading h1,
+  .dashboard-welcome h1 {
+    font-size: 2.75rem;
+  }
+  .account-profile-subtitle {
+    font-size: 0.9375rem;
+    margin-top: 18px;
+  }
+  .dashboard-sidebar {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  .account-member {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .account-member-slot {
+    display: none;
+  }
+  .account-member-avatar {
+    width: 36px;
+    height: 36px;
+  }
+  .account-member > .whd-button {
+    margin-left: 48px;
+  }
+  .account-team-name {
+    font-size: 1.8rem;
+  }
+  .account-team-heading {
+    gap: 12px;
+  }
+  .account-invite-input {
+    flex-direction: column;
+  }
+  .account-invite-input button {
+    width: 100%;
+  }
+  .account-page .account-invitation-panel {
+    padding-block: 36px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .account-page *,
+  .account-page *::before,
+  .account-page *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .account-member:hover .account-member-avatar {
+    transform: none;
+  }
+}
+
+/* Existing WHD header support links and connected six-digit OTP stay available. */
+.dashboard-welcome-copy {
+  min-width: 0;
+}
+.account-join-form {
+  min-width: 0;
+}
+.account-page .auth-header-with-help {
+  gap: 24px;
+}
+.auth-header-help {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-right: auto;
+  margin-left: 16px;
+}
+.auth-header-help a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--ink-2);
+  font-size: 0.8125rem;
+}
+.auth-header-help svg {
+  flex-shrink: 0;
+  color: var(--saber);
+}
+.account-otp-input {
+  justify-content: center;
+  gap: 10px;
+  padding-block: 8px;
+  direction: ltr;
+}
+.account-otp-group {
+  isolation: isolate;
+}
+.account-otp-slot {
+  width: clamp(24px, 5.5vw, 46px);
+  height: 54px;
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+.account-otp-input:has(input[aria-invalid='true']) .account-otp-slot {
+  border-color: var(--destructive);
+}
+.account-otp-separator {
+  color: var(--saber);
+}
+.account-otp-separator svg {
+  width: 16px;
+}
+.account-otp-slot .animate-caret-blink {
+  background: var(--saber);
+  animation: otp-caret-blink 1.2s step-end infinite;
+}
+@keyframes otp-caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+@media (max-width: 767px) {
+  .account-page .auth-header-with-help {
+    height: auto;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0 12px;
+    padding-top: 8px;
+    padding-bottom: 4px;
+  }
+  .auth-header-with-help .auth-header-actions {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+  .auth-header-help {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin: 0;
+    justify-content: center;
+    gap: 24px;
+  }
+  .auth-header-help a {
+    font-size: 0.75rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .account-otp-slot .animate-caret-blink {
+    animation: none;
+  }
+}
+
+/* Match the reference verification field while retaining input-otp's paste,
+   keyboard, six-digit validation and accessible single textbox. */
+.account-otp-input {
+  gap: 0;
+  padding: 0;
+  min-height: 50px;
+  border: 1px solid var(--line-2);
+  background: rgb(3 4 10 / 0.8);
+}
+.account-otp-input:focus-within {
+  border-color: var(--saber);
+  box-shadow:
+    0 0 0 1px var(--saber),
+    0 0 20px var(--saber-soft);
+}
+.account-otp-group {
+  flex: 1;
+  max-width: 144px;
+}
+.account-otp-slot {
+  flex: 1;
+  width: 0;
+  height: 50px;
+  font-size: 2rem;
+  border: 0;
+  background: transparent;
+}
+.account-otp-slot[data-active='true'] {
+  border: 0;
+  box-shadow: none;
+}
+.account-otp-separator {
+  display: none;
+}
+.account-otp-input:has(input[aria-invalid='true']) {
+  border-color: var(--destructive);
+}
+/* The source's 18px check mark within WHD's existing 44px interactive target. */
+.account-consent .whd-checkbox {
+  position: relative;
+  margin: 0 -13px;
+  border: 0;
+  background: transparent;
+  color: var(--space);
+}
+.account-consent .whd-checkbox::before {
+  content: '';
+  position: absolute;
+  inset: 13px;
+  border: 1px solid var(--line-2);
+  background: var(--space);
+}
+.account-consent .whd-checkbox[data-checked]::before {
+  border-color: var(--saber);
+  background: var(--saber);
+}
+.account-consent .whd-checkbox svg {
+  position: relative;
+  width: 14px;
+  height: 14px;
+}
+@media (max-width: 680px) {
+  .account-page .account-login-card {
+    padding-block: 24px;
+  }
+  .account-page .account-profile-panel > [data-slot='card-content'] {
+    padding-block: 24px;
+  }
+  .account-team-form {
+    padding-block: 24px;
+  }
+  .account-page [data-slot='card'] > :is(.whd-team-header, .whd-cv-header, .whd-no-team-header) {
+    padding-top: 24px;
+  }
+  .account-page .account-team-card:has(.account-team-forms) > .whd-no-team-header {
+    padding-top: 0;
+  }
+}
+
+/* Existing readiness and create/join surfaces use the same source HUD corners. */
+.account-team-form,
+.dashboard-stats {
+  --tick: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background:
+    linear-gradient(var(--tick), var(--tick)) top left / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top left / 1px 10px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top right / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top right / 1px 10px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom left / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom left / 1px 10px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom right / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom right / 1px 10px no-repeat,
+    rgb(9 12 21 / 0.55);
+}
+
+.invitation-team-name {
+  color: var(--saber);
+  margin-top: 10px;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.15;
+}
+.invitation-facts {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  border-block: 1px solid var(--line);
+  padding-block: 16px;
+  margin-top: 24px;
+  font-family: var(--font-mono);
+  color: var(--ink-2);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}

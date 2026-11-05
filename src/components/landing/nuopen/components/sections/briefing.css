@@ -1,0 +1,118 @@
+.nuopen-landing {
+  .briefing-grid {
+    align-items: center;
+  }
+
+  .briefing-head {
+    max-width: 40rem;
+  }
+
+  .briefing-frame {
+    position: relative;
+  }
+
+  .briefing-stage {
+    position: relative;
+    height: clamp(300px, 46vw, 560px);
+  }
+
+  .briefing-reticle {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    color: var(--ink-3);
+  }
+
+  .briefing-reticle circle,
+  .briefing-reticle line {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+    opacity: 0.6;
+  }
+
+  .briefing-caption {
+    margin-top: 14px;
+    text-align: center;
+    color: var(--ink-3);
+  }
+
+  .briefing-readout {
+    padding: 4px clamp(18px, 2.4vw, 28px);
+  }
+
+  .briefing-row {
+    display: grid;
+    gap: 8px;
+    padding-block: 18px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .briefing-row:last-child {
+    border-bottom: 0;
+  }
+
+  .briefing-row dd {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .briefing-value {
+    font-size: 1.0625rem;
+    color: var(--ink);
+  }
+
+  .briefing-detail {
+    font-size: 0.9375rem;
+    color: var(--ink-3);
+  }
+
+  .briefing-map {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    margin-top: 2px;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line-2);
+    transition:
+      color 0.35s var(--ease-out),
+      border-color 0.35s var(--ease-out);
+  }
+
+  .briefing-map:hover {
+    color: var(--saber);
+    border-color: var(--saber);
+  }
+
+  @media (min-width: 640px) {
+    .briefing-row {
+      grid-template-columns: 9rem minmax(0, 1fr);
+      gap: 20px;
+      align-items: baseline;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .briefing-target {
+      grid-row: 1 / span 2;
+    }
+    .briefing-head {
+      grid-row: 1;
+      align-self: end;
+    }
+    .briefing-readout {
+      grid-row: 2;
+      align-self: start;
+    }
+  }
+}

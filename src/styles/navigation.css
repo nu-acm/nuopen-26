@@ -1,0 +1,307 @@
+/* Shared navigation text and white account actions. */
+.site-nav-link,
+.account-nav a.site-nav-link,
+.account-back.site-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 10px 12px;
+  border-bottom: 2px solid transparent;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    color 180ms,
+    border-color 180ms;
+}
+.site-nav-link:hover,
+.site-nav-link[aria-current],
+.account-nav a.site-nav-link:hover,
+.account-nav a.site-nav-link[aria-current] {
+  border-bottom-color: var(--saber);
+}
+.site-nav-link:focus-visible {
+  outline: 2px solid var(--saber);
+  outline-offset: 3px;
+}
+.account-nav a.site-nav-link {
+  min-height: 70px;
+  padding-inline: 0;
+}
+.landing-header-account.site-nav-action,
+.account-back.site-nav-action {
+  flex: 0 1 210px;
+  width: 210px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 2px;
+  background: var(--core);
+  color: #05060a;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow:
+    0 0 0 1px var(--saber),
+    0 0 14px var(--saber-glow),
+    0 0 40px var(--saber-soft);
+}
+.site-nav-link.site-nav-action:hover {
+  background: var(--core);
+  color: #05060a;
+  box-shadow:
+    0 0 0 1px var(--saber),
+    0 0 22px var(--saber-glow),
+    0 0 70px var(--saber-glow);
+}
+.site-nav-action > span[aria-hidden] {
+  color: inherit;
+}
+
+/* Identical control order and alignment on the landing and account pages. */
+.auth-header .auth-header-inner,
+.landing-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  max-width: 1440px;
+  min-height: 68px;
+  margin-inline: auto;
+  padding: 12px var(--gutter);
+}
+.auth-header-inner > .account-brand,
+.landing-header-inner > a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding-top: 0;
+}
+.auth-header .site-brand-wordmark {
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+.auth-header .site-brand-edition {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+}
+.auth-header .auth-header-actions,
+.landing-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  margin-left: auto;
+}
+.account-header-tools,
+.landing-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.account-header-secondary,
+.landing-header-secondary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+.landing-header-language,
+.account-header-secondary > .whd-language-group {
+  display: flex;
+  flex-shrink: 0;
+}
+.auth-header .whd-language-toggle,
+.landing-header-language .whd-language-toggle {
+  min-width: 36px;
+  min-height: 44px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+.landing-menu-preferences {
+  margin-top: 20px;
+}
+.nuopen-landing .landing-menu-link {
+  justify-content: flex-start;
+  min-height: 54px;
+  padding-inline: 0;
+  border-bottom-color: var(--line);
+}
+@media (min-width: 1280px) {
+  .landing-header-inner [aria-controls='mobile-menu'] {
+    display: none;
+  }
+}
+@media (max-width: 1279px) {
+  .nuopen-page {
+    --header-h: 136px;
+  }
+  .auth-header .auth-header-inner,
+  .landing-header-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+  .auth-header .auth-header-actions,
+  .landing-header-actions {
+    display: contents;
+  }
+  .account-header-tools,
+  .landing-header-tools {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    gap: 4px;
+  }
+  .account-header-secondary,
+  .landing-header-secondary {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: space-between;
+  }
+  .landing-header-account.site-nav-action,
+  .account-back.site-nav-action {
+    min-height: 56px;
+  }
+  .landing-header-inner > nav {
+    display: none;
+  }
+  .landing-header-inner [aria-controls='mobile-menu'] {
+    display: grid;
+  }
+  .nuopen-landing #mobile-menu {
+    display: grid;
+  }
+}
+@media (max-width: 680px) {
+  .account-nav a.site-nav-link {
+    min-height: 60px;
+  }
+}
+@media (max-width: 400px) {
+  .landing-header-inner > a > .font-mono {
+    display: none;
+  }
+}
+
+/* Give localized words room to wrap at spaces rather than splitting headings. */
+.nuopen-page :is(.btn, .btn-ghost) {
+  min-width: 0;
+  max-width: 100%;
+  height: auto;
+  min-height: 48px;
+  padding-block: 12px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+.nuopen-page .trench-actions > a {
+  height: auto;
+  min-height: 60px;
+}
+.nuopen-page.nuopen-landing .side-option-title,
+.nuopen-page.nuopen-landing .footer-episode {
+  white-space: normal;
+}
+.nuopen-page.nuopen-landing .side-option-title {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  line-height: 1.15;
+}
+.nuopen-page .hero-episode,
+.nuopen-page [role='timer'] {
+  max-width: 100%;
+}
+.nuopen-page [role='timer'] {
+  flex-wrap: wrap;
+}
+.nuopen-page .hero-episode {
+  text-align: center;
+}
+.nuopen-page:is(:lang(ru), :lang(kk)) :is(h2, h3) {
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+@media (min-width: 1024px) {
+  .nuopen-page:is(:lang(ru), :lang(kk)) .split-copy {
+    grid-column: 1 / span 6;
+  }
+  .nuopen-page:is(:lang(ru), :lang(kk)) .rules-copy {
+    grid-column: 1 / span 7;
+  }
+  .nuopen-page:is(:lang(ru), :lang(kk)) .rules-stage {
+    grid-column: 8 / span 5;
+  }
+}
+@media (max-width: 639px) {
+  .nuopen-page:is(:lang(ru), :lang(kk)) .hero-episode::before,
+  .nuopen-page:is(:lang(ru), :lang(kk)) .hero-episode::after {
+    display: none;
+  }
+}
+@media (max-width: 359px) {
+  .nuopen-page:is(:lang(ru), :lang(kk)) .side-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-nav-link {
+    transition: none;
+  }
+}
+
+.nuopen-page:is(:lang(ru), :lang(kk)) .trench-copy {
+  max-width: 52rem;
+}
+@media (min-width: 1024px) {
+  .nuopen-page:is(:lang(ru), :lang(kk)) :is(.allies-copy, .faq-head) {
+    grid-column: 1 / span 7;
+  }
+  .nuopen-page:is(:lang(ru), :lang(kk)) :is(.allies-side, .faq-body) {
+    grid-column: 8 / span 5;
+  }
+}
+
+@media (min-width: 1024px) {
+  .nuopen-page:is(:lang(ru), :lang(kk)) .allies-copy {
+    grid-column: 1 / span 8;
+  }
+  .nuopen-page:is(:lang(ru), :lang(kk)) .allies-side {
+    grid-column: 9 / span 4;
+  }
+}
+
+.account-page:is(:lang(ru), :lang(kk)) .account-profile-layout .account-page-heading h1 {
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+@media (min-width: 901px) {
+  .account-page:is(:lang(ru), :lang(kk)) .account-profile-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  }
+}
+@media (max-width: 680px) {
+  .account-page:is(:lang(ru), :lang(kk)) .account-profile-layout .account-page-heading h1 {
+    font-size: clamp(2rem, 8.5vw, 2.75rem);
+  }
+}

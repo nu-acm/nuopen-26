@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1790095564412,
+      "tag": "0000_lame_retro_girl",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1791868101130,
+      "tag": "0001_ai_generation_limit",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793254263404,
+      "tag": "0002_team_contest_identity",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1793614085046,
+      "tag": "0002_registration_consent_and_rate_limits",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1793682926146,
+      "tag": "0004_document_acknowledgment",
+      "breakpoints": true
+    }
+  ]
+}

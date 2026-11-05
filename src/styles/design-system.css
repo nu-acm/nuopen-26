@@ -1,0 +1,316 @@
+/* NUOPEN shared visual foundation. WHD keeps its components, variants and behavior. */
+:root {
+  --space: #03040a;
+  --space-2: #090c15;
+  --ink: #ece9e1;
+  --ink-2: #b0ada4;
+  --ink-3: #8a877f;
+  --line: rgb(236 233 225 / 0.12);
+  --line-2: rgb(236 233 225 / 0.22);
+  --crawl: #ffe81f;
+  --holo: #5cd6ff;
+  --core: #f7f5ef;
+  --blade-dark: #ff3131;
+  --blade-dark-glow: rgb(255 49 49 / 0.55);
+  --blade-light: #3ea8ff;
+  --blade-light-glow: rgb(62 168 255 / 0.55);
+  /* NUOPEN's root renders the light side by default. No preference logic is migrated. */
+  --saber: var(--blade-light);
+  --saber-glow: var(--blade-light-glow);
+  --saber-soft: rgb(62 168 255 / 0.14);
+  --gutter: max(clamp(16px, 4vw, 48px), env(safe-area-inset-left), env(safe-area-inset-right));
+  --header-h: 68px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --font-jost: 'Jost';
+  --font-plex: 'IBM Plex Sans';
+  --font-plex-mono: 'IBM Plex Mono';
+  --font-archivo: 'Archivo';
+  --font-news: 'News Cycle';
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+/* The source's type roles, bridged to existing WHD component names. */
+:where(h1, h2, h3) {
+  font-family: var(--font-display);
+}
+
+.whd-display,
+[data-slot='card-title'],
+.whd-popup-title,
+.account-page :is(h1, h2, h3),
+.landing-page .landing-heading,
+.footer-two-brand h2 {
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.02;
+  text-shadow: none;
+}
+
+.landing-page .landing-eyebrow,
+.account-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.landing-page .landing-eyebrow::before {
+  width: 28px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--core);
+  box-shadow:
+    0 0 4px var(--saber),
+    0 0 10px var(--saber-glow);
+}
+
+/* Container-relative sizing accommodates WHD's longer event name in Jost uppercase. */
+.landing-page .feature-two .landing-heading {
+  font-size: clamp(1.35rem, min(4.1vw, 8.5cqi), 4rem);
+}
+
+.landing-page .footer-two-brand h2 {
+  font-size: clamp(1rem, min(2.6vw, 7.5cqi), 2.5rem);
+}
+
+@media (max-width: 767px) {
+  .landing-page .feature-two .landing-heading {
+    font-size: clamp(1.35rem, min(8vw, 8.5cqi), 3.5rem);
+  }
+
+  .landing-page .footer-two-brand h2 {
+    font-size: clamp(1rem, 7.5cqi, 2.5rem);
+  }
+}
+
+/* Existing shared panels receive the reference HUD; page geometry stays unchanged. */
+.whd-card,
+.neon-frame,
+.account-page [data-slot='card'] {
+  --tick: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background:
+    linear-gradient(var(--tick), var(--tick)) top left / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top left / 1px 10px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top right / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top right / 1px 10px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom left / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom left / 1px 10px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom right / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom right / 1px 10px no-repeat,
+    rgb(9 12 21 / 0.55);
+}
+
+.account-page {
+  --account-panel: var(--space-2);
+  --account-lime: var(--holo);
+}
+
+.whd-confirm-popup {
+  border: 1px solid var(--line-2);
+  border-radius: 0;
+  background: var(--space-2);
+}
+
+/* Preserve native/Base UI inputs, validation attributes and 44px minimum targets. */
+.whd-input,
+.account-page :is(input:not([type='file']):not([data-input-otp]), select) {
+  min-height: 50px;
+  padding: 12px 14px;
+  border: 1px solid var(--line-2);
+  border-radius: 0;
+  background: rgb(3 4 10 / 0.8);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  transition: border-color 200ms;
+}
+
+.whd-input::placeholder {
+  color: var(--ink-3);
+  opacity: 0.8;
+}
+
+.whd-input:hover,
+.account-page :is(input:not([data-input-otp]), select):hover {
+  border-color: var(--ink-3);
+}
+
+.whd-input:focus,
+.account-page :is(input:not([data-input-otp]), select):focus {
+  border-color: var(--saber);
+  box-shadow: none;
+}
+
+.whd-input[aria-invalid='true'],
+.account-page input:not([data-input-otp])[aria-invalid='true'] {
+  border-color: var(--destructive);
+}
+
+.whd-input[aria-invalid='true']:focus,
+.account-page input:not([data-input-otp])[aria-invalid='true']:focus {
+  box-shadow: none;
+}
+
+.whd-input-group {
+  border-color: var(--line-2);
+  border-radius: 0;
+  background: rgb(3 4 10 / 0.8);
+}
+
+.whd-input-group:has(input:focus) {
+  border-color: var(--saber);
+  box-shadow: none;
+}
+
+.whd-native-select option {
+  background: var(--space-2);
+  color: var(--ink);
+}
+
+/* Source .btn/.btn-ghost appearance through WHD's existing named variants. */
+.whd-button {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  font-family: var(--font-mono);
+}
+
+.neon-button,
+.whd-button-solid,
+.account-page .neon-button,
+.landing-page .landing-cta:not(.hero-spy-cta),
+.landing-page .feature-two-action,
+.landing-page .nav-cta {
+  min-height: 48px;
+  border: 0;
+  border-radius: 2px;
+  background: var(--core);
+  color: var(--primary-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow:
+    0 0 0 1px var(--saber),
+    0 0 14px var(--saber-glow),
+    0 0 40px var(--saber-soft);
+  transition:
+    box-shadow 350ms var(--ease-out),
+    background-color 350ms var(--ease-out),
+    transform 350ms var(--ease-out);
+}
+
+.neon-button:hover,
+.whd-button-solid:hover,
+.account-page .neon-button:hover,
+.landing-page .landing-cta:not(.hero-spy-cta):hover,
+.landing-page .feature-two-action:hover,
+.landing-page .nav-cta:hover {
+  background: var(--core);
+  box-shadow:
+    0 0 0 1px var(--saber),
+    0 0 22px var(--saber-glow),
+    0 0 70px var(--saber-glow);
+}
+
+.neon-button:active,
+.whd-button-solid:active,
+.account-page .neon-button:active {
+  transform: translateY(1px);
+}
+
+.account-page .neon-button {
+  min-height: 50px;
+}
+
+.whd-button-secondary {
+  border: 1px solid var(--line-2);
+  border-radius: 2px;
+  color: var(--ink);
+  background: rgb(3 4 10 / 0.6);
+}
+
+.whd-button-secondary:hover {
+  border-color: var(--ink-2);
+  background: rgb(236 233 225 / 0.06);
+}
+
+.neon-button:disabled,
+.whd-button-solid:disabled,
+.account-page .neon-button:disabled {
+  box-shadow: none;
+}
+
+.account-button-arrow,
+.landing-page .landing-cta:not(.hero-spy-cta) > svg,
+.landing-page .landing-cta:not(.hero-spy-cta) > span[aria-hidden],
+.landing-page .feature-two-action > span {
+  border-radius: 0;
+  background: transparent;
+  color: currentColor;
+}
+
+.whd-segmented,
+.whd-tabs-list,
+.whd-checkbox,
+.whd-notice {
+  border-radius: 0;
+}
+
+.whd-toggle,
+.whd-tab,
+.whd-language-toggle {
+  border-radius: 2px;
+}
+
+.whd-toggle[data-pressed],
+.whd-tab[data-active] {
+  color: var(--ink);
+  background: var(--saber-soft);
+  box-shadow: inset 0 -2px var(--saber);
+}
+
+.account-otp-slot {
+  font-family: var(--font-mono);
+  background: rgb(3 4 10 / 0.8);
+  border-color: var(--line-2);
+  box-shadow: none;
+}
+
+.account-otp-slot:first-child,
+.account-otp-slot:last-child {
+  border-radius: 0;
+}
+
+.account-otp-slot[data-active='true'] {
+  border-color: var(--saber);
+  box-shadow: none;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

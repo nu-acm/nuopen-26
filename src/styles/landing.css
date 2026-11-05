@@ -1,0 +1,1101 @@
+/* NUOPEN presentation mapped onto WHD's existing landing components and content. */
+.site-starfield {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100lvh;
+  pointer-events: none;
+}
+.landing-page {
+  position: relative;
+  isolation: isolate;
+  color: var(--ink);
+  background: var(--space);
+  overflow: clip;
+}
+.landing-page main {
+  counter-reset: chapter;
+}
+.landing-page .landing-container {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.landing-page .landing-section {
+  position: relative;
+  padding-block: clamp(72px, 10vh, 140px);
+}
+.landing-page .landing-heading {
+  max-width: none;
+  margin: 0 0 24px;
+  font-size: clamp(2.125rem, 4.6vw, 4.5rem);
+  overflow-wrap: anywhere;
+}
+.landing-copy {
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.landing-label {
+  font: 400 0.75rem/1.4 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.landing-page .landing-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85em;
+  margin-bottom: 24px;
+}
+.landing-page main .landing-eyebrow {
+  counter-increment: chapter;
+}
+.landing-page main .landing-eyebrow::after {
+  content: counter(chapter, decimal-leading-zero);
+  order: -2;
+  color: var(--ink-3);
+}
+.reference-split {
+  display: grid;
+  gap: clamp(32px, 5vw, 56px);
+}
+.reference-hud {
+  --tick: var(--ink-2);
+  position: relative;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(var(--tick), var(--tick)) top left / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top left / 1px 10px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top right / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top right / 1px 10px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom left / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom left / 1px 10px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom right / 10px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom right / 1px 10px no-repeat,
+    rgb(9 12 21 / 0.55);
+}
+.scene-host > canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.site-brand-wordmark {
+  font-family: var(--font-archivo), var(--font-sans);
+  font-variation-settings: 'wdth' 125;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 0.92;
+}
+.site-brand-edition {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--saber);
+}
+
+/* Reference header, retaining WHD's six destinations and language control. */
+.landing-page .landing-nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  border-bottom: 1px solid var(--line);
+  background: rgb(3 4 10 / 0.96);
+}
+.nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: var(--header-h);
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.nav-logo {
+  display: inline-flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-shrink: 0;
+  min-height: 44px;
+  padding-top: 14px;
+  font-size: 1.05rem;
+}
+.desktop-nav {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  margin-left: 16px;
+}
+.desktop-nav a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px;
+  color: var(--ink-2);
+  font: 400 0.7rem/1.4 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.desktop-nav a:hover {
+  color: var(--ink);
+  text-shadow: none;
+}
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.landing-page .nav-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 16px;
+  white-space: nowrap;
+  font-size: 0.75rem;
+}
+.menu-toggle {
+  display: grid;
+  position: relative;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.mobile-nav {
+  padding: 8px var(--gutter) 24px;
+  max-height: calc(100svh - var(--header-h));
+  overflow-y: auto;
+  background: var(--space);
+  border-top: 1px solid var(--line);
+}
+.mobile-nav > a:not(.landing-cta) {
+  display: flex;
+  align-items: center;
+  min-height: 60px;
+  border-bottom: 1px solid var(--line);
+  font: 500 1.5rem/1.2 var(--font-display);
+  text-transform: uppercase;
+}
+.mobile-nav .whd-language-group {
+  padding-block: 16px;
+}
+.landing-page .landing-cta,
+.landing-page .feature-two-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 22px;
+  border-radius: 2px;
+  white-space: normal;
+  text-align: center;
+}
+.landing-page .landing-cta > :is(svg, span[aria-hidden]),
+.landing-page .feature-two-action > span {
+  width: 18px;
+  height: 18px;
+  flex-basis: 18px;
+  padding: 0;
+  font-size: 1rem;
+}
+
+/* Hero: original ship shot, outline title, episode type and bottom readout. */
+.landing-page .landing-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  isolation: isolate;
+  overflow: hidden;
+}
+.landing-page .hero-stage {
+  position: absolute;
+  inset-inline: 0;
+  z-index: -1;
+}
+.landing-page .hero-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.landing-page .hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  text-align: center;
+}
+.landing-page .hero-title,
+.landing-page .footer-wordmark {
+  font-family: var(--font-archivo), var(--font-sans);
+  font-variation-settings: 'wdth' 125;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: max(1.5px, 0.012em) var(--crawl);
+  letter-spacing: -0.01em;
+  line-height: 0.88;
+}
+.landing-page .hero-title {
+  font-size: clamp(2.5rem, min(10.8vw, 13vh), 9.5rem);
+  white-space: normal;
+}
+.hero-title > span {
+  display: block;
+}
+.landing-page .hero-sub {
+  font-family: var(--font-display);
+  max-width: 100%;
+  font-size: clamp(0.9rem, 1.5vw, 1.3rem);
+  line-height: 1.5;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.landing-page .hero-copy .landing-copy {
+  margin-top: 20px;
+  max-width: 40rem;
+}
+.hero-action {
+  margin-top: 32px;
+}
+.landing-page .hero-spy-cta {
+  min-width: 200px;
+}
+.landing-page .hero-strip {
+  width: 100%;
+  max-width: 1400px;
+  margin-inline: auto;
+}
+.hero-registration-status {
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.landing-countdown {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+}
+.landing-countdown > p {
+  font: 400 0.75rem/1.4 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.landing-countdown dl {
+  display: flex;
+  gap: clamp(16px, 3vw, 40px);
+}
+.landing-countdown dl > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.landing-countdown dd {
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 2vw, 1.75rem);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.landing-countdown dt {
+  font: 400 0.65rem/1.4 var(--font-mono);
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+
+/* Briefing and WHD's three retained challenges. */
+.event-facts {
+  padding-block: clamp(72px, 10vh, 140px);
+}
+.briefing-readout {
+  min-width: 0;
+}
+.briefing-readout .briefing-row > div {
+  min-width: 0;
+}
+.briefing-readout .briefing-value {
+  font-size: clamp(1.5rem, 2.8vw, 2.5rem);
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+.briefing-readout .briefing-place {
+  font-size: 1.5rem;
+}
+.event-stat-description {
+  margin-top: 8px;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+}
+.event-stat-description a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  gap: 12px;
+  border-bottom: 1px solid var(--line-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.feature-two-layout {
+  display: grid;
+  gap: clamp(32px, 5vw, 56px);
+}
+.feature-two-copy {
+  min-width: 0;
+  container-type: inline-size;
+}
+.landing-page .feature-two .landing-heading {
+  font-size: clamp(1.35rem, min(4.1vw, 8.5cqi), 4rem);
+}
+.feature-two .landing-heading > span {
+  color: var(--ink);
+  white-space: nowrap;
+}
+.feature-two-questions {
+  margin-block: 28px;
+}
+[data-variant='feature'] .whd-accordion-item {
+  border-bottom: 1px solid var(--line);
+}
+[data-variant='feature'] .whd-accordion-trigger {
+  font-size: 1rem;
+  color: var(--ink);
+  min-height: 56px;
+}
+[data-variant='feature'] .whd-accordion-inner {
+  color: var(--ink-2);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+.feature-two-visual {
+  min-width: 0;
+}
+.feature-two-rounds {
+  display: grid;
+  gap: 0;
+  border: 1px solid var(--line);
+}
+.landing-page .feature-two-card {
+  border-radius: 0;
+  background: rgb(9 12 21 / 0.55);
+  border-bottom: 1px solid var(--line);
+}
+.feature-two-round:last-child .feature-two-card {
+  border-bottom: 0;
+}
+.feature-two-card-content {
+  padding: clamp(24px, 3vw, 40px);
+}
+.feature-two-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  color: var(--saber);
+}
+.feature-two-card-top svg {
+  width: 24px;
+  height: 24px;
+}
+.feature-two-number {
+  font: 400 0.75rem/1.4 var(--font-mono);
+  color: var(--ink-3);
+  letter-spacing: 0.14em;
+}
+.feature-two-card h3 {
+  font: 500 clamp(1.25rem, 2vw, 1.75rem)/1.1 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.feature-two-time {
+  margin-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+.about-organizers {
+  margin-top: 48px;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}
+
+/* Source route and running order; WHD has three dates instead of four. */
+.date-stats-list .date-stat {
+  position: relative;
+  padding-left: 40px;
+  min-width: 0;
+}
+.date-stat-icon {
+  width: 20px;
+  height: 20px;
+  margin-block: 12px;
+  color: var(--saber);
+}
+.date-stat-value {
+  font: 400 0.8125rem/1.5 var(--font-mono);
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+.date-stat-label {
+  margin-top: 10px;
+  font: 500 clamp(1.125rem, 1.5vw, 1.375rem)/1.2 var(--font-display);
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.landing-page .agenda-row {
+  grid-template-columns: 1fr;
+}
+.landing-page .agenda-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.landing-page .agenda-body {
+  min-width: 0;
+}
+
+/* Source prize readout, retaining extra WHD benefits and sponsor assets. */
+.whd-bento {
+  display: grid;
+  gap: 24px;
+}
+.whd-bento-prize {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: clamp(32px, 5vw, 56px) 16px;
+  border: 1px solid var(--line);
+  background: rgb(9 12 21 / 0.55);
+  text-align: center;
+}
+.bento-trophy {
+  display: none;
+}
+.bento-prize-label {
+  font: 400 0.75rem/1.4 var(--font-mono);
+  color: var(--ink-2);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.landing-page .bento-prize-amount {
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+.bounty-currency {
+  font-family: var(--font-sans);
+}
+.whd-bento-welcome,
+.whd-bento-experience,
+.whd-bento-partners {
+  border: 1px solid var(--line);
+  background: rgb(9 12 21 / 0.55);
+  padding: clamp(24px, 3vw, 40px);
+  min-width: 0;
+}
+.whd-bento-welcome {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.whd-bento-card h3 {
+  font: 500 clamp(1.125rem, 1.8vw, 1.375rem)/1.3 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.bento-gift,
+.bento-extras svg {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  color: var(--saber);
+}
+.bento-extras {
+  display: grid;
+  gap: 24px;
+}
+.bento-extras li {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.bento-sponsors {
+  min-width: 0;
+}
+.partner-logos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 24px;
+  margin-top: 24px;
+}
+.partner-logos img {
+  width: 100%;
+  height: auto;
+  max-height: 100px;
+  object-fit: contain;
+}
+
+/* NUOPEN's broad photo frame, retaining all six WHD photos and its dialog behavior. */
+.gallery-section {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding: clamp(72px, 10vh, 140px) var(--gutter);
+}
+.gallery-stage {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+.gallery-center {
+  grid-column: 1 / -1;
+  margin-bottom: 32px;
+}
+.gallery-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--line-2);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+.gallery-open svg {
+  width: 18px;
+}
+.landing-page .gallery-frame {
+  display: block;
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--line);
+  padding: 6px;
+  background: var(--space-2);
+  cursor: pointer;
+  translate: calc(var(--gallery-x, 0) * 0.15px) calc(var(--gallery-y, 0) * 0.15px);
+}
+.gallery-frame img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  filter: saturate(0.55) contrast(1.08) brightness(0.92);
+}
+.gallery-frame-1 {
+  grid-column: 1 / -1;
+}
+.gallery-frame-1 img {
+  aspect-ratio: 1256 / 660;
+}
+.gallery-frame:hover {
+  border-color: var(--saber);
+}
+.gallery-viewer {
+  position: relative;
+  padding: 16px;
+  background: var(--space);
+  border: 1px solid var(--line-2);
+}
+.gallery-close {
+  display: grid;
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  z-index: 2;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  background: var(--space);
+  border: 1px solid var(--line-2);
+  cursor: pointer;
+}
+.gallery-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding-top: 16px;
+  font-family: var(--font-mono);
+  color: var(--ink-2);
+}
+.gallery-controls button {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+/* Source FAQ split, using WHD's Base UI accordion and complete question set. */
+.faq-six {
+  display: grid;
+  align-items: start;
+  gap: clamp(32px, 5vw, 56px);
+}
+.faq-six-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.faq-six-intro .landing-heading,
+.faq-six-intro .landing-eyebrow {
+  margin-bottom: 0;
+}
+.faq-panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-top: 12px;
+}
+.faq-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  border-bottom: 1px solid var(--saber);
+  font-size: 0.9375rem;
+}
+.faq-six-list {
+  border-top: 1px solid var(--line);
+  min-width: 0;
+}
+.landing-page [data-variant='faq'] .whd-accordion-item {
+  border-bottom: 1px solid var(--line);
+}
+.landing-page [data-variant='faq'] .whd-accordion-trigger {
+  width: 100%;
+  gap: 24px;
+  align-items: center;
+  padding: 20px 0;
+  font: 500 clamp(1.0625rem, 1.6vw, 1.25rem)/1.4 var(--font-sans);
+  color: var(--ink);
+  border-radius: 0;
+}
+.landing-page [data-variant='faq'] .whd-accordion-trigger[data-open],
+.landing-page [data-variant='faq'] .whd-accordion-trigger:hover {
+  color: var(--saber);
+}
+.faq-six-number {
+  display: none;
+}
+.faq-six-question {
+  flex: 1;
+  min-width: 0;
+}
+.faq-six-toggle {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--ink-2);
+}
+.faq-six-toggle svg {
+  width: 12px;
+  height: 12px;
+}
+.landing-page [data-variant='faq'] .whd-accordion-inner {
+  padding: 0 40px 24px 0;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+.faq-page-back {
+  padding-top: 48px;
+}
+.faq-page-back a {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink-2);
+}
+.faq-page-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 24px;
+  padding-block: 32px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-3);
+  font-size: 0.8125rem;
+}
+.faq-page-footer > div {
+  display: flex;
+  gap: 24px;
+}
+
+/* Source trench shot and source footer rhythm; original WHD links remain. */
+.cta-four {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.landing-page .cta-four .landing-heading {
+  max-width: 12ch;
+  font-size: clamp(2.5rem, 6.4vw, 6rem);
+}
+.cta-four-subtitle {
+  max-width: 40rem;
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  color: var(--ink-2);
+}
+.cta-four-copy > .landing-cta {
+  margin-top: 32px;
+  min-height: 60px;
+  padding-inline: 36px;
+}
+.landing-page .trench-count {
+  max-width: 36rem;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+.landing-footer {
+  position: relative;
+  background: linear-gradient(to bottom, rgb(3 4 10 / 0), var(--space) 22%);
+}
+.landing-footer::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--saber) 50%, transparent);
+  box-shadow: 0 0 12px var(--saber-glow);
+}
+.landing-page .landing-footer {
+  padding-block: clamp(72px, 10vh, 120px) calc(clamp(32px, 5vh, 48px) + env(safe-area-inset-bottom));
+}
+.footer-two-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  container-type: inline-size;
+}
+.footer-two-logo {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  min-height: 44px;
+}
+.landing-page .footer-wordmark {
+  margin: clamp(36px, 6vh, 56px) 0 clamp(18px, 3vh, 26px);
+  font-size: clamp(2.6rem, 9.5vw, 9.5rem);
+  text-align: center;
+  filter: drop-shadow(0 0 22px rgb(255 232 31 / 0.18));
+}
+.landing-page .footer-two-brand h2 {
+  max-width: 100%;
+  font-size: clamp(1rem, min(2.6vw, 6.5cqi), 2.5rem);
+  line-height: 1.3;
+}
+.footer-two-event-name {
+  white-space: nowrap;
+}
+.footer-two-socials {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-top: clamp(48px, 7vh, 72px);
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-2);
+}
+.footer-two-socials > div {
+  display: flex;
+  gap: 20px;
+}
+.footer-two-socials a {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+.footer-two-socials svg {
+  width: 20px;
+  height: 20px;
+}
+.footer-two-content {
+  padding-top: 24px;
+}
+.footer-two-groups {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 32px;
+}
+.footer-two-groups h3 {
+  color: var(--ink-3);
+  font: 400 0.75rem/1.4 var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.footer-two-groups ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin-top: 12px;
+}
+.footer-two-groups a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink);
+}
+.footer-two-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-3);
+  font: 400 0.75rem/1.7 var(--font-mono);
+}
+.footer-two a:hover {
+  color: var(--saber);
+}
+
+@media (min-width: 720px) {
+  .landing-page .agenda-row {
+    grid-template-columns: 170px minmax(0, 1fr);
+  }
+  .whd-bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .whd-bento-partners {
+    grid-column: 1 / -1;
+  }
+}
+@media (min-width: 900px) {
+  .landing-page .date-stats-list.route {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .date-stats-list .date-stat {
+    padding: 36px 28px 0 0;
+  }
+}
+@media (min-width: 1024px) {
+  .reference-split,
+  .feature-two-layout,
+  .faq-six {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 48px;
+  }
+  .briefing-target,
+  .feature-two-copy,
+  .faq-six-intro {
+    grid-column: 1 / span 5;
+  }
+  .briefing-readout,
+  .feature-two-visual,
+  .faq-six-list {
+    grid-column: 7 / span 6;
+  }
+  .faq-six-intro {
+    position: sticky;
+    top: calc(var(--header-h) + 48px);
+    align-self: start;
+  }
+}
+@media (min-width: 1280px) {
+  .desktop-nav {
+    display: flex;
+  }
+  .menu-toggle {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  .nav-actions > .whd-language-group {
+    display: none;
+  }
+  .landing-page .feature-two .landing-heading {
+    font-size: clamp(1.35rem, min(8vw, 8.5cqi), 3.5rem);
+  }
+  .landing-countdown {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .landing-countdown dl {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .landing-countdown dl > div {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .landing-countdown dd {
+    font-size: 1.25rem;
+  }
+  .gallery-stage {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .gallery-frame-1 {
+    grid-column: 1 / -1;
+  }
+  .partner-logos {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .partner-logos img {
+    max-width: 280px;
+    margin-inline: auto;
+  }
+  .landing-page .footer-two-brand h2 {
+    font-size: clamp(1rem, 6.5cqi, 2.5rem);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-page .gallery-frame {
+    translate: none;
+  }
+}
+
+/* Retain existing component/variant names while their active presentation changes. */
+.date-stats,
+.benefits-bento,
+.faq-showcase {
+  isolation: isolate;
+}
+.faq-page {
+  min-height: 100svh;
+}
+.faq-six-full .landing-heading {
+  max-width: 18ch;
+}
+.cta-four-visual,
+.hero-cta-label {
+  min-width: 0;
+}
+.hero-cta-arrow {
+  flex-shrink: 0;
+}
+.event-stat-purple {
+  --stat-accent: var(--holo);
+}
+.event-stat-lime {
+  --stat-accent: var(--crawl);
+}
+/* Retired decorative components stay available to existing imports. */
+.flower-trail {
+  pointer-events: none;
+}
+.hero-visual {
+  position: relative;
+  min-width: 0;
+}
+.hero-visual > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.hero-eyes {
+  pointer-events: none;
+}
+.hero-gadget {
+  position: relative;
+}
+.hero-gadget-message {
+  color: var(--ink-2);
+}
+
+.landing-page .hero-spy-cta {
+  background: var(--core);
+  color: var(--primary-foreground);
+  border: 0;
+  border-radius: 2px;
+  font: 700 0.8125rem/1.5 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow:
+    0 0 0 1px var(--saber),
+    0 0 14px var(--saber-glow),
+    0 0 40px var(--saber-soft);
+}
+.landing-page .hero-spy-cta:hover {
+  box-shadow:
+    0 0 0 1px var(--saber),
+    0 0 22px var(--saber-glow),
+    0 0 70px var(--saber-glow);
+}
+.landing-page main > :is(.landing-section, .gallery-section) {
+  counter-increment: chapter;
+}
+.landing-page main .landing-eyebrow {
+  counter-increment: none;
+}
+
+@media (max-width: 479px) {
+  .nav-bar {
+    gap: 12px;
+  }
+  .landing-page .nav-logo .site-brand-edition {
+    display: none;
+  }
+}
+
+.landing-page .feature-two .landing-heading {
+  white-space: nowrap;
+}
+
+.footer-two-logo {
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.footer-two-logo .landing-label {
+  max-width: 55ch;
+  color: var(--ink-2);
+}
+.footer-mark {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  color: var(--core);
+}
+.acm-mark-letter {
+  font-family: var(--font-archivo), sans-serif;
+}
+@media (min-width: 1024px) {
+  .briefing-head {
+    grid-column: 7 / span 6;
+  }
+}

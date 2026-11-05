@@ -1,0 +1,192 @@
+@utility nu-bg-rgb-3-4-10-0-96 {
+  @apply bg-[rgb(3_4_10/0.96)];
+}
+@utility nu-bg-var-core {
+  @apply bg-[var(--core)];
+}
+@utility nu-bg-var-saber-soft {
+  @apply bg-[var(--saber-soft)];
+}
+@utility nu-border-var-saber {
+  @apply border-[var(--saber)];
+}
+@utility nu-duration-400ms {
+  @apply duration-[400ms];
+}
+@utility nu-ease-var-ease-out {
+  @apply ease-[var(--ease-out)];
+}
+@utility nu-grid-cols-1fr-1-2fr-1-4fr {
+  @apply grid-cols-[1fr_1.2fr_1.4fr];
+}
+@utility nu-grid-cols-1fr-1fr {
+  @apply grid-cols-[1fr_1fr];
+}
+@utility nu-grid-rows-0fr {
+  @apply grid-rows-[0fr];
+}
+@utility nu-grid-rows-1fr {
+  @apply grid-rows-[1fr];
+}
+@utility nu-h-2px {
+  @apply h-[2px];
+}
+@utility nu-h-3px {
+  @apply h-[3px];
+}
+@utility nu-h-var-header-h {
+  @apply h-[var(--header-h)];
+}
+@utility nu-left-var-gutter {
+  @apply left-[var(--gutter)];
+}
+@utility nu-max-h-calc-100svh-var-header-h {
+  @apply max-h-[calc(100svh-var(--header-h))];
+}
+@utility nu-max-w-1240px {
+  @apply max-w-[1240px];
+}
+@utility nu-max-w-1400px {
+  @apply max-w-[1400px];
+}
+@utility nu-max-w-40rem {
+  @apply max-w-[40rem];
+}
+@utility nu-min-w-4-5rem {
+  @apply min-w-[4.5rem];
+}
+@utility nu-px-var-gutter {
+  @apply px-[var(--gutter)];
+}
+@utility nu-shadow-0-0-6px-var-saber {
+  @apply shadow-[0_0_6px_var(--saber)];
+}
+@utility nu-shadow-inset-0-0-0-1px-var-saber-0-0-14px-var-saber-glow {
+  @apply shadow-[inset_0_0_0_1px_var(--saber),0_0_14px_var(--saber-glow)];
+}
+@utility nu-text-0-75rem {
+  @apply text-[0.75rem];
+}
+@utility nu-text-0-7rem {
+  @apply text-[0.7rem];
+}
+@utility nu-text-1-05rem {
+  @apply text-[1.05rem];
+}
+@utility nu-text-1-5rem {
+  @apply text-[1.5rem];
+}
+@utility nu-text-1-75rem {
+  @apply text-[1.75rem];
+}
+@utility nu-text-2-25rem {
+  @apply text-[2.25rem];
+}
+@utility nu-text-var-saber {
+  @apply text-[var(--saber)];
+}
+@utility nu-tracking-0-02em {
+  @apply tracking-[0.02em];
+}
+@utility nu-tracking-0-14em {
+  @apply tracking-[0.14em];
+}
+@utility nu-tracking-0-18em {
+  @apply tracking-[0.18em];
+}
+@utility nu-transition-background-color-border-color {
+  @apply transition-[background-color,border-color];
+}
+@utility nu-transition-color-background-color-box-shadow-border-color {
+  @apply transition-[color,background-color,box-shadow,border-color];
+}
+@utility nu-transition-grid-template-rows {
+  @apply transition-[grid-template-rows];
+}
+@utility nu-z-1 {
+  @apply z-[1];
+}
+@utility nu-z-70 {
+  @apply z-[70];
+}
+@utility nu-z-90 {
+  @apply z-[90];
+}
+/* Exact reference values, expressed as named presentation utilities for WHD lint rules. */
+.nuopen-landing .nu-acm-type {
+  font-family: var(--font-archivo), sans-serif;
+}
+.nuopen-landing .nu-starfield {
+  z-index: -1;
+}
+.nuopen-landing .nu-saber-progress {
+  transform: scaleX(var(--progress, 0));
+  box-shadow:
+    0 0 4px var(--saber),
+    0 0 12px var(--saber-glow),
+    0 0 28px var(--saber-glow);
+}
+.nuopen-landing .navigation-jump-stars i {
+  opacity: var(--streak-opacity);
+}
+.nuopen-landing .allies,
+.nuopen-landing .allies-address,
+.nuopen-landing .allies-chip,
+.nuopen-landing .allies-copy,
+.nuopen-landing .allies-cta,
+.nuopen-landing .allies-head,
+.nuopen-landing .allies-names,
+.nuopen-landing .allies-pitch,
+.nuopen-landing .allies-pitch-text,
+.nuopen-landing .allies-points,
+.nuopen-landing .allies-row,
+.nuopen-landing .allies-side,
+.nuopen-landing .allies-timeline,
+.nuopen-landing .allies-wall,
+.nuopen-landing .allies-wall-block,
+.nuopen-landing .allies-wall-chip,
+.nuopen-landing .allies-year,
+.nuopen-landing .bounty,
+.nuopen-landing .bounty-copy,
+.nuopen-landing .crawl,
+.nuopen-landing .crawl-episode,
+.nuopen-landing .crawl-plane,
+.nuopen-landing .crawl-text,
+.nuopen-landing .crawl-title,
+.nuopen-landing .crawl-viewport,
+.nuopen-landing .faq-body,
+.nuopen-landing .header-logo,
+.nuopen-landing .hero,
+.nuopen-landing .hyper,
+.nuopen-landing .hyper-flash,
+.nuopen-landing .hyper-stick,
+.nuopen-landing .navigation-jump,
+.nuopen-landing .navigation-jump-stars,
+.nuopen-landing .record,
+.nuopen-landing .record-num,
+.nuopen-landing .rule,
+.nuopen-landing .rule-num,
+.nuopen-landing .rule-punch,
+.nuopen-landing .rule-text,
+.nuopen-landing .rule-title,
+.nuopen-landing .rules,
+.nuopen-landing .rules-aside,
+.nuopen-landing .rules-copy,
+.nuopen-landing .rules-head,
+.nuopen-landing .rules-list,
+.nuopen-landing .rules-stage,
+.nuopen-landing .schedule,
+.nuopen-landing .side-band,
+.nuopen-landing .side-bar,
+.nuopen-landing .side-choice,
+.nuopen-landing .side-copy,
+.nuopen-landing .side-fact,
+.nuopen-landing .side-facts,
+.nuopen-landing .side-option,
+.nuopen-landing .side-option-title,
+.nuopen-landing .side-reveal,
+.nuopen-landing .side-row,
+.nuopen-landing .side-stage,
+.nuopen-landing .side-title {
+  --nuopen-animation-hook: 1;
+}

@@ -1,0 +1,24 @@
+3D visual assets reproduced from the NUOPEN design reference.
+Assets copied unchanged. NUOPEN's source records them as compressed and re-oriented for the web.
+
+Imperial-class Star Destroyer — Heataker
+License recorded in NUOPEN: Sketchfab Standard
+https://sketchfab.com/3d-models/star-wars-imperial-class-star-destroyer-fa18d537db4d4020a443c1802ec0f88e
+
+Death Star — SebastianSosnowski
+License recorded in NUOPEN: CC BY-NC-ND 4.0
+https://creativecommons.org/licenses/by-nc-nd/4.0/
+https://sketchfab.com/3d-models/death-star-star-wars-3d5f01485e9e4e8b9d995d7764341afe
+
+3D T.I.E Fighter — Mickael Boitte
+License recorded in NUOPEN: CC BY 4.0
+https://creativecommons.org/licenses/by/4.0/
+https://sketchfab.com/3d-models/3d-tie-fighter-star-wars-model-5375de94c2484ab0b2a2bd75aa63c2b4
+
+Additional original NUOPEN landing models:
+Darth Vader — Stym — CC BY-NC-SA 4.0
+https://sketchfab.com/3d-models/darth-vader-1784449656114e55b596fc3e902f083d
+Anakin Skywalker — Battlefront II — rendysix — CC BY 4.0
+https://sketchfab.com/3d-models/anakin-skywalker-battlefront-ii-24c34fbc5a94408bad9bff4402054957
+Luke Skywalker lightsaber — art_em — CC BY 4.0
+https://sketchfab.com/3d-models/luke-skywalker-lightsaber-0b38aebb987c45018b79d98025b77ea9

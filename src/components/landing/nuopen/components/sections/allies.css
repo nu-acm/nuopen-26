@@ -1,0 +1,161 @@
+.nuopen-landing {
+  .allies-copy {
+    display: grid;
+    align-content: start;
+    gap: clamp(48px, 8vh, 80px);
+  }
+
+  .allies-head {
+    display: grid;
+    gap: 20px;
+  }
+
+  .allies-timeline {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .allies-row {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1.25rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .allies-year {
+    font-size: 0.875rem;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+  }
+
+  .allies-row:last-child .allies-year {
+    color: var(--ink);
+  }
+
+  .allies-names {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .allies-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding-inline: 10px;
+    border: 1px solid var(--line-2);
+    font-size: 0.875rem;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .allies-side {
+    display: grid;
+    align-content: start;
+    gap: clamp(14px, 2.6svh, 24px);
+  }
+
+  .allies-wall-block {
+    display: grid;
+    gap: 14px;
+  }
+
+  .allies-wall {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .allies-wall-chip {
+    min-height: clamp(44px, 6.5svh, 72px);
+    font-size: clamp(1.125rem, 1.8vw, 1.375rem);
+    background: rgb(9 12 21 / 0.55);
+  }
+
+  .allies-pitch {
+    --tick: var(--saber);
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: clamp(10px, 2svh, 18px);
+    padding: clamp(20px, min(3.5vw, 3.5svh), 40px);
+  }
+
+  /* Sticks only where the whole column fits under the header; on shorter screens it scrolls with the page. */
+  @media (min-width: 1024px) and (min-height: 680px) {
+    .allies-side {
+      position: sticky;
+      top: calc(var(--header-h) + clamp(16px, 3svh, 32px));
+      align-self: start;
+    }
+  }
+
+  .allies-pitch-text {
+    color: var(--ink-2);
+  }
+
+  .allies-points {
+    display: grid;
+    gap: clamp(6px, 1.2svh, 12px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .allies-points li {
+    position: relative;
+    padding-left: 22px;
+    color: var(--ink);
+  }
+
+  .allies-points li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.55em;
+    width: 7px;
+    height: 7px;
+    background: var(--saber);
+    transform: rotate(45deg);
+    box-shadow: 0 0 8px var(--saber-glow);
+  }
+
+  .allies-cta {
+    margin-top: 8px;
+  }
+
+  .allies-address {
+    text-transform: none;
+    letter-spacing: 0.04em;
+    font-size: 0.8125rem;
+  }
+
+  @media (min-width: 640px) {
+    .allies-row {
+      grid-template-columns: 5rem minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+
+    .allies-names {
+      gap: 8px;
+    }
+
+    .allies-chip {
+      padding-inline: 14px;
+      font-size: 1rem;
+    }
+  }
+}

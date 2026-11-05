@@ -1,0 +1,329 @@
+.nuopen-landing {
+  &:is(html.lenis *),
+  &:is(html.lenis *) .nuopen-page-body {
+    height: auto;
+  }
+
+  &:is(.lenis.lenis-smooth *) {
+    scroll-behavior: auto !important;
+  }
+
+  .nuopen-page-body {
+    min-height: 100svh;
+    font-family: var(--font-plex), system-ui, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--saber);
+    color: #000;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--saber);
+    outline-offset: 3px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* ---- type ---- */
+
+  /* The NU OPEN wordmark only: a heavy extended outline in the spirit of the film logo. */
+  .font-logo {
+    font-family: var(--font-archivo), system-ui, sans-serif;
+    font-variation-settings: 'wdth' 125;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 0.92;
+  }
+
+  .font-display {
+    /* Jost has no tenge sign (U+20B8); Plex fills any missing glyph instead of a system font. */
+    font-family: var(--font-jost), var(--font-plex), system-ui, sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.02;
+  }
+
+  .font-mono {
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+  }
+
+  .h2 {
+    font-size: clamp(2.125rem, 4.6vw, 4.5rem);
+  }
+
+  /* Reserved for the three big moments: the choice, the reward, the final call. */
+  .h2-xl {
+    font-size: clamp(2.5rem, 6.4vw, 6rem);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  .h3 {
+    font-size: clamp(1.25rem, 2vw, 1.75rem);
+  }
+
+  .lead {
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+
+  .label {
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85em;
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .kicker::before {
+    content: '';
+    order: -1;
+    width: 28px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--core);
+    box-shadow:
+      0 0 4px var(--saber),
+      0 0 10px var(--saber-glow);
+  }
+
+  /* Chapter numbers, like film reels: every kicker in the story counts itself. */
+  main {
+    counter-reset: chapter;
+  }
+
+  main .kicker {
+    counter-increment: chapter;
+  }
+
+  main .kicker::after {
+    content: counter(chapter, decimal-leading-zero);
+    order: -2;
+    color: var(--ink-3);
+  }
+
+  .outline-crawl {
+    color: transparent;
+    -webkit-text-stroke: max(1.5px, 0.012em) var(--crawl);
+  }
+
+  /* ---- layout ---- */
+
+  .section {
+    position: relative;
+    width: 100%;
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    padding-block: clamp(72px, 10vh, 140px);
+  }
+
+  /* One shared two-column split: copy on columns 1–5, the main block on 7–12. */
+  .split {
+    display: grid;
+    gap: clamp(32px, 5vw, 56px);
+  }
+
+  @media (min-width: 1024px) {
+    .split {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: 48px;
+    }
+
+    .split-copy {
+      grid-column: 1 / span 5;
+    }
+
+    .split-main {
+      grid-column: 7 / span 6;
+    }
+  }
+
+  /* ---- buttons: a lit blade — white core, side-coloured halo ---- */
+
+  .btn,
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 48px;
+    padding-inline: 22px;
+    border-radius: 2px;
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition:
+      box-shadow 0.35s var(--ease-out),
+      background-color 0.35s var(--ease-out),
+      border-color 0.35s var(--ease-out),
+      transform 0.35s var(--ease-out);
+  }
+
+  .btn {
+    background: var(--core);
+    color: #05060a;
+    box-shadow:
+      0 0 0 1px var(--saber),
+      0 0 14px var(--saber-glow),
+      0 0 40px var(--saber-soft);
+  }
+
+  .btn:hover {
+    box-shadow:
+      0 0 0 1px var(--saber),
+      0 0 22px var(--saber-glow),
+      0 0 70px var(--saber-glow);
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn-ghost {
+    border: 1px solid var(--line-2);
+    color: var(--ink);
+    background: rgb(3 4 10 / 0.6);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--ink-2);
+    background: rgb(236 233 225 / 0.06);
+  }
+
+  .btn-sm {
+    height: 44px;
+    padding-inline: 16px;
+    font-size: 0.75rem;
+  }
+
+  /* ---- HUD panel: hairline box with targeting-corner ticks ---- */
+
+  .hud {
+    --tick: var(--ink-2);
+    position: relative;
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(var(--tick), var(--tick)) top left / 10px 1px no-repeat,
+      linear-gradient(var(--tick), var(--tick)) top left / 1px 10px no-repeat,
+      linear-gradient(var(--tick), var(--tick)) top right / 10px 1px no-repeat,
+      linear-gradient(var(--tick), var(--tick)) top right / 1px 10px no-repeat,
+      linear-gradient(var(--tick), var(--tick)) bottom left / 10px 1px no-repeat,
+      linear-gradient(var(--tick), var(--tick)) bottom left / 1px 10px no-repeat,
+      linear-gradient(var(--tick), var(--tick)) bottom right / 10px 1px no-repeat,
+      linear-gradient(var(--tick), var(--tick)) bottom right / 1px 10px no-repeat,
+      rgb(9 12 21 / 0.55);
+  }
+
+  .sr-only-focusable:not(:focus) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* ---- intro: shown only when the head script marked a first visit ---- */
+
+  .intro {
+    display: none;
+  }
+
+  &:is(html[data-intro='1'] *) .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    place-items: center;
+    padding: var(--gutter);
+    background: #000;
+  }
+
+  /* Without scripts the opening could never end; once Intro runs it owns the timing, including the wait for Begin. */
+  &:is(html[data-intro='1'] *):not([data-intro-live]) .intro {
+    animation: intro-failsafe-hide 0.6s 9s forwards;
+  }
+
+  .intro-begin {
+    margin-top: clamp(28px, 6vh, 56px);
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .intro-tap {
+    display: none;
+  }
+
+  @media (hover: none) {
+    .intro-click {
+      display: none;
+    }
+
+    .intro-tap {
+      display: inline;
+    }
+  }
+
+  .intro-line {
+    opacity: 0;
+    color: var(--holo);
+    font-family: var(--font-news), sans-serif;
+    font-size: clamp(1.25rem, 2.6vw, 2.2rem);
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+  }
+
+  @keyframes intro-failsafe-hide {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+}

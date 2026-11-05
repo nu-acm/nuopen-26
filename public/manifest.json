@@ -1,0 +1,28 @@
+{
+  "short_name": "NU Open",
+  "name": "NU Open 2026",
+  "description": "NU Open 2026 · Episode VII: The Code Awakens. The annual ICPC-style programming contest by ACM@NU at Nazarbayev University.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#03040a",
+  "background_color": "#03040a"
+}
