@@ -1,4 +1,5 @@
 import { formatMoney } from '@/components/landing/nuopen/lib/format';
+import { EVENT_DATE } from '@/lib/event';
 
 const EMAIL = 'acmsc@nu.edu.kz';
 const PRIZE = { amount: 1_200_000, currency: '₸' };
@@ -14,11 +15,11 @@ export const EVENT = {
   organizerShort: 'ACM@NU',
   registerHref: '/register',
   contest: {
-    start: '2026-11-07T11:00:00+05:00',
-    end: '2026-11-07T16:00:00+05:00',
+    start: `${EVENT_DATE}T11:00:00+05:00`,
+    end: `${EVENT_DATE}T16:00:00+05:00`,
     hours: 5,
-    dateLabel: '7 November 2026',
-    weekday: 'Saturday',
+    dateLabel: '22 November 2026',
+    weekday: 'Sunday',
     format: 'ICPC-style',
     platform: 'Codeforces',
   },
@@ -54,7 +55,7 @@ export const EVENT = {
       label: 'Confirmation',
       note: 'On-campus teams get a confirmation email.',
     },
-    { date: '2026-11-07', label: 'Contest day', note: 'Nazarbayev University, Astana.' },
+    { date: EVENT_DATE, label: 'Contest day', note: 'Nazarbayev University, Astana.' },
   ],
   // placeholder: last year's running order, to be confirmed for 2026
   agenda: [

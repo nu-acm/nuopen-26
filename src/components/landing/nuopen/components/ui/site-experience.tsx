@@ -1,5 +1,6 @@
 import { NavigationJump } from './navigation-jump';
 import { SaberProgress } from './saber-progress';
+import { SaberTrail } from './saber-trail';
 import { Soundtrack } from './soundtrack';
 import { SideSync } from './use-side';
 
@@ -9,6 +10,7 @@ export function SiteExperience() {
     <>
       <SideSync />
       <SaberProgress />
+      <SaberTrail />
       <Soundtrack />
       <NavigationJump />
     </>

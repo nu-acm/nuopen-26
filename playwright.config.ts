@@ -5,7 +5,10 @@ export default defineConfig({
   outputDir: './output/playwright/results',
   reporter: [['list'], ['html', { outputFolder: './output/playwright/report', open: 'never' }]],
   fullyParallel: false,
-  workers: 2,
+  workers: process.env.CI ? 1 : 2,
+  timeout: process.env.CI ? 120_000 : 30_000,
+  expect: { timeout: process.env.CI ? 10_000 : 5_000 },
+  globalTimeout: process.env.CI ? 25 * 60_000 : 0,
   retries: 0,
   use: {
     browserName: 'chromium',

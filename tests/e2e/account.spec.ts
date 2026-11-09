@@ -23,7 +23,7 @@ test('registers, edits a profile, creates a team, and admits a teammate', async 
   await page.getByRole('button', { name: 'Create a team', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Browser Team' })).toBeVisible();
   const invite = page.getByRole('textbox', { name: 'Invite link' });
-  await expect(invite).toHaveValue(/\/invite\/browser-team$/);
+  await expect(invite).toHaveValue(/\/invite\/[0-9a-f]{32}$/);
   const context = await browser.newContext({ baseURL: app.url, viewport: page.viewportSize() });
   const thirdContext = await browser.newContext({
     baseURL: app.url,

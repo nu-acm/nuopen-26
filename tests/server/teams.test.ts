@@ -3,6 +3,7 @@ import {
   createTeam,
   dissolveTeam,
   getTeamByParticipant,
+  getTeamBySlug,
   joinTeamBySlug,
   kickMember,
   leaveTeam,
@@ -84,4 +85,42 @@ it('enforces captain permissions and detaches members on dissolution', async () 
   await dissolveTeam('captain');
   expect(await getTeamByParticipant('captain')).toBeNull();
   expect(await getTeamByParticipant('member')).toBeNull();
+});
+
+it('uses unpredictable invite tokens and rejects legacy name-based links', async () => {
+  await seedParticipant('captain');
+  await seedParticipant('member');
+  await expect(createTeam('captain', '!!!')).rejects.toThrow(TEAM_ERRORS.nameNeedsLetters);
+  const created = await createTeam('captain', 'Guessable Team');
+  expect(created.name).toBe('Guessable Team');
+  expect(created.inviteSlug).toMatch(/^[0-9a-f]{32}$/);
+  expect(await getTeamBySlug('guessable-team')).toBeNull();
+  await expect(joinTeamBySlug('member', 'guessable-team')).rejects.toThrow(
+    TEAM_ERRORS.invalidInvite,
+  );
+  await joinTeamBySlug('member', created.inviteSlug);
+  expect((await getTeamByParticipant('member'))?.name).toBe('Guessable Team');
+});
+
+it('rotates legacy invite links once, even when members load concurrently', async () => {
+  await seedParticipant('captain');
+  await seedParticipant('member');
+  const created = await createTeam('captain', 'Legacy Team');
+  await joinTeamBySlug('member', created.inviteSlug);
+  await bindings.DB.prepare('UPDATE team SET invite_slug = ?, invite_token = NULL WHERE id = ?')
+    .bind('legacy-team', created.id)
+    .run();
+  await seedParticipant('outsider');
+  expect(await getTeamBySlug('legacy-team')).toBeNull();
+  await expect(joinTeamBySlug('outsider', 'legacy-team')).rejects.toThrow(
+    TEAM_ERRORS.invalidInvite,
+  );
+  const [first, second] = await Promise.all([
+    getTeamByParticipant('captain'),
+    getTeamByParticipant('member'),
+  ]);
+  expect(first?.inviteSlug).toMatch(/^[0-9a-f]{32}$/);
+  expect(second?.inviteSlug).toBe(first?.inviteSlug);
+  expect(first?.name).toBe('Legacy Team');
+  await joinTeamBySlug('outsider', first!.inviteSlug);
 });

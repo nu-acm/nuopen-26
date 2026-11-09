@@ -99,8 +99,8 @@ it('preserves required and optional phone errors after trimming', () => {
 
 it('checks age on the event date and requires a contact for unusable IIN birth dates', () => {
   // Turning 18 on the event day is adult; turning 18 the next day still needs a contact.
-  expect(requiresGuardianPhone('081114600001')).toBe(false);
-  expect(requiresGuardianPhone('081115600001')).toBe(true);
+  expect(requiresGuardianPhone('081122600001')).toBe(false);
+  expect(requiresGuardianPhone('081123600001')).toBe(true);
   expect(requiresGuardianPhone('081110600001')).toBe(false);
   expect(requiresGuardianPhone('101101600001')).toBe(true);
   expect(requiresGuardianPhone('080229600001')).toBe(false);

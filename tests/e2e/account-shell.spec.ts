@@ -15,19 +15,27 @@ test('team and personal-data tabs keep actions separate and preserve profile edi
   await login(page, app.codes, 'account-tabs@example.test');
   await onboard(page, 'Pilot Example');
   await page.evaluate(() => document.fonts.ready);
-  const accountControls = await page.locator('.auth-header').evaluate((header) => {
-    const language = header.querySelector('.whd-language-group')!.getBoundingClientRect();
-    const action = header.querySelector('.account-back')!.getBoundingClientRect();
-    return {
-      languageX: language.x,
-      languageY: language.y,
-      actionX: action.x,
-      actionY: action.y,
-      width: action.width,
-      height: action.height,
-    };
-  });
-  expect(accountControls.languageX).toBeLessThan(accountControls.actionX);
+  await expect(page.locator('.auth-header .account-back')).toBeVisible();
+  await expect(page.locator('.auth-header .whd-language-group')).toBeVisible();
+  let accountControls = { languageX: 0, languageY: 0, actionX: 0, actionY: 0, width: 0, height: 0 };
+  await expect
+    .poll(async () => {
+      accountControls = await page.locator('.auth-header').evaluate((header) => {
+        const headerTop = header.getBoundingClientRect().top;
+        const language = header.querySelector('.whd-language-group')!.getBoundingClientRect();
+        const action = header.querySelector('.account-back')!.getBoundingClientRect();
+        return {
+          languageX: language.x,
+          languageY: language.y - headerTop,
+          actionX: action.x,
+          actionY: action.y - headerTop,
+          width: action.width,
+          height: action.height,
+        };
+      });
+      return accountControls.width > 0 && accountControls.languageX < accountControls.actionX;
+    })
+    .toBe(true);
   await expect(page.locator('.account-back')).toHaveCSS('background-color', 'rgb(247, 245, 239)');
 
   const nav = page.getByRole('navigation', { name: 'Your account', exact: true });
@@ -69,13 +77,14 @@ test('team and personal-data tabs keep actions separate and preserve profile edi
   await expect(page.getByRole('heading', { name: 'NU Open', exact: true })).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
   const landingControls = await page.locator('[data-site-header]').evaluate((header) => {
+    const headerTop = header.getBoundingClientRect().top;
     const language = header.querySelector('.whd-language-group')!.getBoundingClientRect();
     const action = header.querySelector('.landing-header-account')!.getBoundingClientRect();
     return {
       languageX: language.x,
-      languageY: language.y,
+      languageY: language.y - headerTop,
       actionX: action.x,
-      actionY: action.y,
+      actionY: action.y - headerTop,
       width: action.width,
       height: action.height,
     };
@@ -197,4 +206,24 @@ test('pilot name stays readable during its simple fade and respects reduced moti
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(name).toHaveCSS('animation-name', 'none');
   await expect(name).toHaveCSS('opacity', '1');
+});
+
+test('music control remains visible across landing and account navigation', async ({
+  page,
+  app,
+}) => {
+  // A missing or slow HEAD response must not hide the header control.
+  await page.route('**/nuopen/audio/*.m4a', (route) =>
+    route.request().method() === 'HEAD' ? route.fulfill({ status: 404 }) : route.continue(),
+  );
+  await login(page, app.codes, 'music-navigation@example.test');
+  await onboard(page, 'Music Navigation');
+  const accountMusic = page.locator('.auth-header').getByRole('button', { name: /music/i });
+  await expect(accountMusic).toBeVisible();
+  await page.getByRole('link', { name: 'Back to landing page' }).click();
+  await expect(
+    page.locator('[data-site-header]').getByRole('button', { name: /music/i }),
+  ).toBeVisible();
+  await page.locator('[data-site-header] .landing-header-account').click();
+  await expect(accountMusic).toBeVisible();
 });

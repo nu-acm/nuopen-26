@@ -65,7 +65,7 @@ function PrivacyPage() {
 
       <LegalSection title="4. Minors">
         <p>
-          Participants who will be under 18 on November 14, 2026 must provide a parent or guardian’s
+          Participants who will be under 18 on November 22, 2026 must provide a parent or guardian’s
           phone number so we can reach them about the event. We use the birth date encoded in the
           IIN for this check. If it does not contain a usable birth date, a parent or guardian
           contact is also required. Organizers verify eligibility.

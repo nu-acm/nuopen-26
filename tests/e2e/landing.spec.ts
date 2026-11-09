@@ -17,15 +17,12 @@ test('keeps the original NU Open landing copy and FAQ behavior', async ({ page }
   await expect(page.locator('#record')).toContainText('Six battles behind us');
   await expect(page.locator('#bounty')).toContainText(`Prize pool ${EVENT.prize.text}`);
   for (const rule of EVENT.rules) await expect(page.locator('#rules')).toContainText(rule.text);
-  for (const item of EVENT.faq) {
-    const question = page.locator('#faq').getByRole('button', { name: item.q, exact: true });
-    await expect(question).toHaveAttribute('aria-expanded', 'false');
-    await expect(
-      page
-        .locator('.faq-item')
-        .filter({ has: page.getByRole('button', { name: item.q, exact: true }) }),
-    ).toContainText(item.a);
-  }
+  const questions = page.locator('#faq').getByRole('button');
+  await expect(questions).toHaveText(EVENT.faq.map((item) => item.q));
+  await expect(page.locator('#faq').getByRole('button', { expanded: false })).toHaveCount(
+    EVENT.faq.length,
+  );
+  await expect(page.locator('#faq .faq-panel p')).toHaveText(EVENT.faq.map((item) => item.a));
   const firstQuestion = page
     .locator('#faq')
     .getByRole('button', { name: EVENT.faq[0].q, exact: true });
@@ -162,14 +159,15 @@ test('NU Open registration calls the existing WHD OTP, profile and team backend'
 });
 
 test('original landing CTAs still obey WHD registration closure', async ({ page, app }) => {
-  await app.setDeadline(new Date(Date.now() + 6000).toISOString());
   await page.goto('/');
   await expect(
     page.locator('.hero-copy').getByRole('link', { name: 'Register your team', exact: true }),
   ).toBeVisible();
+  await app.setDeadline(new Date(Date.now() + 15000).toISOString());
+  await page.reload();
   await expect(
     page.locator('.hero-copy').getByRole('link', { name: 'Sign in', exact: true }),
-  ).toBeVisible({ timeout: 10000 });
+  ).toBeVisible({ timeout: 20000 });
   await expect(
     page.locator('#register').getByRole('link', { name: 'Sign in', exact: true }),
   ).toHaveAttribute('href', '/login');

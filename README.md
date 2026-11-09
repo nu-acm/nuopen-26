@@ -9,8 +9,8 @@ Built with TanStack Start, React, Cloudflare Workers and D1, Drizzle, and Better
 Requirements: Node 24.21.0 (see `.node-version`) and [Vite+](https://viteplus.dev/) (`vp`). The lockfile uses pnpm 12.11.2.
 
 ```sh
-git clone --branch feat/whd-app-migration https://github.com/nu-acm/nu-open-26.git
-cd nu-open-26
+git clone https://github.com/ZhassulanP/nuopen26.git
+cd nuopen26
 vp install --frozen-lockfile
 cp .dev.vars.example .dev.vars
 ```
@@ -80,7 +80,7 @@ Google sign-in is optional. To enable it, create your own Google OAuth credentia
 
 ### 4. Deploy using GitHub Actions
 
-The deployment workflow is **manual**, so a push does not migrate a database or deploy a site. GitHub only offers `workflow_dispatch` workflows that exist on the repository’s default branch; this migration branch does not change the organization’s default branch. Use the prepared personal `ZhassulanP/nuopen26` repository for the first deployment, or arrange to add this workflow to the organization’s default branch when the team is ready. Once the URL, D1 binding and Worker secrets are ready:
+The deployment workflow is **manual**, so a push does not migrate a database or deploy a site. Once the URL, D1 binding and Worker secrets are ready:
 
 1. Create a Cloudflare API token with access to **your account's** Workers Scripts and D1, and add it to this GitHub repository under **Settings → Secrets and variables → Actions** as `CLOUDFLARE_API_TOKEN`. Never use an organisation production token.
 2. Commit and push your updated `wrangler.jsonc` to this repository's default branch.

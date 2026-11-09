@@ -118,13 +118,7 @@ export function AuthCard({
     );
   }
   return (
-    <div className="whd-grid-bg relative flex flex-1 items-center justify-center overflow-hidden px-4 py-12 sm:px-6">
-      {/* Star glow, echoing the landing hero */}
-      <div
-        aria-hidden="true"
-        className="whd-auth-glow pointer-events-none absolute top-1/2 left-1/2 aspect-square -translate-x-1/2 -translate-y-1/2 bg-contain bg-center bg-no-repeat opacity-70"
-      />
-
+    <div className="relative flex flex-1 items-center justify-center overflow-hidden px-4 py-12 sm:px-6">
       <Card variant="auth" className={cn('relative w-full max-w-md', className)}>
         <CardHeader variant="auth">
           <CardTitle as="h1" variant="auth">

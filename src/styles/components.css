@@ -409,10 +409,6 @@
   flex-direction: column;
   width: 100%;
 }
-.whd-auth-glow {
-  width: min(900px, 140vw);
-  background-image: url('/whd/star-glow.webp');
-}
 .whd-auth-top {
   padding: 20px 24px;
 }

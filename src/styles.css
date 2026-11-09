@@ -26,6 +26,7 @@
 @import './components/landing/nuopen/components/sections/side-choice.css';
 @import './components/landing/nuopen/components/sections/trench.css';
 @import './components/landing/nuopen/components/ui/navigation-jump.css';
+@import './components/landing/nuopen/components/ui/saber-trail.css';
 @import './components/landing/nuopen/presentation.css';
 @import './styles/account-dashboard.css';
 @import './styles/navigation.css';
@@ -178,23 +179,6 @@ body {
   color: var(--whd-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-/* Faint blueprint grid from the design, tiled down the page and overlaid */
-.whd-grid-bg {
-  isolation: isolate;
-}
-.whd-grid-bg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image: url('/whd/bg-grid.webp');
-  background-repeat: repeat-y;
-  background-position: top center;
-  background-size: max(2058px, 107%) auto;
-  opacity: 0.1;
 }
 
 /* Shared controls use filled surfaces; focus rings remain available. */

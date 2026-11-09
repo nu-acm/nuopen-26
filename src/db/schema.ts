@@ -13,8 +13,8 @@ export const MAX_TEAM_SIZE = MIN_TEAM_SIZE;
 
 /**
  * Team — created by a captain, up to MAX_TEAM_SIZE members.
- * inviteSlug is a URL-safe slug derived from the team name (e.g. "cool-hackers"),
- * used for /invite/$slug links.
+ * inviteToken is the random capability used for /invite/$slug links.
+ * inviteSlug remains the admin reference and is rotated alongside legacy tokens.
  */
 export const team = sqliteTable('team', {
   id: text('id').primaryKey(), // crypto.randomUUID()
@@ -22,6 +22,8 @@ export const team = sqliteTable('team', {
   // Canonicalized name, for case- and spacing-insensitive uniqueness checks.
   nameCanonical: text('name_canonical').notNull().unique(),
   inviteSlug: text('invite_slug').notNull().unique(),
+  // Null for legacy teams until an authenticated member opens the dashboard.
+  inviteToken: text('invite_token').unique(),
   captainId: text('captain_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),

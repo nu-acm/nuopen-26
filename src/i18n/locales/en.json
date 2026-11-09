@@ -66,7 +66,7 @@
   },
   "infoCards": {
     "when": "When?",
-    "whenAnswer": "November 14",
+    "whenAnswer": "November 22",
     "whenDetail": "one day, three rounds",
     "where": "Where?",
     "whereAnswer": "Nazarbayev University",
@@ -103,7 +103,7 @@
       "registrationLabel": "Registration Period",
       "confirmation": "November 12-13",
       "confirmationLabel": "Confirmation Period",
-      "event": "November 14",
+      "event": "November 22",
       "eventLabel": "NU Open"
     }
   },
@@ -183,7 +183,7 @@
       },
       "howToParticipate": {
         "q": "How can I participate?",
-        "a": "Sign up on this site with your email, fill in your details, and create a team of 3 people or join one with an invite link. Registration is open until November 12, 2026. Then come to Nazarbayev University on November 14, 2026."
+        "a": "Sign up on this site with your email, fill in your details, and create a team of 3 people or join one with an invite link. Registration is open until November 12, 2026. Then come to Nazarbayev University on November 22, 2026."
       },
       "online": {
         "q": "Can I participate online?",
@@ -258,7 +258,7 @@
     "city": "City",
     "placeOfStudy": "School, college or university",
     "parentPhone": "Parent or guardian phone",
-    "parentPhoneHint": "Required if you will be under 18 on November 14, 2026, or your IIN has no usable birth date.",
+    "parentPhoneHint": "Required if you will be under 18 on November 22, 2026, or your IIN has no usable birth date.",
     "educationLevel": "Level of study",
     "submit": "Continue",
     "saveFailed": "Could not save. Please try again.",
@@ -509,9 +509,9 @@
   },
   "metadata": {
     "title": "NU Open 2026",
-    "description": "November 14 at Nazarbayev University, Astana. Teams of 3 compete in programming, mathematics and product design for a 425 000 ₸ prize pool.",
+    "description": "November 22 at Nazarbayev University, Astana. Teams of 3 compete in programming, mathematics and product design for a 425 000 ₸ prize pool.",
     "imageAlt": "NU Open 2026",
-    "faqDescription": "Answers about NU Open 2026: eligibility, teams of 3, registration, the November 14 programme and prizes."
+    "faqDescription": "Answers about NU Open 2026: eligibility, teams of 3, registration, the November 22 programme and prizes."
   },
   "account": {
     "teamTab": "My team",

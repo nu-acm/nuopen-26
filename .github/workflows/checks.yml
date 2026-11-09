@@ -1,12 +1,10 @@
-# Format, lint, types, server tests and browser tests, on every pull request and on main. A warning only: merging
-# doesn't require them, and the deploy (deploy.yml) doesn't wait for them. No secrets: the tests use local D1, test
-# secrets and a local mail stub.
+# Format, lint, types, server tests and browser tests for pull requests and production deployments.
+# No secrets: the tests use local D1, test secrets and a local mail stub.
 name: Checks
 
 on:
   pull_request:
-  push:
-    branches: [main]
+  workflow_call:
 
 # A newer push to the same branch or pull request replaces the run in progress.
 concurrency:
@@ -19,7 +17,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -34,13 +32,31 @@ jobs:
             args: ['--frozen-lockfile']
       - run: vp check
       - run: vp test
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [desktop, mobile]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: voidzero-dev/setup-vp@68f39c78aaf39be468cabd2afb09c162574c84af # v1.21.2
+        with:
+          node-version-file: .node-version
+          cache: true
+          run-install: |
+            args: ['--frozen-lockfile']
       - name: Install Chromium for the browser tests
         run: vp exec playwright install --with-deps chromium
-      - run: vp run test:e2e
+      - run: vp run test:e2e --project=${{ matrix.project }}
       - name: Upload the browser test report
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.project }}
           path: output/playwright/
           retention-days: 7

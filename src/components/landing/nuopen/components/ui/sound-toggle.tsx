@@ -1,30 +1,11 @@
 import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
-import { useEffect, useState } from 'react';
 import { sideStore } from '@/components/landing/nuopen/lib/side';
-import { TRACKS } from './soundtrack';
 import { useSide } from './use-side';
-
-function useTrackFound() {
-  const side = useSide((s) => s.side);
-  const [found, setFound] = useState(false);
-  useEffect(() => {
-    let live = true;
-    fetch(TRACKS[side], { method: 'HEAD' })
-      .then((r) => live && setFound(r.ok))
-      .catch(() => live && setFound(false));
-    return () => {
-      live = false;
-    };
-  }, [side]);
-  return found;
-}
 
 export function SoundToggle() {
   const text = useLandingText();
   const on = useSide((s) => s.music);
-  const found = useTrackFound();
   const label = text(on ? 'Mute the music' : 'Play the music');
-  if (!found) return null;
   return (
     <button
       type="button"

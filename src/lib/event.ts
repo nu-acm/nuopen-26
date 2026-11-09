@@ -24,7 +24,7 @@ export const INSTRUCTIONS_AND_RULES_URL =
   'https://drive.google.com/file/d/1lblOCnzRenDdfWUR13vQMKcli6M9exZf/view?usp=sharing';
 
 /** Calendar date in Astana, used for participant age on the event day. */
-export const EVENT_DATE = '2026-11-14';
+export const EVENT_DATE = '2026-11-22';
 
 /** Shared program for the schedule and the three challenge cards. */
 export const EVENT_SCHEDULE = [

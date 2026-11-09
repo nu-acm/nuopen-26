@@ -1,0 +1,21 @@
+.nu-saber-trail {
+  display: none;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 120;
+  pointer-events: none;
+  overflow: hidden;
+  fill: none;
+  stroke: var(--core);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 3px var(--saber)) drop-shadow(0 0 7px var(--saber-glow));
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .nu-saber-trail {
+    display: block;
+  }
+}

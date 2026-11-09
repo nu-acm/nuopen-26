@@ -1,5 +1,46 @@
 import { test, expect } from './fixtures';
 
+test('lightsaber trail fades, follows the Force palette and respects motion and touch', async ({
+  page,
+}, info) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/login');
+  await expect(page.locator('.account-login-content')).not.toHaveAttribute('inert');
+  const trail = page.locator('.nu-saber-trail');
+  const strokes = trail.locator('path[d]');
+  const swipe = async () => {
+    await page.mouse.move(200, 300);
+    await page.mouse.move(450, 350, { steps: 8 });
+  };
+  await expect(trail).toHaveAttribute('aria-hidden', 'true');
+  await expect(trail).toHaveCSS('pointer-events', 'none');
+  if (info.project.name === 'mobile') {
+    await swipe();
+    await expect(trail).toBeHidden();
+    await expect(strokes).toHaveCount(0);
+    return;
+  }
+  await expect(trail).toBeVisible();
+  await swipe();
+  await expect(strokes.first()).toBeAttached();
+  await expect(strokes).toHaveCount(0);
+  const lightFilter = await trail.evaluate((element) => getComputedStyle(element).filter);
+  await page.getByRole('button', { name: 'Dark side', exact: true }).click();
+  await expect(trail).not.toHaveCSS('filter', lightFilter);
+  await swipe();
+  await expect(strokes.first()).toBeAttached();
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(trail).toBeHidden();
+  await expect(strokes).toHaveCount(0);
+  await swipe();
+  await expect(strokes).toHaveCount(0);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await swipe();
+  await expect(strokes.first()).toBeAttached();
+  await page.mouse.move(-1, -1);
+  await expect(strokes).toHaveCount(0);
+});
+
 test('changing reduced-motion preference stops and resumes the account sky and radar', async ({
   page,
 }, info) => {
