@@ -126,6 +126,18 @@
     min-height: 44px;
   }
 
+  @media (max-width: 639px) {
+    .footer-legal {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-legal-links {
+      flex-direction: column;
+      gap: 0;
+    }
+  }
+
   @media (min-width: 640px) {
     .footer-episode {
       gap: 16px;
