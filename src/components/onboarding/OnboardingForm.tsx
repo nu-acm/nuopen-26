@@ -6,6 +6,9 @@ import { Input, Select } from '@/components/ui/input';
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { FormField } from '@/components/ui/form-field';
 import { Checkbox } from '@/components/ui/checkbox';
+import { FileUpload } from '@/components/ui/file-upload-2';
+import { CV_UPLOAD_HINT } from '@/lib/cv';
+import { getCvSelectionError } from '@/lib/cv-client';
 import {
   EDUCATION_LEVELS,
   requiresGuardianPhone,
@@ -32,7 +35,7 @@ export function OnboardingForm({
 }: {
   defaults?: OnboardingDefaults;
   email?: string;
-  onSubmit: (values: OnboardingInput) => Promise<void>;
+  onSubmit: (values: OnboardingInput, cv: File | null) => Promise<boolean>;
 }) {
   const consentId = useId();
   const documentsId = useId();
@@ -51,6 +54,8 @@ export function OnboardingForm({
   });
   const [errors, setErrors] = useState<Errors>({});
   const [pending, setPending] = useState(false);
+  const [cv, setCv] = useState<File | null>(null);
+  const [cvError, setCvError] = useState('');
   const { trigger } = useWebHaptics(webHapticsOptions);
 
   const set =
@@ -60,8 +65,15 @@ export function OnboardingForm({
 
   const needsParentPhone = requiresGuardianPhone(values.iin);
 
+  const selectCv = (files: File[]) => {
+    const error = getCvSelectionError(files);
+    setCvError(error ?? '');
+    if (!error) setCv(files[0]);
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (pending) return;
     setErrors({});
 
     const parsed = onboardingSchema.safeParse(values);
@@ -79,8 +91,7 @@ export function OnboardingForm({
 
     setPending(true);
     try {
-      await onSubmit(parsed.data);
-      void trigger('success');
+      if (await onSubmit(parsed.data, cv)) void trigger('success');
     } catch (err) {
       void trigger('error');
       // Server validation errors serialize their issues into Error.message.
@@ -308,6 +319,35 @@ export function OnboardingForm({
             <FieldError>{errors.documentsPolicyVersion}</FieldError>
           )}
         </Field>
+
+        {!defaults && (
+          <div className="account-cv-upload">
+            <FileUpload
+              accept="application/pdf,.pdf"
+              title="Your CV"
+              hint={CV_UPLOAD_HINT}
+              buttonLabel={cv ? 'Choose another PDF' : 'Choose PDF'}
+              uploadingLabel="Uploading…"
+              disabled={pending}
+              fileName={cv?.name}
+              error={cvError}
+              onFilesAdded={selectCv}
+            />
+            {cv && (
+              <Button
+                type="button"
+                variant="ghost"
+                disabled={pending}
+                onClick={() => {
+                  setCv(null);
+                  setCvError('');
+                }}
+              >
+                Remove selected PDF
+              </Button>
+            )}
+          </div>
+        )}
 
         {errors.form && (
           <p role="alert" className="text-sm text-destructive">

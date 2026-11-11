@@ -11,21 +11,10 @@ import {
 } from '@/components/ui/card';
 import { FileUpload } from '@/components/ui/file-upload-2';
 import { ConfirmButton } from '@/components/ui/confirm-button';
-import { CV_ERRORS, CV_MAX_BYTES, CV_MAX_MB } from '@/lib/cv';
+import { CV_ERRORS, CV_MAX_MB, CV_UPLOAD_HINT } from '@/lib/cv';
+import { deleteCvFile, getCvSelectionError, uploadCvFile } from '@/lib/cv-client';
 
 type Pending = 'upload' | 'delete' | null;
-
-async function requestCv(init: RequestInit) {
-  let res: Response;
-  try {
-    res = await fetch('/api/cv', init);
-  } catch {
-    throw new Error(CV_ERRORS.failed);
-  }
-  if (res.ok) return;
-  const body = (await res.json().catch(() => null)) as { error?: string } | null;
-  throw new Error(body?.error ?? CV_ERRORS.failed);
-}
 
 /**
  * Optional PDF CV, stored in the organisers' Google Drive. The participant can
@@ -71,20 +60,11 @@ export function CvCard({
 
   const upload = (files: File[]) => {
     if (busyRef.current || !registrationOpen) return;
-    if (files.length !== 1) return reportError('Please upload one PDF file at a time.');
+    const selectionError = getCvSelectionError(files);
+    if (selectionError) return reportError(selectionError);
     const file = files[0];
-    // Checked again on the server; this just saves a pointless upload.
-    if (file.size > CV_MAX_BYTES) return reportError(CV_ERRORS.tooLarge);
-    if (
-      (file.type && file.type !== 'application/pdf') ||
-      (!file.type && !/\.pdf$/i.test(file.name))
-    ) {
-      return reportError(CV_ERRORS.notPdf);
-    }
     setUploadName(file.name);
-    const body = new FormData();
-    body.append('file', file);
-    return run('upload', () => requestCv({ method: 'POST', body }), 'Your CV was uploaded.');
+    return run('upload', () => uploadCvFile(file), 'Your CV was uploaded.');
   };
 
   return (
@@ -103,7 +83,7 @@ export function CvCard({
 
         <CardDescription variant="account">
           {registrationOpen
-            ? `Optional. Upload a PDF up to ${CV_MAX_MB} MB. It is stored in the organisers’ private Google Drive folder. By uploading, you agree that organisers may review your CV and share it with event partners for recruitment.`
+            ? CV_UPLOAD_HINT
             : 'Registration is closed, so your CV can no longer be changed.'}
         </CardDescription>
       </CardHeader>
@@ -130,9 +110,7 @@ export function CvCard({
                 loading={pending === 'delete'}
                 loadingLabel="Loading…"
                 disabled={pending !== null}
-                onConfirm={() =>
-                  run('delete', () => requestCv({ method: 'DELETE' }), 'Your CV was deleted.')
-                }
+                onConfirm={() => run('delete', deleteCvFile, 'Your CV was deleted.')}
               />
             )}
           </div>

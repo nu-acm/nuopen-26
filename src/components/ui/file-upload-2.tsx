@@ -96,6 +96,7 @@ export function FileUpload({
         {hint}
       </p>
       <Button
+        type="button"
         size="sm"
         disabled={blocked}
         aria-describedby={`${id}-hint${error ? ` ${id}-error` : ''}`}
@@ -104,10 +105,11 @@ export function FileUpload({
         {uploading ? uploadingLabel : buttonLabel}
       </Button>
       <div className="file-upload-feedback" role="status" aria-live="polite">
-        {uploading && (
+        {fileName && (
           <span className="file-upload-file">
             <FileText size={16} aria-hidden="true" />
-            {fileName}: {uploadingLabel}
+            {fileName}
+            {uploading && `: ${uploadingLabel}`}
           </span>
         )}
         {error && (

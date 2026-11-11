@@ -1,4 +1,4 @@
-import { test, expect, login, onboard, seedEligibleTeam } from './fixtures';
+import { test, expect, login, onboard, fillOnboarding, seedEligibleTeam } from './fixtures';
 import { DOCUMENTS_POLICY_VERSION, REGISTRATION_POLICY_VERSION } from '@/lib/consent';
 
 test('registers, edits a profile, creates a team, and admits a teammate', async ({
@@ -87,6 +87,60 @@ test('registers, edits a profile, creates a team, and admits a teammate', async 
     await thirdContext.close();
   }
 });
+
+for (const action of ['Retry CV upload', 'Continue without CV'] as const) {
+  test(`saves the profile before uploading a CV and supports "${action}"`, async ({
+    page,
+    app,
+  }) => {
+    const retry = action === 'Retry CV upload';
+    if (!retry) {
+      await seedEligibleTeam(app.db);
+      await app.db.prepare("UPDATE team SET invite_token = 'eligible-team'").run();
+    }
+    await login(page, app.codes, 'onboarding-cv@example.test');
+    if (!retry) await page.goto('/onboarding?redirect=%2Finvite%2Feligible-team');
+    await fillOnboarding(page, 'CV Participant');
+    const readProfile = () =>
+      app.db
+        .prepare('SELECT full_name, cv_url FROM participant WHERE full_name = ?')
+        .bind('CV Participant')
+        .first<{ full_name: string; cv_url: string | null }>();
+
+    let uploadAttempts = 0;
+    const profilesAtUpload: Awaited<ReturnType<typeof readProfile>>[] = [];
+    app.expectedHttpErrors.add(502);
+    await page.route('**/api/cv', async (route) => {
+      uploadAttempts++;
+      profilesAtUpload.push(await readProfile());
+      if (uploadAttempts === 1) {
+        await route.fulfill({ status: 502, json: { error: 'Could not upload the CV.' } });
+      } else {
+        await route.continue();
+      }
+    });
+    await page.locator('input[type="file"]').setInputFiles({
+      name: 'first-cv.pdf',
+      mimeType: 'application/pdf',
+      buffer: Buffer.from('%PDF-1.7\nregistration browser test'),
+    });
+    await expect(page.getByText('first-cv.pdf')).toBeVisible();
+    expect(uploadAttempts).toBe(0);
+    expect(await readProfile()).toBeNull();
+
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+    await expect(page.getByRole('alert')).toHaveText(
+      'Your profile is saved. Could not upload the CV.',
+    );
+    expect(profilesAtUpload).toEqual([{ full_name: 'CV Participant', cv_url: null }]);
+    await page.getByRole('button', { name: action, exact: true }).click();
+    await expect(page).toHaveURL(retry ? /\/dashboard$/ : /\/invite\/eligible-team$/);
+    expect(uploadAttempts).toBe(retry ? 2 : 1);
+    expect((await readProfile())?.cv_url).toBe(
+      retry ? 'https://drive.google.com/file/d/testDriveFile123/view' : null,
+    );
+  });
+}
 
 test('requires consent and leaves legacy profiles unaccepted until they agree', async ({
   page,

@@ -13,11 +13,13 @@ import { OnboardingForm, type OnboardingDefaults } from '@/components/onboarding
 import { ensureSession, getSession } from '@/lib/auth.server';
 import { getParticipant, upsertParticipant } from '@/lib/onboarding.server';
 import { isRegistrationOpen, REGISTRATION_CLOSED_ERROR } from '@/lib/registration.server';
-import { LinkButton } from '@/components/ui/button';
+import { Button, LinkButton } from '@/components/ui/button';
 import { Notice } from '@/components/ui/notice';
 import { onboardingSchema } from '@/lib/validation';
 import { safeInviteRedirect, validateRedirectSearch } from '@/lib/redirect';
 import { DOCUMENTS_POLICY_VERSION, REGISTRATION_POLICY_VERSION } from '@/lib/consent';
+import { CV_ERRORS } from '@/lib/cv';
+import { uploadCvFile } from '@/lib/cv-client';
 
 /** Existing profile values, so onboarding doubles as "edit my details". */
 const loadProfile = createServerFn({ method: 'GET' }).handler(async () => {
@@ -92,11 +94,39 @@ function OnboardingPage() {
 
   const { trigger } = useWebHaptics(webHapticsOptions);
   const [cvFeedback, setCvFeedback] = useState<{ error: boolean; message: string } | null>(null);
+  const [failedUpload, setFailedUpload] = useState<{ file: File; message: string } | null>(null);
+  const [continuing, setContinuing] = useState(false);
   useEffect(() => {
     if (!cvFeedback) return;
     const timer = setTimeout(() => setCvFeedback(null), 4000);
     return () => clearTimeout(timer);
   }, [cvFeedback]);
+
+  const finishOnboarding = async () => {
+    await router.invalidate({ sync: true });
+    await navigate({ to: safeInviteRedirect(inviteRedirect) ?? '/dashboard' });
+  };
+
+  const uploadSelectedCv = async (file: File) => {
+    try {
+      await uploadCvFile(file);
+      return true;
+    } catch (err) {
+      setFailedUpload({ file, message: err instanceof Error ? err.message : CV_ERRORS.failed });
+      void trigger('error');
+      return false;
+    }
+  };
+
+  const continueAfterFailure = async (file?: File) => {
+    setContinuing(true);
+    try {
+      if (file && !(await uploadSelectedCv(file))) return;
+      await finishOnboarding();
+    } finally {
+      setContinuing(false);
+    }
+  };
 
   const cvPanel = defaults ? (
     <CvCard
@@ -175,15 +205,40 @@ function OnboardingPage() {
           </>
         }
       >
-        <OnboardingForm
-          defaults={defaults}
-          email={email}
-          onSubmit={async (values) => {
-            await saveProfile({ data: values });
-            await router.invalidate({ sync: true });
-            await navigate({ to: safeInviteRedirect(inviteRedirect) ?? '/dashboard' });
-          }}
-        />
+        {failedUpload ? (
+          <div className="account-cv-upload" aria-busy={continuing}>
+            <p role="alert" className="account-feedback account-feedback-error">
+              Your profile is saved. {failedUpload.message}
+            </p>
+            <p className="break-all">{failedUpload.file.name}</p>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                disabled={continuing}
+                onClick={() => void continueAfterFailure(failedUpload.file)}
+              >
+                Retry CV upload
+              </Button>
+              <Button
+                variant="secondary"
+                disabled={continuing}
+                onClick={() => void continueAfterFailure()}
+              >
+                Continue without CV
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <OnboardingForm
+            defaults={defaults}
+            email={email}
+            onSubmit={async (values, cv) => {
+              await saveProfile({ data: values });
+              if (cv && !(await uploadSelectedCv(cv))) return false;
+              await finishOnboarding();
+              return true;
+            }}
+          />
+        )}
       </AuthCard>
     </AccountShell>
   );

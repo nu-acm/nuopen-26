@@ -272,6 +272,7 @@
   gap: 24px;
 }
 .account-profile-form .account-consent,
+.account-profile-form .account-cv-upload,
 .account-profile-form .whd-field-group > :is(button, [role='alert']) {
   grid-column: 1 / -1;
 }

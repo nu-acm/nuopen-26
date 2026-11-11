@@ -166,7 +166,7 @@ export async function login(page: Page, codes: Map<string, string>, email: strin
   await expect(page).toHaveURL(/\/(onboarding|dashboard|admin)$/);
 }
 
-export async function onboard(page: Page, name: string) {
+export async function fillOnboarding(page: Page, name: string) {
   await page.getByRole('textbox', { name: 'Full name' }).fill(name);
   await page.getByRole('textbox', { name: 'IIN' }).fill('060101600001');
   await page.getByRole('textbox', { name: /^Phone\s*\*?$/ }).fill('+7 701 000 00 00');
@@ -177,6 +177,10 @@ export async function onboard(page: Page, name: string) {
   await page.getByRole('textbox', { name: 'City' }).fill('Astana');
   await page.getByRole('checkbox', { name: 'I agree to the terms' }).check();
   await page.getByRole('checkbox', { name: 'I have read the Code of Conduct' }).check();
+}
+
+export async function onboard(page: Page, name: string) {
+  await fillOnboarding(page, name);
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
 }

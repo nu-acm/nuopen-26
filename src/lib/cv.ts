@@ -2,6 +2,7 @@
 
 export const CV_MAX_MB = 5;
 export const CV_MAX_BYTES = CV_MAX_MB * 1024 * 1024;
+export const CV_UPLOAD_HINT = `Optional. Upload a PDF up to ${CV_MAX_MB} MB. It is stored in the organisers’ private Google Drive folder. By uploading, you agree that organisers may review your CV and share it with event partners for recruitment.`;
 
 export const CV_ERRORS = {
   notPdf: 'Please choose a PDF file.',

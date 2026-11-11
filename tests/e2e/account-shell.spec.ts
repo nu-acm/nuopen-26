@@ -18,8 +18,14 @@ test('team and personal-data tabs keep actions separate and preserve profile edi
   await login(page, app.codes, 'account-tabs@example.test');
   await onboard(page, 'Pilot Example');
   await page.evaluate(() => document.fonts.ready);
-  await expect(page.locator('.auth-header .account-back')).toBeVisible();
-  const accountControls = await headerActionBounds(page.locator('.auth-header .account-back'));
+  const accountAction = page.locator('.auth-header .account-back');
+  let accountControls: Awaited<ReturnType<typeof headerActionBounds>> | undefined;
+  await expect
+    .poll(async () => {
+      accountControls = await headerActionBounds(accountAction);
+      return accountControls.height;
+    })
+    .toBeGreaterThanOrEqual(44);
   await expect(page.locator('.account-back')).toHaveCSS('background-color', 'rgb(247, 245, 239)');
 
   const nav = page.getByRole('navigation', { name: 'Your account', exact: true });
@@ -60,8 +66,9 @@ test('team and personal-data tabs keep actions separate and preserve profile edi
   await expect(page).toHaveURL(`${app.url}/`);
   await expect(page.getByRole('heading', { name: 'NU Open', exact: true })).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
-  const landingControls = await headerActionBounds(page.locator('.landing-header-account'));
-  expect(landingControls).toEqual(accountControls);
+  await expect
+    .poll(() => headerActionBounds(page.locator('.landing-header-account')))
+    .toEqual(accountControls);
   await expect(page.locator('.landing-header-account')).toHaveCSS(
     'background-color',
     'rgb(247, 245, 239)',
@@ -78,7 +85,7 @@ test('account Force controls work and sign-out lives in personal data', async ({
   await header.getByRole('button', { name: 'Light side', exact: true }).click();
   await expect(page.locator('html')).toHaveAttribute('data-side', 'light');
   await expect(header.getByRole('link', { name: 'Back to landing page' })).toBeVisible();
-  await expect(page.locator('input[type="file"]')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Choose PDF' })).toBeVisible();
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
   await page.getByRole('button', { name: 'Sure?', exact: true }).click();
   await expect(page).toHaveURL(`${app.url}/`);
