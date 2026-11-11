@@ -93,11 +93,11 @@ test('rejects invalid codes and only cleans up matching old verification mail', 
   }
   expect(sent).toHaveLength(0);
   cleanupOldCodes();
-  expect(searches).toHaveLength(3);
+  expect(searches).toHaveLength(2);
   expect(messages.map((message) => !!message.trashed)).toEqual([
     true,
     true,
-    true,
+    false,
     false,
     false,
     false,

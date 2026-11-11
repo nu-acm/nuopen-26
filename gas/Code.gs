@@ -1,5 +1,5 @@
 /**
- * Women's Hack Day — webhook for login codes and CV storage.
+ * NU Open 2026 webhook for sign-in codes and CV storage.
  *
  * The site POSTs JSON to this web app, always with { secret, action }:
  *   send-otp   { email, otp, type }  emails the 6-digit code
@@ -30,7 +30,7 @@ const BRAND = {
 const OTP_PATTERN = /^\d{6}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const CODE_LIFETIME_MINUTES = 5;
-const CV_FOLDER_NAME = "Women's Hack Day CVs";
+const CV_FOLDER_NAME = 'NU Open 2026 CVs';
 const CV_MAX_BYTES = 5 * 1024 * 1024;
 const FILE_ID_PATTERN = /^[\w-]{10,200}$/;
 
@@ -171,7 +171,7 @@ function reply(obj) {
   );
 }
 
-/** Move sent code messages older than 24 hours to Trash. */
+/** Move this event's sent code messages older than 24 hours to Trash. */
 function cleanupOldCodes() {
   const sender = Session.getEffectiveUser().getEmail().trim().toLowerCase();
   if (!EMAIL_PATTERN.test(sender)) throw new Error('Cannot identify the sending account');
@@ -180,7 +180,6 @@ function cleanupOldCodes() {
   const suffixes = [
     ' is your ' + BRAND.name + ' verification code',
     ' is your ' + BRAND.name + ' code',
-    " is your Women's Hack Day code",
   ];
   for (const suffix of suffixes) {
     const threads = GmailApp.search(
