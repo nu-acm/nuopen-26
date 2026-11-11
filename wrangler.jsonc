@@ -12,7 +12,7 @@
     "html_handling": "none",
   },
   "vars": {
-    "BETTER_AUTH_URL": "https://nuopen26.ghbit.workers.dev",
+    "BETTER_AUTH_URL": "https://nuopen.nuacm.kz",
     // Blank uses the event deadline. A var, so .dev.vars can still override it (see secrets below).
     "REGISTRATION_DEADLINE": "",
     // Codeforces logins are this prefix + the table number (team07). Proctoring's login prefix

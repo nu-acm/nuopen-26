@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { getDb } from '@/db';
+import { isEligibleTeamSize } from '@/lib/event';
 
 interface AppEnv {
   DB: D1Database;
@@ -26,7 +27,7 @@ export type ReportParticipant = {
   teamNumber: number | null;
   /** Links the participant row to its team row in the admin table. */
   teamSlug: string | null;
-  /** In a team with exactly MIN_TEAM_SIZE members. */
+  /** In a team with an eligible roster size. */
   teamEligible: boolean;
   attended: boolean;
   createdAt: string;
@@ -37,7 +38,7 @@ export type ReportTeam = {
   inviteSlug: string;
   captainName: string;
   memberCount: number;
-  /** A team competes with exactly MIN_TEAM_SIZE members. */
+  /** Whether the team's roster size qualifies for the contest. */
   eligible: boolean;
   /** Marked by organisers after the confirmation period; such a team gets no number. */
   unconfirmed: boolean;
@@ -68,7 +69,6 @@ export async function getReportData(): Promise<{
   stats: ReportStats;
 }> {
   const db = getAppDb();
-  const { MIN_TEAM_SIZE } = await import('@/db/schema');
 
   const [participantRows, teamRows] = await Promise.all([
     db.query.participant.findMany({
@@ -86,7 +86,7 @@ export async function getReportData(): Promise<{
   ]);
 
   const eligibleTeamIds = new Set(
-    teamRows.filter((t) => t.members.length === MIN_TEAM_SIZE).map((t) => t.id),
+    teamRows.filter((t) => isEligibleTeamSize(t.members.length)).map((t) => t.id),
   );
 
   const participants: ReportParticipant[] = participantRows.map((p) => ({
@@ -119,7 +119,7 @@ export async function getReportData(): Promise<{
       inviteSlug: t.inviteSlug,
       captainName: t.captain?.fullName ?? '',
       memberCount: t.members.length,
-      eligible: t.members.length === MIN_TEAM_SIZE,
+      eligible: eligibleTeamIds.has(t.id),
       unconfirmed: t.unconfirmed,
       number: t.number,
       members: ordered,

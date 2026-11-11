@@ -52,7 +52,7 @@ for (const [locale, copy] of Object.entries({ en, ru, kk })) {
         await response!.text(),
       );
 
-      const canonical = `https://whd.nuacmw.kz${path}`;
+      const canonical = `https://nuopen.nuacm.kz${path}`;
       expect(head.titles).toBe(1);
       expect(head.descriptions).toBe(1);
       expect(head.title).not.toMatch(/[—–]/);
@@ -65,7 +65,7 @@ for (const [locale, copy] of Object.entries({ en, ru, kk })) {
       expect(head.meta['og:description']).toBe(head.description);
       expect(head.meta['twitter:description']).toBe(head.description);
       expect(head.meta['og:locale']).toBe({ en: 'en_US', ru: 'ru_RU', kk: 'kk_KZ' }[locale]);
-      expect(head.meta['og:image']).toBe('https://whd.nuacmw.kz/social-preview.png');
+      expect(head.meta['og:image']).toBe('https://nuopen.nuacm.kz/social-preview.png');
       expect(head.meta['twitter:image']).toBe(head.meta['og:image']);
       if (path === '/') {
         expect(head.title).toBe(
@@ -110,7 +110,7 @@ for (const [locale, copy] of Object.entries({ en, ru, kk })) {
     await expect(page).toHaveURL(`${app.url}/faq`);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
-      'https://whd.nuacmw.kz/faq',
+      'https://nuopen.nuacm.kz/faq',
     );
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
       'content',
@@ -157,7 +157,7 @@ for (const path of ['/login', '/faq']) {
       );
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
         'href',
-        `https://whd.nuacmw.kz${path}`,
+        `https://nuopen.nuacm.kz${path}`,
       );
     }
   });

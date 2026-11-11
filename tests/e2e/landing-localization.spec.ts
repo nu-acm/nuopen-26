@@ -35,7 +35,7 @@ for (const locale of ['en', 'ru', 'kk'] as const) {
         ...EVENT.crawl,
         ...EVENT.stats.map((s) => s.label),
         ...EVENT.timeline.flatMap((s) => [s.label, s.note]),
-        ...EVENT.agenda.flatMap((s) => [s.title, s.note]),
+        ...EVENT.agenda.flatMap((s) => (s.venue ? [s.title, s.venue] : [s.title])),
         ...EVENT.rules.flatMap((s) => [s.title, s.text]),
         ...EVENT.faq.flatMap((s) => [s.q, s.a]),
         ...EVENT.partnerPitch,

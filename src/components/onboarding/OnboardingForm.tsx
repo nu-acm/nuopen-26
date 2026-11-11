@@ -230,7 +230,7 @@ export function OnboardingForm({
           disabled={pending}
           label={t('onboarding.placeOfStudy')}
           error={errors.placeOfStudy}
-          required
+          required={values.educationLevel !== 'Not currently studying'}
         >
           {(p) => (
             <Input

@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Input } from '@/components/ui/input';
 import { Segmented } from '@/components/ui/segmented';
 import { ColumnToggleBar, AdminDataTable, StatCard } from '@/components/admin/table';
-import { MIN_TEAM_SIZE } from '@/db/schema';
+import { MAX_TEAM_SIZE, MIN_TEAM_SIZE } from '@/lib/event';
 import { getSession } from '@/lib/auth.server';
 import { sessionIsAdmin } from '@/lib/admin.server';
 import { compareTeamNumbers, formatTeamNumber } from '@/lib/contest';
@@ -60,7 +60,7 @@ export const Route = createFileRoute('/_admin/checkin')({
 
 type Tab = 'participants' | 'teams';
 type AttendanceFilter = 'all' | 'attended' | 'not-attended';
-/** ready: enough members present to compete; partial: some; no-show: none. */
+/** ready: the whole roster is present; partial: some; no-show: none. */
 type TeamStatus = 'ready' | 'partial' | 'no-show';
 
 const participantId = (row: CheckinData['participants'][number]) => row.id;
@@ -83,7 +83,7 @@ function TableNumber({ number }: { number: number | null }) {
 
 function teamStatus(team: CheckinTeam): TeamStatus {
   const present = attendedCount(team);
-  if (present === MIN_TEAM_SIZE) return 'ready';
+  if (present === team.members.length) return 'ready';
   return present > 0 ? 'partial' : 'no-show';
 }
 
@@ -388,7 +388,7 @@ function CheckinPage() {
           <div>
             <h1 className="admin-title">{t('admin.checkinTitle')}</h1>
             <p className="mt-2 text-sm text-whd-text-muted">
-              {t('admin.checkinScope', { min: MIN_TEAM_SIZE })}
+              {t('admin.checkinScope', { min: MIN_TEAM_SIZE, max: MAX_TEAM_SIZE })}
             </p>
           </div>
         </div>

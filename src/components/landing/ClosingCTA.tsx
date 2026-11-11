@@ -8,7 +8,7 @@ import Scene from '@/components/landing/Scene';
 import { NEXT_STEP_ROUTE, type NextStep } from '@/lib/next-step';
 import type { RegistrationStatus } from '@/lib/registration';
 import { parseTextWithLinks } from '@/lib/text';
-import { MIN_TEAM_SIZE } from '@/db/schema';
+import { MAX_TEAM_SIZE, MIN_TEAM_SIZE } from '@/lib/event';
 
 export default function ClosingCTA({
   nextStep,
@@ -38,7 +38,7 @@ export default function ClosingCTA({
           title={isClosed ? t('countdown.ended') : parseTextWithLinks(t('closingCta.title'))}
           subtitle={
             isClosed || nextStep !== 'register'
-              ? t(statusKey, { min: MIN_TEAM_SIZE })
+              ? t(statusKey, { min: MIN_TEAM_SIZE, max: MAX_TEAM_SIZE })
               : t('hero.tagline')
           }
           action={

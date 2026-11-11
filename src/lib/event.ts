@@ -26,6 +26,14 @@ export const INSTRUCTIONS_AND_RULES_URL =
 /** Calendar date in Astana, used for participant age on the event day. */
 export const EVENT_DATE = '2026-11-22';
 
+export const MIN_PARTICIPANT_AGE = 16;
+export const MIN_TEAM_SIZE = 1;
+export const MAX_TEAM_SIZE = 3;
+
+export function isEligibleTeamSize(size: number): boolean {
+  return size >= MIN_TEAM_SIZE && size <= MAX_TEAM_SIZE;
+}
+
 /** Shared program for the schedule and the three challenge cards. */
 export const EVENT_SCHEDULE = [
   { time: '09:00 - 10:00', id: 'registration', venue: 'redHall' },

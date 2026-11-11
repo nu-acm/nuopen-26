@@ -7,7 +7,7 @@ import { getSession } from '@/lib/auth.server';
 import { getParticipant } from '@/lib/onboarding.server';
 import { getTeamByParticipant } from '@/lib/team.server';
 import { getRegistrationStatus } from '@/lib/registration.server';
-import { MIN_TEAM_SIZE } from '@/db/schema';
+import { isEligibleTeamSize } from '@/lib/event';
 import type { NextStep } from '@/lib/next-step';
 
 /** The session, plus where this visitor is in the sign-up funnel. */
@@ -22,9 +22,8 @@ async function getFunnelState() {
   const profile = await getParticipant(session.user.id);
   if (!profile) return { session, nextStep: 'onboarding' as NextStep };
   if (!profile.teamId) return { session, nextStep: 'team' as NextStep };
-  // A team competes with exactly MIN_TEAM_SIZE members.
   const team = await getTeamByParticipant(session.user.id);
-  const ready = !!team && team.members.length === MIN_TEAM_SIZE;
+  const ready = !!team && isEligibleTeamSize(team.members.length);
   return { session, nextStep: (ready ? 'ready' : 'incomplete') as NextStep };
 }
 

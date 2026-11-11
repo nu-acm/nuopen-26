@@ -118,6 +118,21 @@ it('checks age on the event date and requires a contact for unusable IIN birth d
   );
 });
 
+it('accepts non-students and enforces the minimum age on the event date', () => {
+  const nonStudent = { ...profile, educationLevel: 'Not currently studying', placeOfStudy: '' };
+  expect(onboardingSchema.safeParse(nonStudent).success).toBe(true);
+  expect(onboardingSchema.safeParse({ ...profile, placeOfStudy: '' }).error?.issues).toContainEqual(
+    expect.objectContaining({ path: ['placeOfStudy'], message: 'validation.placeOfStudyRequired' }),
+  );
+  const entrant = { ...nonStudent, parentPhone: '77020000000' };
+  expect(onboardingSchema.safeParse({ ...entrant, iin: '101122600001' }).success).toBe(true);
+  expect(
+    onboardingSchema.safeParse({ ...entrant, iin: '101123600001' }).error?.issues,
+  ).toContainEqual(
+    expect.objectContaining({ path: ['iin'], message: 'validation.participantTooYoung' }),
+  );
+});
+
 it('rejects team names the Codeforces users file cannot carry', () => {
   expect(createTeamSchema.parse({ name: '  Binary Blossoms ' })).toEqual({
     name: 'Binary Blossoms',

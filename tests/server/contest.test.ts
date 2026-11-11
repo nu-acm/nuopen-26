@@ -38,17 +38,18 @@ it('numbers eligible, confirmed teams once registration closes, and appends late
   const alpha = await seedTeam('a', 'Alpha');
   const beta = await seedTeam('b', 'Beta');
   const gamma = await seedTeam('c', 'Gamma');
-  await seedTeam('s', 'Small', 2);
+  const solo = await seedTeam('s', 'Solo', 1);
+  await seedTeam('p', 'Pair', 2);
   await setTeamUnconfirmed(gamma.inviteSlug, true);
 
   await expect(finalizeTeams()).rejects.toThrow(CONTEST_ERRORS.registrationOpen);
   closeRegistration();
-  expect(await finalizeTeams()).toEqual({ assigned: 2, badNames: [] });
+  expect(await finalizeTeams()).toEqual({ assigned: 4, badNames: [] });
 
   const first = await numbers();
   const numbered = first.filter((t) => t.number !== null);
-  expect(numbered.map((t) => t.name).sort()).toEqual(['Alpha', 'Beta']);
-  expect(numbered.map((t) => t.number).sort((x, y) => (x ?? 0) - (y ?? 0))).toEqual([1, 2]);
+  expect(numbered.map((t) => t.name).sort()).toEqual(['Alpha', 'Beta', 'Pair', 'Solo']);
+  expect(numbered.map((t) => t.number).sort((x, y) => (x ?? 0) - (y ?? 0))).toEqual([1, 2, 3, 4]);
   for (const t of numbered) expect(t.contest_password).toMatch(/^[A-HJKMNP-Z2-9]{6}$/);
 
   // Clicking again changes nothing; a numbered team can no longer be unconfirmed.
@@ -60,8 +61,9 @@ it('numbers eligible, confirmed teams once registration closes, and appends late
   // A team confirmed after all gets the next number.
   await setTeamUnconfirmed(gamma.inviteSlug, false);
   expect(await finalizeTeams()).toEqual({ assigned: 1, badNames: [] });
-  expect((await numbers()).find((t) => t.name === 'Gamma')?.number).toBe(3);
+  expect((await numbers()).find((t) => t.name === 'Gamma')?.number).toBe(5);
   expect((await getTeamByParticipant(beta.ids[1]))?.contest).not.toBeNull();
+  expect((await getTeamByParticipant(solo.ids[0]))?.contest).not.toBeNull();
 });
 
 it('never repeats a number or leaves a gap when organisers finalize at the same time', async () => {
@@ -141,7 +143,8 @@ it('shows the contest card only to members of a numbered team, whatever the dead
 
 it('exports numbered teams for proctoring and keeps passwords out of the report', async () => {
   const quoted = await seedTeam('q', 'Bits, "Bytes"');
-  await seedTeam('u', 'Unnumbered', 2);
+  const unnumbered = await seedTeam('u', 'Unnumbered', 2);
+  await setTeamUnconfirmed(unnumbered.inviteSlug, true);
   closeRegistration();
   await finalizeTeams();
   const [{ contest_password: password }] = (await numbers()).filter((t) => t.number !== null);
@@ -162,6 +165,6 @@ it('exports numbered teams for proctoring and keeps passwords out of the report'
   expect(csv.split('\n')[0]).toContain('Team,Team number,Attended');
 
   const checkin = await getCheckinData();
-  expect(checkin.teams.map((t) => t.number)).toEqual([1]);
-  expect(new Set(checkin.participants.map((p) => p.teamNumber))).toEqual(new Set([1]));
+  expect(checkin.teams.map((t) => t.number)).toEqual([1, null]);
+  expect(new Set(checkin.participants.map((p) => p.teamNumber))).toEqual(new Set([1, null]));
 });

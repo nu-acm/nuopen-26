@@ -1,7 +1,8 @@
 import { env } from 'cloudflare:workers';
 import { and, eq, exists, isNull, lt, sql } from 'drizzle-orm';
 import { getDb } from '@/db';
-import { team, participant, MAX_TEAM_SIZE } from '@/db/schema';
+import { team, participant } from '@/db/schema';
+import { MAX_TEAM_SIZE } from '@/lib/event';
 import type { ContestAccess } from '@/lib/contest';
 import { getContestAccess } from '@/lib/contest.server';
 import { TEAM_ERRORS } from '@/lib/team-errors';

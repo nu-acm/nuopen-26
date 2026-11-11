@@ -1,7 +1,8 @@
 import { env } from 'cloudflare:workers';
-import { and, asc, eq, isNotNull, isNull, sql } from 'drizzle-orm';
+import { and, asc, between, eq, isNotNull, isNull, sql } from 'drizzle-orm';
 import { getDb } from '@/db';
-import { MIN_TEAM_SIZE, team } from '@/db/schema';
+import { team } from '@/db/schema';
+import { MAX_TEAM_SIZE, MIN_TEAM_SIZE } from '@/lib/event';
 import {
   CONTEST_ERRORS,
   CONTEST_PASSWORD_ALPHABET,
@@ -110,7 +111,11 @@ const memberCount = sql<number>`(select count(*) from participant where particip
 
 /** Eligible, not marked unconfirmed, and not numbered yet: what finalizeTeams numbers. */
 const awaitingNumber = () =>
-  and(isNull(team.number), eq(team.unconfirmed, false), eq(memberCount, MIN_TEAM_SIZE));
+  and(
+    isNull(team.number),
+    eq(team.unconfirmed, false),
+    between(memberCount, MIN_TEAM_SIZE, MAX_TEAM_SIZE),
+  );
 
 /** Mark a team as not having confirmed participation, or undo it. Numbered teams are final. */
 export async function setTeamUnconfirmed(

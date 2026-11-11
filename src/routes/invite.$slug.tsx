@@ -8,7 +8,7 @@ import { getRequest } from '@tanstack/react-start/server';
 import { AccountShell } from '@/components/AccountShell';
 import { AuthCard } from '@/components/ui/auth-card';
 import { Button } from '@/components/ui/button';
-import { MAX_TEAM_SIZE } from '@/db/schema';
+import { MAX_TEAM_SIZE } from '@/lib/event';
 import { getSession } from '@/lib/auth.server';
 import { getParticipant } from '@/lib/onboarding.server';
 import { getTeamBySlug, joinTeamBySlug } from '@/lib/team.server';

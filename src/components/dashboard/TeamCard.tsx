@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Item } from '@/components/ui/item';
 import { Notice } from '@/components/ui/notice';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { MAX_TEAM_SIZE } from '@/db/schema';
+import { MAX_TEAM_SIZE } from '@/lib/event';
 import type { TeamData } from '@/lib/team.server';
 import { webHapticsOptions } from '@/lib/web-haptics';
 

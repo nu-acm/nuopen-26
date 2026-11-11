@@ -95,7 +95,7 @@ export function FlightPlan() {
               <p className={isMainSlot(slot) ? 'agenda-title font-display' : 'agenda-title'}>
                 {text(slot.title)}
               </p>
-              <p className="agenda-note">{text(slot.note)}</p>
+              {slot.venue && <p className="agenda-note">{text(slot.venue)}</p>}
             </div>
             {isMainSlot(slot) && (
               <span className="agenda-tag font-mono">

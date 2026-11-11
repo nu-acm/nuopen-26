@@ -44,13 +44,13 @@
       "onboarding": "You are signed in. Fill in your details to complete registration.",
       "team": "Your details are saved. Next, create or join a team.",
       "ready": "You are registered with a team. See you at the event!",
-      "incomplete": "Your team must have exactly {{min}} members to compete."
+      "incomplete": "Your team must have {{min}} to {{max}} members to compete."
     },
     "closedStatus": {
       "register": "Already registered? Sign in to see your team.",
       "onboarding": "Registration closed before you finished your details.",
       "team": "Registration is closed, and you are not in a team.",
-      "incomplete": "Registration is closed. Your team must have exactly {{min}} members. Contact the organisers."
+      "incomplete": "Your roster is outside the allowed team size. Contact the organisers."
     }
   },
   "countdown": {
@@ -159,11 +159,11 @@
     "questions": {
       "whatIs": {
         "q": "What is NU Open?",
-        "a": "NU Open 2026 is the sixth annual team competition for girls. Three rounds: competitive programming, mathematics and product design."
+        "a": "NU Open 2026 is the seventh annual ICPC-style programming contest. Teams have five hours to solve a problem set."
       },
       "organizers": {
         "q": "Who are the organisers of NU Open?",
-        "a": "ACM@NU Student Chapter, the first ACM-W chapter in Kazakhstan and Central Asia. The chapter supports women in STEM and IT."
+        "a": "The ACM Student Chapter at Nazarbayev University (ACM@NU) organises NU Open."
       },
       "otherEvents": {
         "q": "Are there any other events for girls?",
@@ -171,19 +171,19 @@
       },
       "whoCanParticipate": {
         "q": "Who can participate?",
-        "a": "Girls aged 16 to 20 studying at a high school, college or university. Compete in teams of 3."
+        "a": "Anyone aged 16 or older can compete, solo or in a team of up to three."
       },
       "professional": {
         "q": "Do I need to be a professional?",
-        "a": "No, everyone interested in IT is welcome to participate."
+        "a": "No experience is required."
       },
       "noTeam": {
         "q": "What if I don't have a team?",
-        "a": "You can find teammates in our <link href=\"https://t.me/whd_2026\">Telegram chat</link>."
+        "a": "Create a one-person team to compete solo, or find teammates in the <link href=\"https://t.me/whd_2026\">Telegram chat</link>."
       },
       "howToParticipate": {
         "q": "How can I participate?",
-        "a": "Sign up on this site with your email, fill in your details, and create a team of 3 people or join one with an invite link. Registration is open until November 12, 2026. Then come to Nazarbayev University on November 22, 2026."
+        "a": "Sign in by email, complete your profile, and create or join a team. Registration closes on {{deadline}} at 23:59 Astana time."
       },
       "online": {
         "q": "Can I participate online?",
@@ -191,7 +191,7 @@
       },
       "certificates": {
         "q": "Will there be prizes?",
-        "a": "Yes! The 425 000 ₸ prize pool includes 250 000 ₸ for first place, 125 000 ₸ for second and 50 000 ₸ for third. Winners get merch, all participants get welcome packages, and there is a coffee break for everyone."
+        "a": "The prize pool is {{prize}}."
       },
       "noAnswer": {
         "q": "I didn't find an answer to my question. What should I do?",
@@ -297,7 +297,7 @@
     "kick": "Remove",
     "leave": "Leave team",
     "dissolve": "Dissolve team",
-    "teamIncomplete": "A team must have exactly {{min}} members to compete.",
+    "teamIncomplete": "Eligible teams have {{min}} to {{max}} members.",
     "teamReady": "Your team is ready.",
     "actionFailed": "That did not work. Please try again.",
     "statusLabel": "Status",
@@ -314,7 +314,7 @@
     "generateFailed": "Could not come up with a name. Try again later.",
     "registrationLocked": "Registration is closed, so team changes are locked.",
     "registrationClosedNoTeam": "Registration is closed. You can no longer create or join a team.",
-    "feedbackCreated": "Team {{name}} created. Share the invite link with your teammates.",
+    "feedbackCreated": "Team {{name}} created.",
     "feedbackJoined": "You joined the team.",
     "feedbackKicked": "{{name}} was removed from the team.",
     "feedbackLeft": "You left the team.",
@@ -354,7 +354,8 @@
     "consentRequired": "Please agree to the terms and personal data processing to continue.",
     "documentsRequired": "Please confirm that you have read the Code of Conduct and Instructions and Rules to continue.",
     "documentsChanged": "The documents have changed. Reload this page and review them before confirming again.",
-    "policyChanged": "The registration policy has changed. Reload this page and review it before continuing."
+    "policyChanged": "The registration policy has changed. Reload this page and review it before continuing.",
+    "participantTooYoung": "You must be at least 16 on the day of the contest."
   },
   "education": {
     "School": "School",
@@ -362,7 +363,8 @@
     "Foundation": "Foundation",
     "Bachelor's": "Bachelor's",
     "Master's": "Master's",
-    "PhD": "PhD"
+    "PhD": "PhD",
+    "Not currently studying": "Not currently studying"
   },
   "invite": {
     "title": "Join this team",
@@ -404,7 +406,7 @@
     "showingCount": "{{shown}} of {{total}}",
     "teamSearchPlaceholder": "Search team, captain, member…",
     "eligibleBreakdown": "{{eligible}} eligible / {{other}} not",
-    "checkinScope": "Only teams with exactly {{min}} members are listed.",
+    "checkinScope": "Only teams with {{min}} to {{max}} members are listed.",
     "statEligibleParticipants": "Eligible participants",
     "attendanceBreakdown": "{{present}} in / {{absent}} not yet",
     "teamStatusBreakdown": "{{ready}} ready / {{partial}} partial / {{noShow}} no-show",
@@ -509,9 +511,9 @@
   },
   "metadata": {
     "title": "NU Open 2026",
-    "description": "November 22 at Nazarbayev University, Astana. Teams of 3 compete in programming, mathematics and product design for a 425 000 ₸ prize pool.",
+    "description": "NU Open 2026 is a five-hour programming contest on November 22 at Nazarbayev University in Astana. Compete solo or in a team of up to three for a ₸1,000,000 prize pool.",
     "imageAlt": "NU Open 2026",
-    "faqDescription": "Answers about NU Open 2026: eligibility, teams of 3, registration, the November 22 programme and prizes."
+    "faqDescription": "Answers about NU Open 2026 eligibility, team size, registration, the November 22 schedule, and prizes."
   },
   "account": {
     "teamTab": "My team",
@@ -533,7 +535,7 @@
     "pending": "Pending",
     "missionParameters": "Mission parameters",
     "stayOnTarget": "Stay on target.",
-    "missionCopy": "One team. {{count}} pilots. {{hours}} hours to solve the problem set.",
+    "missionCopy": "Teams of {{min}} to {{max}} have {{hours}} hours to solve the problem set.",
     "venueCopy": "All team members must attend in person at {{venue}}, {{city}}.",
     "reviewRules": "Review the contest rules",
     "yourSquadron": "Your squadron",

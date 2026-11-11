@@ -1,7 +1,8 @@
 import { env } from 'cloudflare:workers';
-import { count, eq, isNotNull, sql } from 'drizzle-orm';
+import { between, count, eq, isNotNull, sql } from 'drizzle-orm';
 import { getDb } from '@/db';
-import { MIN_TEAM_SIZE, participant, team } from '@/db/schema';
+import { participant, team } from '@/db/schema';
+import { MAX_TEAM_SIZE, MIN_TEAM_SIZE } from '@/lib/event';
 
 interface AppEnv {
   DB: D1Database;
@@ -41,7 +42,7 @@ export type CheckinTeam = {
   members: CheckinTeamMember[];
 };
 
-/** Only people in eligible teams (exactly MIN_TEAM_SIZE members) are checked in. */
+/** Only people in eligible teams are listed for check-in. */
 export type CheckinData = {
   participants: CheckinParticipant[];
   teams: CheckinTeam[];
@@ -54,16 +55,14 @@ export async function getCheckinData(): Promise<CheckinData> {
   const db = getAppDb();
 
   // Eligible teams are computed in SQL, so ineligible rosters are never read.
-  const eligible = db
-    .$with('eligible')
-    .as(
-      db
-        .select({ teamId: participant.teamId })
-        .from(participant)
-        .where(isNotNull(participant.teamId))
-        .groupBy(participant.teamId)
-        .having(eq(count(), MIN_TEAM_SIZE)),
-    );
+  const eligible = db.$with('eligible').as(
+    db
+      .select({ teamId: participant.teamId })
+      .from(participant)
+      .where(isNotNull(participant.teamId))
+      .groupBy(participant.teamId)
+      .having(between(count(), MIN_TEAM_SIZE, MAX_TEAM_SIZE)),
+  );
 
   const teamsQuery = db
     .with(eligible)

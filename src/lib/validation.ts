@@ -1,10 +1,7 @@
 import { z } from 'zod';
 import { DOCUMENTS_POLICY_VERSION, REGISTRATION_POLICY_VERSION } from '@/lib/consent';
-import { EVENT_DATE } from '@/lib/event';
+import { EVENT_DATE, MIN_PARTICIPANT_AGE } from '@/lib/event';
 
-/**
- * Women's Hack Day is open to school, college and university students.
- */
 export const EDUCATION_LEVELS = [
   'School',
   'College',
@@ -12,16 +9,16 @@ export const EDUCATION_LEVELS = [
   "Bachelor's",
   "Master's",
   'PhD',
+  'Not currently studying',
 ] as const;
 
 export type EducationLevel = (typeof EDUCATION_LEVELS)[number];
 
-/** Use the IIN's encoded birth date; an unusable date also requires a contact. */
-export function requiresGuardianPhone(iin: string): boolean {
-  if (!/^\d{12}$/.test(iin)) return false;
+const IIN_PATTERN = /^\d{12}$/;
 
+function ageOnEventDay(iin: string): number | null {
   const century = Number(iin[6]);
-  if (century < 1 || century > 6) return true;
+  if (century < 1 || century > 6) return null;
 
   const year = 1700 + Math.ceil(century / 2) * 100 + Number(iin.slice(0, 2));
   const month = Number(iin.slice(2, 4));
@@ -34,7 +31,7 @@ export function requiresGuardianPhone(iin: string): boolean {
     birthDate.getUTCDate() !== day ||
     birthDate > eventDate
   ) {
-    return true;
+    return null;
   }
 
   let age = eventDate.getUTCFullYear() - year;
@@ -44,7 +41,14 @@ export function requiresGuardianPhone(iin: string): boolean {
   ) {
     age--;
   }
-  return age < 18;
+  return age;
+}
+
+/** An unusable birth date still requires a guardian contact. */
+export function requiresGuardianPhone(iin: string): boolean {
+  if (!IIN_PATTERN.test(iin)) return false;
+  const age = ageOnEventDay(iin);
+  return age === null || age < 18;
 }
 
 // Validation messages are i18n keys, resolved with t() in the UI.
@@ -55,6 +59,7 @@ const V = {
   fullNameRequired: 'validation.fullNameRequired',
   fullNameMax: 'validation.fullNameMax',
   iinInvalid: 'validation.iinInvalid',
+  participantTooYoung: 'validation.participantTooYoung',
   phoneRequired: 'validation.phoneRequired',
   phoneInvalid: 'validation.phoneInvalid',
   educationInvalid: 'validation.educationInvalid',
@@ -112,14 +117,10 @@ export const onboardingSchema = z
       .trim()
       .min(1, { error: V.fullNameRequired })
       .max(100, { error: V.fullNameMax }),
-    iin: z.string().regex(/^\d{12}$/, { error: V.iinInvalid }),
+    iin: z.string().regex(IIN_PATTERN, { error: V.iinInvalid }),
     phone: z.string().trim().min(1, { error: V.phoneRequired }).pipe(phoneSchema(V.phoneInvalid)),
     city: z.string().trim().min(1, { error: V.cityRequired }).max(100, { error: V.cityMax }),
-    placeOfStudy: z
-      .string()
-      .trim()
-      .min(1, { error: V.placeOfStudyRequired })
-      .max(100, { error: V.placeOfStudyMax }),
+    placeOfStudy: z.string().trim().max(100, { error: V.placeOfStudyMax }),
     parentPhone: z
       .string()
       .trim()
@@ -132,6 +133,18 @@ export const onboardingSchema = z
     documentsRead: z.literal(true, { error: V.documentsRequired }),
     documentsPolicyVersion: z.literal(DOCUMENTS_POLICY_VERSION, { error: V.documentsChanged }),
   })
+  .refine((d) => d.educationLevel === 'Not currently studying' || !!d.placeOfStudy, {
+    message: V.placeOfStudyRequired,
+    path: ['placeOfStudy'],
+  })
+  .refine(
+    (d) => {
+      if (!IIN_PATTERN.test(d.iin)) return true;
+      const age = ageOnEventDay(d.iin);
+      return age === null || age >= MIN_PARTICIPANT_AGE;
+    },
+    { message: V.participantTooYoung, path: ['iin'] },
+  )
   .refine((d) => !requiresGuardianPhone(d.iin) || !!d.parentPhone, {
     message: V.parentPhoneRequired,
     path: ['parentPhone'],

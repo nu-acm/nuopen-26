@@ -4,7 +4,7 @@ import { EVENT } from '@/components/landing/nuopen/content/event';
 // Static captures retain every source section while avoiding motion during layout measurements.
 test.use({ reducedMotion: 'reduce' });
 
-test('keeps the original NU Open landing copy and FAQ behavior', async ({ page }) => {
+test('shows NU Open event details and expands FAQ answers', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'NU Open', exact: true })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
@@ -15,7 +15,20 @@ test('keeps the original NU Open landing copy and FAQ behavior', async ({ page }
   await expect(page.locator('#briefing')).toContainText(EVENT.contest.dateLabel);
   await expect(page.locator('#briefing')).toContainText('1–3 per team');
   await expect(page.locator('#record')).toContainText('Six battles behind us');
-  await expect(page.locator('#bounty')).toContainText(`Prize pool ${EVENT.prize.text}`);
+  await expect(page.locator('#bounty')).toContainText('Prize pool ₸1 000 000');
+  await expect(page.locator('#schedule .route-date')).toHaveText([
+    '11 Nov',
+    '20 Nov',
+    '21 Nov',
+    '22 Nov',
+  ]);
+  await expect(page.locator('#schedule .agenda-note')).toHaveText([
+    'Red Hall',
+    'Red Hall',
+    'Ballroom Left',
+    'C3 Vestibule',
+    'Red Hall',
+  ]);
   for (const rule of EVENT.rules) await expect(page.locator('#rules')).toContainText(rule.text);
   const questions = page.locator('#faq').getByRole('button');
   await expect(questions).toHaveText(EVENT.faq.map((item) => item.q));
@@ -116,10 +129,7 @@ test('saved Force and music choices restore after a fresh navigation', async ({ 
     expect((await page.request.head(`/nuopen/audio/${track}`)).ok()).toBe(true);
 });
 
-test('NU Open registration calls the existing WHD OTP, profile and team backend', async ({
-  page,
-  app,
-}) => {
+test('NU Open registration accepts a one-person team', async ({ page, app }) => {
   await page.goto('/');
   await page
     .locator('.hero-copy')
@@ -147,6 +157,9 @@ test('NU Open registration calls the existing WHD OTP, profile and team backend'
   await expect(
     page.getByRole('heading', { name: 'Source Landing Team', exact: true }),
   ).toBeVisible();
+  const readiness = page.locator('.readiness-list li').filter({ hasText: 'Team registered' });
+  await expect(readiness).toHaveAttribute('data-ready', 'true');
+  await expect(readiness).toContainText('1 of 3');
   await page.goto('/');
   await page.locator('.hero-copy').getByRole('link', { name: 'Manage team', exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
@@ -158,7 +171,7 @@ test('NU Open registration calls the existing WHD OTP, profile and team backend'
   ).toBe('NU Landing Participant');
 });
 
-test('original landing CTAs still obey WHD registration closure', async ({ page, app }) => {
+test('landing CTAs reflect registration closure', async ({ page, app }) => {
   await page.goto('/');
   await expect(
     page.locator('.hero-copy').getByRole('link', { name: 'Register your team', exact: true }),

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { PilotName } from '@/components/dashboard/PilotName';
 import { DashboardStats } from '@/components/dashboard/DashboardStats';
 import { EVENT } from '@/components/landing/nuopen/content/event';
-import { MIN_TEAM_SIZE } from '@/db/schema';
+import { MAX_TEAM_SIZE, MIN_TEAM_SIZE } from '@/lib/event';
 import type { TeamData } from '@/lib/team.server';
 
 export function DashboardLayout({
@@ -56,7 +56,13 @@ export function DashboardLayout({
           <section className="dashboard-brief">
             <p className="account-eyebrow">{t('account.missionParameters')}</p>
             <h2>{t('account.stayOnTarget')}</h2>
-            <p>{t('account.missionCopy', { count: MIN_TEAM_SIZE, hours: EVENT.contest.hours })}</p>
+            <p>
+              {t('account.missionCopy', {
+                min: MIN_TEAM_SIZE,
+                max: MAX_TEAM_SIZE,
+                hours: EVENT.contest.hours,
+              })}
+            </p>
             <p>
               {t('account.venueCopy', { venue: EVENT.venue.name, city: text(EVENT.venue.city) })}
             </p>

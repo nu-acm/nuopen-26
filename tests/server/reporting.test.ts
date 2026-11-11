@@ -20,9 +20,9 @@ it('reports joined rosters and attendance, checking in only eligible teams', asy
   expect(report.stats).toEqual({
     participants: 5,
     teams: 2,
-    eligibleTeams: 1,
+    eligibleTeams: 2,
     numberedTeams: 0,
-    awaitingNumber: 1,
+    awaitingNumber: 2,
     teamless: 1,
     attended: 1,
   });
@@ -33,17 +33,22 @@ it('reports joined rosters and attendance, checking in only eligible teams', asy
     teamSlug: eligible.inviteSlug,
   });
   const checkin = await getCheckinData();
-  expect(checkin.participants.map((p) => p.id).sort()).toEqual(['captain', 'member', 'third']);
+  expect(checkin.participants.map((p) => p.id).sort()).toEqual([
+    'captain',
+    'member',
+    'small',
+    'third',
+  ]);
   expect(checkin.teams[0].members[0].id).toBe('captain');
   await expect(setAttendance('missing', true)).rejects.toThrow('Participant not found');
 });
 
-it('excludes incomplete and previously oversized teams from eligibility and check-in', async () => {
+it('includes pairs and excludes previously oversized teams from eligibility and check-in', async () => {
   for (const id of ['captain', 'second', 'third', 'fourth']) await seedParticipant(id);
   const team = await createTeam('captain', 'Roster Size');
   await joinTeamBySlug('second', team.inviteSlug);
-  expect((await getReportData()).teams[0].eligible).toBe(false);
-  expect((await getCheckinData()).teams).toEqual([]);
+  expect((await getReportData()).teams[0].eligible).toBe(true);
+  expect((await getCheckinData()).participants).toHaveLength(2);
 
   await joinTeamBySlug('third', team.inviteSlug);
   expect((await getReportData()).teams[0].eligible).toBe(true);
@@ -99,14 +104,14 @@ it('escapes CSV fields, neutralizes formulas, and preserves leading-zero identif
 it('shares the event deadline between status and server checks, closing at the boundary', () => {
   bindings.REGISTRATION_DEADLINE = '';
   vi.useFakeTimers({ toFake: ['Date'] });
-  vi.setSystemTime(new Date('2026-10-22T12:00:00+05:00'));
+  vi.setSystemTime(new Date('2026-11-11T12:00:00+05:00'));
   expect(isRegistrationOpen()).toBe(true);
-  vi.setSystemTime(new Date('2026-11-12T23:59:58+05:00'));
+  vi.setSystemTime(new Date('2026-11-20T23:59:58+05:00'));
   expect(isRegistrationOpen()).toBe(true);
   expect(getRegistrationStatus().deadline).toBe(
     new Date(DEFAULT_REGISTRATION_DEADLINE).toISOString(),
   );
-  vi.setSystemTime(new Date('2026-11-12T23:59:59+05:00'));
+  vi.setSystemTime(new Date('2026-11-20T23:59:59+05:00'));
   expect(isRegistrationOpen()).toBe(false);
   expect(getRegistrationStatus().open).toBe(false);
 });

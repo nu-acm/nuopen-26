@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://whd.nuacmw.kz';
+export const SITE_URL = 'https://nuopen.nuacm.kz';
 
 /** Keep search results and social previews consistent when a page overrides its copy. */
 export function pageMetadata(title: string, description: string) {

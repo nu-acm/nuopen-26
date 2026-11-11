@@ -1,8 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { FaCalendarAlt, FaMapMarkerAlt, FaUsers } from 'react-icons/fa';
 import Stats2 from '@/components/ui/stats-2';
-import { VENUE_MAP_URL } from '@/lib/event';
-import { MIN_TEAM_SIZE } from '@/db/schema';
+import { EVENT_DATE, MAX_TEAM_SIZE, MIN_TEAM_SIZE, VENUE_MAP_URL } from '@/lib/event';
 
 export default function InfoCards() {
   const { t } = useTranslation();
@@ -12,7 +11,7 @@ export default function InfoCards() {
       icon: FaCalendarAlt,
       accent: 'pink' as const,
       label: t('infoCards.when'),
-      metric: '14',
+      metric: EVENT_DATE.slice(-2),
       subLabel: t('infoCards.monthYear'),
       description: t('infoCards.whenDetail'),
     },
@@ -35,7 +34,7 @@ export default function InfoCards() {
       icon: FaUsers,
       accent: 'lime' as const,
       label: t('infoCards.teamLabel'),
-      metric: String(MIN_TEAM_SIZE),
+      metric: `${MIN_TEAM_SIZE}–${MAX_TEAM_SIZE}`,
       subLabel: t('infoCards.teamMembers'),
       description: t('infoCards.howDetail'),
     },

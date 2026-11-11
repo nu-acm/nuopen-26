@@ -1,8 +1,13 @@
 import { formatMoney } from '@/components/landing/nuopen/lib/format';
-import { EVENT_DATE } from '@/lib/event';
+import { EVENT_DATE, MAX_TEAM_SIZE, MIN_PARTICIPANT_AGE, MIN_TEAM_SIZE } from '@/lib/event';
+import {
+  CONFIRMATION_DATE,
+  DEFAULT_REGISTRATION_DEADLINE,
+  REGISTRATION_OPEN_DATE,
+} from '@/lib/registration';
 
 const EMAIL = 'acmsc@nu.edu.kz';
-const PRIZE = { amount: 1_200_000, currency: '₸' };
+const PRIZE = { amount: 1_000_000, currency: '₸' };
 const PRIZE_TEXT = formatMoney(PRIZE.amount, PRIZE.currency);
 
 export const EVENT = {
@@ -29,7 +34,7 @@ export const EVENT = {
     address: '53 Kabanbay Batyr Ave',
     mapHref: 'https://maps.google.com/?q=Nazarbayev+University+Astana',
   },
-  team: { min: 1, max: 3, minAge: 16 },
+  team: { min: MIN_TEAM_SIZE, max: MAX_TEAM_SIZE, minAge: MIN_PARTICIPANT_AGE },
   prize: { text: PRIZE_TEXT, extra: 'plus ACM@NU merch for the winners' },
   stats: [
     { value: 2100, suffix: '+', label: 'participants' },
@@ -42,53 +47,58 @@ export const EVENT = {
     'In five hours, teams of up to three must solve a problem set forged by the jury, armed with one laptop, their wits and nothing else.',
     'Six battles have drawn more than 2,100 pilots from over ten star systems. Now the jury awaits the next generation of coders…',
   ],
-  // placeholder: 2026 dates to be confirmed by ACM@NU
   timeline: [
     {
-      date: '2026-10-23',
+      date: REGISTRATION_OPEN_DATE,
       label: 'Registration opens',
       note: 'Sign up solo or as a team of up to three.',
     },
-    { date: '2026-11-03', label: 'Registration closes', note: 'Last call, 23:59 Astana time.' },
     {
-      date: '2026-11-05',
+      date: DEFAULT_REGISTRATION_DEADLINE.slice(0, 10),
+      label: 'Registration closes',
+      note: 'Last call, 23:59 Astana time.',
+    },
+    {
+      date: CONFIRMATION_DATE,
       label: 'Confirmation',
-      note: 'On-campus teams get a confirmation email.',
+      note: 'Teams receive confirmation by email.',
     },
     { date: EVENT_DATE, label: 'Contest day', note: 'Nazarbayev University, Astana.' },
   ],
-  // placeholder: last year's running order, to be confirmed for 2026
   agenda: [
     {
       from: '09:00',
       to: '10:00',
-      title: 'Check-in',
-      note: 'Bring your ID and one laptop per team.',
+      title: 'On-site registration',
+      venue: 'Red Hall',
     },
     {
       from: '10:00',
       to: '10:40',
       title: 'Opening ceremony',
-      note: 'Rules, judges and the last briefing.',
+      venue: 'Red Hall',
     },
     {
       from: '11:00',
       to: '16:00',
-      title: 'The contest',
-      note: 'Five hours. One problem set.',
+      title: 'Competition',
+      venue: 'Ballroom Left',
       main: true,
     },
-    { from: '16:00', to: '16:30', title: 'Coffee break', note: 'On us, for on-campus teams.' },
-    { from: '16:30', to: '17:00', title: 'Photo', note: 'Every squadron, one frame.' },
+    { from: '16:00', to: '16:30', title: 'Coffee break', venue: 'C3 Vestibule' },
+    { from: '16:30', to: '17:00', title: 'Photoshoot', venue: null },
     {
       from: '17:00',
       to: '18:00',
       title: 'Closing ceremony',
-      note: 'Results and the prize ceremony.',
+      venue: 'Red Hall',
     },
   ],
   rules: [
-    { title: 'Fly solo or in threes', text: 'Compete on your own or in a team of up to three.' },
+    {
+      title: 'Compete solo or with teammates',
+      text: 'Compete on your own or in a team of up to three.',
+    },
     { title: 'Be there to win', text: 'Prizes go to teams who register and compete in person.' },
     { title: 'One laptop per team', text: 'Bring your own. Laptops are not provided.' },
     {
@@ -103,7 +113,7 @@ export const EVENT = {
   faq: [
     {
       q: 'Who can take part?',
-      a: 'Anyone aged 16 or older, from any university or school. Compete solo or in a team of up to three, in person at Nazarbayev University.',
+      a: 'Anyone aged 16 or older can compete solo or in a team of up to three, in person at Nazarbayev University.',
     },
     { q: 'Is it free?', a: 'Yes. Taking part in NU Open costs nothing.' },
     {

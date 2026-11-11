@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
 import { Card, CardContent } from '@/components/ui/card';
-import { MIN_TEAM_SIZE, MAX_TEAM_SIZE } from '@/db/schema';
+import { MIN_TEAM_SIZE, MAX_TEAM_SIZE, isEligibleTeamSize } from '@/lib/event';
 import type { TeamData } from '@/lib/team.server';
 
 export function DashboardStats({ team, email }: { team: TeamData | null; email: string }) {
   const { t } = useTranslation();
-  const ready = !!team && team.members.length === MIN_TEAM_SIZE;
+  const ready = !!team && isEligibleTeamSize(team.members.length);
   return (
     <Card variant="dashboard-checklist">
       <CardContent variant="dashboard-checklist">
@@ -42,7 +42,7 @@ export function DashboardStats({ team, email }: { team: TeamData | null; email: 
                         count: team.members.length,
                         max: MAX_TEAM_SIZE,
                       })
-                    : t('dashboard.teamIncomplete', { min: MIN_TEAM_SIZE })
+                    : t('dashboard.teamIncomplete', { min: MIN_TEAM_SIZE, max: MAX_TEAM_SIZE })
                   : t('dashboard.noTeam')}
               </small>
             </div>
