@@ -1,5 +1,6 @@
 import './footer.css';
 
+import { Link } from '@tanstack/react-router';
 import { EVENT } from '@/components/landing/nuopen/content/event';
 
 import { AcmMark } from '../ui/acm-mark';
@@ -42,9 +43,17 @@ export function Footer() {
           <p>
             © {YEAR} {EVENT.organizer}, {EVENT.venue.name}
           </p>
-          <a href="/nuopen/models/CREDITS.txt" className="footer-credits-link">
-            3D model credits
-          </a>
+          <nav className="footer-legal-links" aria-label="Legal">
+            <Link to="/privacy" className="footer-credits-link">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="footer-credits-link">
+              Terms of Service
+            </Link>
+            <a href="/nuopen/models/CREDITS.txt" className="footer-credits-link">
+              3D model credits
+            </a>
+          </nav>
         </div>
       </div>
     </footer>

@@ -114,6 +114,18 @@
     color: var(--ink-3);
   }
 
+  .footer-legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+  }
+
+  .footer-legal-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
   @media (min-width: 640px) {
     .footer-episode {
       gap: 16px;
