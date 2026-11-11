@@ -9,8 +9,8 @@ Built with TanStack Start, React, Cloudflare Workers and D1, Drizzle, and Better
 Requirements: Node 24.21.0 (see `.node-version`) and [Vite+](https://viteplus.dev/) (`vp`). The lockfile uses pnpm 12.11.2.
 
 ```sh
-git clone https://github.com/ZhassulanP/nuopen26.git
-cd nuopen26
+git clone https://github.com/nu-acm/nuopen-26.git nuopen-2026
+cd nuopen-2026
 vp install --frozen-lockfile
 cp .dev.vars.example .dev.vars
 ```
@@ -26,9 +26,9 @@ Open http://localhost:3000. The local D1 database is separate from Cloudflare's 
 
 Workers AI needs a remote Cloudflare connection even during local development. If `vp dev` reports `RemoteSessionAuthenticationError`, run `vp exec wrangler whoami` and confirm the signed-in account has Workers AI access; if needed, run `vp exec wrangler logout` and `vp exec wrangler login`. A successful login alone does not guarantee the selected account has the required permissions. The team-name AI feature uses that account; avoid connecting development bindings to someone else's resources.
 
-## Hosting on your Cloudflare account
+## Cloudflare hosting
 
-This is a **Cloudflare Workers** app with a D1 database, not a static site. The configuration in this repository identifies the personal Cloudflare account and the new empty `nuopen26` database created for this project. It does not point to WHD's Cloudflare account, D1 database, or domain. The new database has no tables until the deployment workflow applies the migrations.
+Wrangler targets the ACM@NU Cloudflare account for the `nuopen-2026` Worker and its dedicated `nuopen-2026` D1 database. The deployment workflow applies the database migrations.
 
 ### 1. Check your account and address
 
@@ -36,13 +36,13 @@ This is a **Cloudflare Workers** app with a D1 database, not a static site. The 
 vp exec wrangler whoami
 ```
 
-Confirm it shows your own account. If not, use `vp exec wrangler logout` and `vp exec wrangler login`. In the Cloudflare dashboard, open **Workers & Pages** and find or create **Your subdomain**. Your site's address will be:
+Confirm your active Wrangler profile has access to the ACM@NU account. The production origin is:
 
 ```text
-https://nuopen26.ghbit.workers.dev
+https://nuopen.nuacm.kz
 ```
 
-`vars.BETTER_AUTH_URL` in `wrangler.jsonc` is set to your address. This must be the exact public origin with no trailing slash. The Worker name in `wrangler.jsonc` determines the `nuopen26` part; if you change it, update the URL too. The first deployment will make this address public.
+`vars.BETTER_AUTH_URL` in `wrangler.jsonc` must match the public origin without a trailing slash.
 
 Before continuing, check `account_id` and `d1_databases` in `wrangler.jsonc` against your own Cloudflare account. If you create another D1 database, replace both `database_name` and `database_id`; keep the binding `DB` and `migrations_dir: "drizzle"`. Never point this project at WHD's database. [Cloudflare D1 setup](https://developers.cloudflare.com/d1/get-started/) and [workers.dev addresses](https://developers.cloudflare.com/workers/configuration/routing/workers-dev/) explain these settings.
 

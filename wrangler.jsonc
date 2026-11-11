@@ -1,13 +1,13 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "nuopen26",
-  // Your personal Cloudflare account; this is separate from WHD production.
-  "account_id": "fd8bf8dde3e0025c6b89a65169dead3c",
+  "name": "nuopen-2026",
+  "account_id": "f4071f1b770277fe78925ee11779e59d",
   "compatibility_date": "2026-10-13",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
   "workers_dev": true,
   "preview_urls": false,
+  "routes": [{ "pattern": "nuopen.nuacm.kz", "custom_domain": true }],
   "assets": {
     "html_handling": "none",
   },
@@ -35,8 +35,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "nuopen26",
-      "database_id": "44b554ba-28d9-47fd-972e-8212e51f7855",
+      "database_name": "nuopen-2026",
+      "database_id": "b851b927-cd83-48b7-9e1e-06511a2873e9",
       "migrations_dir": "drizzle",
     },
   ],
