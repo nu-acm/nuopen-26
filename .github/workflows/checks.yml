@@ -1,10 +1,11 @@
-# Format, lint, types, server tests and browser tests for pull requests and production deployments.
+# Format, lint, types, server tests and browser tests for pull requests and pushes to main.
 # No secrets: the tests use local D1, test secrets and a local mail stub.
 name: Checks
 
 on:
   pull_request:
-  workflow_call:
+  push:
+    branches: [main]
 
 # A newer push to the same branch or pull request replaces the run in progress.
 concurrency:
