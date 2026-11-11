@@ -1,7 +1,14 @@
 import { test, expect, login, onboard } from './fixtures';
-import type { Locator } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 test.use({ reducedMotion: 'reduce' });
+
+async function openAccountMenu(page: Page) {
+  const menu = page.locator('.auth-header').getByRole('button', { name: 'Menu', exact: true });
+  if ((await menu.isVisible()) && (await menu.getAttribute('aria-expanded')) === 'false') {
+    await menu.click();
+  }
+}
 
 function headerActionBounds(action: Locator) {
   return action.evaluate((element) => {
@@ -18,7 +25,19 @@ test('team and personal-data tabs keep actions separate and preserve profile edi
   await login(page, app.codes, 'account-tabs@example.test');
   await onboard(page, 'Pilot Example');
   await page.evaluate(() => document.fonts.ready);
-  const accountAction = page.locator('.auth-header .account-back');
+  const mobile = page.viewportSize()!.width < 1280;
+  if (mobile) {
+    await expect
+      .poll(() =>
+        page
+          .locator('.auth-header-inner')
+          .evaluate((header) => header.getBoundingClientRect().height),
+      )
+      .toBeLessThan(80);
+    await expect(page.locator('.account-header-secondary')).toBeHidden();
+  }
+  await openAccountMenu(page);
+  const accountAction = page.locator('.auth-header .account-back:visible');
   let accountControls: Awaited<ReturnType<typeof headerActionBounds>> | undefined;
   await expect
     .poll(async () => {
@@ -26,7 +45,8 @@ test('team and personal-data tabs keep actions separate and preserve profile edi
       return accountControls.height;
     })
     .toBeGreaterThanOrEqual(44);
-  await expect(page.locator('.account-back')).toHaveCSS('background-color', 'rgb(247, 245, 239)');
+  await expect(accountAction).toHaveCSS('background-color', 'rgb(247, 245, 239)');
+  if (mobile) await page.keyboard.press('Escape');
 
   const nav = page.getByRole('navigation', { name: 'Your account', exact: true });
   await expect(nav.getByRole('link')).toHaveCount(2);
@@ -62,14 +82,22 @@ test('team and personal-data tabs keep actions separate and preserve profile edi
   await expect(page).toHaveURL(/\/dashboard$/);
   await nav.getByRole('link', { name: '02 Personal data' }).click();
   await expect(page.getByRole('textbox', { name: 'City' })).toHaveValue('Karaganda');
+  await openAccountMenu(page);
   await page.getByRole('link', { name: 'Back to landing page', exact: true }).click();
   await expect(page).toHaveURL(`${app.url}/`);
   await expect(page.getByRole('heading', { name: 'NU Open', exact: true })).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
-  await expect
-    .poll(() => headerActionBounds(page.locator('.landing-header-account')))
-    .toEqual(accountControls);
-  await expect(page.locator('.landing-header-account')).toHaveCSS(
+  if (mobile) {
+    await page
+      .locator('[data-site-header]')
+      .getByRole('button', { name: 'Menu', exact: true })
+      .click();
+  } else {
+    await expect
+      .poll(() => headerActionBounds(page.locator('.landing-header-account:visible')))
+      .toEqual(accountControls);
+  }
+  await expect(page.locator('.landing-header-account:visible')).toHaveCSS(
     'background-color',
     'rgb(247, 245, 239)',
   );
@@ -80,11 +108,19 @@ test('account Force controls work and sign-out lives in personal data', async ({
   // The personal-data view also provides sign-out before first-time onboarding is completed.
   await expect(page.getByRole('navigation', { name: 'Your account' })).toBeVisible();
   const header = page.locator('.auth-header');
+  await openAccountMenu(page);
   await header.getByRole('button', { name: 'Dark side', exact: true }).click();
   await expect(page.locator('html')).toHaveAttribute('data-side', 'dark');
   await header.getByRole('button', { name: 'Light side', exact: true }).click();
   await expect(page.locator('html')).toHaveAttribute('data-side', 'light');
   await expect(header.getByRole('link', { name: 'Back to landing page' })).toBeVisible();
+  if (page.viewportSize()!.width < 1280) {
+    await page.keyboard.press('Escape');
+    const menu = header.getByRole('button', { name: 'Menu', exact: true });
+    await expect(menu).toBeFocused();
+    await expect(menu).toHaveAttribute('aria-expanded', 'false');
+    await expect(header.getByRole('link', { name: 'Back to landing page' })).toHaveCount(0);
+  }
   await expect(page.getByRole('button', { name: 'Choose PDF' })).toBeVisible();
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
   await page.getByRole('button', { name: 'Sure?', exact: true }).click();
@@ -182,10 +218,18 @@ test('music control remains visible across landing and account navigation', asyn
   await onboard(page, 'Music Navigation');
   const accountMusic = page.locator('.auth-header').getByRole('button', { name: /music/i });
   await expect(accountMusic).toBeVisible();
+  await openAccountMenu(page);
   await page.getByRole('link', { name: 'Back to landing page' }).click();
-  await expect(
-    page.locator('[data-site-header]').getByRole('button', { name: /music/i }),
-  ).toBeVisible();
-  await page.locator('[data-site-header] .landing-header-account').click();
+  const landingHeader = page.locator('[data-site-header]');
+  await expect(landingHeader.getByRole('button', { name: /music/i })).toBeVisible();
+  if (page.viewportSize()!.width < 1280) {
+    await expect(landingHeader.locator('.landing-header-secondary')).toBeHidden();
+    const menu = landingHeader.getByRole('button', { name: 'Menu', exact: true });
+    await expect(menu).toHaveAttribute('aria-expanded', 'false');
+    await expect(landingHeader.locator('.landing-header-inner')).toHaveCSS('height', '68px');
+    await menu.click();
+    await expect(landingHeader.locator('.landing-menu-account')).toBeVisible();
+  }
+  await landingHeader.locator('.landing-header-account:visible').click();
   await expect(accountMusic).toBeVisible();
 });

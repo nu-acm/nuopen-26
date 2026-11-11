@@ -163,6 +163,14 @@ export function Header() {
                 </a>
               ))}
             </nav>
+            <div className="landing-menu-account">
+              <RegistrationLink
+                compact
+                className="site-nav-link site-nav-action landing-header-account"
+              >
+                Register
+              </RegistrationLink>
+            </div>
             <div className="landing-menu-preferences sm:hidden">
               <SideToggle />
             </div>

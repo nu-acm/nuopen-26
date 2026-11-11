@@ -123,8 +123,46 @@
   gap: 16px;
   min-width: 0;
 }
+.account-menu-toggle,
+.account-mobile-menu {
+  display: none;
+}
+.account-menu-toggle {
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: var(--ink);
+}
+.account-menu-toggle:focus-visible {
+  outline: 2px solid var(--saber);
+  outline-offset: 3px;
+}
+.account-mobile-menu {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 16px var(--gutter) 24px;
+}
+.account-mobile-menu nav {
+  display: flex;
+}
+.account-mobile-menu .account-back {
+  flex-basis: auto;
+  width: 100%;
+}
+.account-menu-preferences {
+  display: flex;
+  margin-top: 20px;
+}
 .landing-menu-preferences {
   margin-top: 20px;
+}
+.landing-menu-account {
+  display: flex;
+  margin-top: 20px;
+}
+.landing-menu-account .landing-header-account {
+  flex-basis: auto;
+  width: 100%;
 }
 .nuopen-landing .landing-menu-link {
   justify-content: flex-start;
@@ -138,9 +176,6 @@
   }
 }
 @media (max-width: 1279px) {
-  .nuopen-page {
-    --header-h: 136px;
-  }
   .auth-header .auth-header-inner,
   .landing-header-inner {
     display: grid;
@@ -158,11 +193,16 @@
     justify-self: end;
     gap: 4px;
   }
+  .account-header-side,
   .account-header-secondary,
   .landing-header-secondary {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    justify-content: flex-end;
+    display: none;
+  }
+  .account-menu-toggle {
+    display: grid;
+  }
+  .account-mobile-menu:not([hidden]) {
+    display: block;
   }
   .landing-header-account.site-nav-action,
   .account-back.site-nav-action {
