@@ -96,7 +96,6 @@ for (const action of ['Retry CV upload', 'Continue without CV'] as const) {
     const retry = action === 'Retry CV upload';
     if (!retry) {
       await seedEligibleTeam(app.db);
-      await app.db.prepare("UPDATE team SET invite_token = 'eligible-team'").run();
     }
     await login(page, app.codes, 'onboarding-cv@example.test');
     if (!retry) await page.goto('/onboarding?redirect=%2Finvite%2Feligible-team');

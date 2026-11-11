@@ -15,12 +15,97 @@ function getAppDb() {
   return getDb((env as unknown as AppEnv).DB);
 }
 
-// Team names remain visible; invite tokens are independent, unpredictable capabilities.
-const newInviteToken = () => crypto.randomUUID().replaceAll('-', '');
+/** Cyrillic → Latin, including the Kazakh-specific letters. */
+const CYRILLIC_MAP: Record<string, string> = {
+  а: 'a',
+  б: 'b',
+  в: 'v',
+  г: 'g',
+  д: 'd',
+  е: 'e',
+  ё: 'e',
+  ж: 'z',
+  з: 'z',
+  и: 'i',
+  й: 'y',
+  к: 'k',
+  л: 'l',
+  м: 'm',
+  н: 'n',
+  о: 'o',
+  п: 'p',
+  р: 'r',
+  с: 's',
+  т: 't',
+  у: 'u',
+  ф: 'f',
+  х: 'h',
+  ц: 's',
+  ч: 'c',
+  ш: 's',
+  щ: 's',
+  ъ: 'j',
+  ы: 'y',
+  ь: 'y',
+  э: 'e',
+  ю: 'u',
+  я: 'a',
+  ә: 'a',
+  ғ: 'g',
+  қ: 'k',
+  ң: 'n',
+  ө: 'o',
+  ұ: 'u',
+  ү: 'u',
+  һ: 'h',
+  і: 'i',
+};
 
-/** Normalize a name for case- and spacing-insensitive uniqueness checks. */
+function transliterate(s: string): string {
+  return s.replace(/[Ѐ-ӿ]/g, (ch) => CYRILLIC_MAP[ch] ?? ch);
+}
+
+/**
+ * Turn a team name into a URL-safe ASCII slug.
+ * "Команда Альфа" → "komanda-alyfa"; "Cool Hackers!!" → "cool-hackers"
+ */
+function slugify(name: string): string {
+  return transliterate(name.trim().toLowerCase())
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Normalize a name for uniqueness checks, so "Binary  Blossoms" and
+ * "binary blossoms" collide while the display name is preserved as typed.
+ */
 function canonicalizeTeamName(name: string): string {
   return name.trim().normalize('NFKC').toLowerCase().replace(/\s+/g, ' ');
+}
+
+/** Unique invite slug, appending -2, -3 … on collision. */
+async function generateUniqueSlug(name: string): Promise<string> {
+  const db = getAppDb();
+  const base = slugify(name);
+
+  if (!base) throw new Error(TEAM_ERRORS.nameNeedsLetters);
+
+  const existing = await db.query.team.findFirst({
+    where: eq(team.inviteSlug, base),
+    columns: { id: true },
+  });
+  if (!existing) return base;
+
+  for (let i = 2; i <= 11; i++) {
+    const candidate = `${base}-${i}`;
+    const collision = await db.query.team.findFirst({
+      where: eq(team.inviteSlug, candidate),
+      columns: { id: true },
+    });
+    if (!collision) return candidate;
+  }
+
+  throw new Error(TEAM_ERRORS.slugUnavailable);
 }
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -68,32 +153,10 @@ export async function getTeamByParticipant(userId: string): Promise<TeamData | n
   });
   if (!t) return null;
 
-  // Legacy teams have no token. A compare-and-set prevents concurrent members
-  // from receiving different links; no old name-based slug remains usable.
-  let inviteToken = t.inviteToken;
-  if (!inviteToken) {
-    const replacement = newInviteToken();
-    const [updated] = await db
-      .update(team)
-      .set({ inviteToken: replacement, inviteSlug: replacement })
-      .where(and(eq(team.id, t.id), isNull(team.inviteToken)))
-      .returning({ inviteToken: team.inviteToken });
-    inviteToken =
-      updated?.inviteToken ??
-      (
-        await db.query.team.findFirst({
-          where: eq(team.id, t.id),
-          columns: { inviteToken: true },
-        })
-      )?.inviteToken ??
-      null;
-    if (!inviteToken) throw new Error(TEAM_ERRORS.slugUnavailable);
-  }
-
   return {
     id: t.id,
     name: t.name,
-    inviteSlug: inviteToken,
+    inviteSlug: t.inviteSlug,
     captainId: t.captainId,
     members: t.members.map((m) => ({
       id: m.id,
@@ -108,7 +171,7 @@ export async function getTeamByParticipant(userId: string): Promise<TeamData | n
 export async function getTeamBySlug(slug: string) {
   const db = getAppDb();
   const t = await db.query.team.findFirst({
-    where: eq(team.inviteToken, slug),
+    where: eq(team.inviteSlug, slug),
     with: { members: { columns: { id: true } } },
   });
   if (!t) return null;
@@ -139,8 +202,6 @@ export async function createTeam(userId: string, name: string): Promise<TeamData
     columns: { id: true },
   });
   if (existing) throw new Error(TEAM_ERRORS.nameTaken);
-  // Preserve the existing requirement that a team name contain a supported letter or digit.
-  if (!/[a-z0-9а-яёәғқңөұүһі]/i.test(name)) throw new Error(TEAM_ERRORS.nameNeedsLetters);
 
   const id = crypto.randomUUID();
   const now = new Date();
@@ -148,7 +209,7 @@ export async function createTeam(userId: string, name: string): Promise<TeamData
   // D1 batches are transactions. Only insert while the captain is teamless,
   // then attach her in the same batch so no other create/join can intervene.
   for (let attempt = 0; attempt < 11; attempt++) {
-    const inviteSlug = newInviteToken();
+    const inviteSlug = await generateUniqueSlug(name);
     try {
       const [insert] = await db.batch([
         db
@@ -160,7 +221,7 @@ export async function createTeam(userId: string, name: string): Promise<TeamData
                 name: sql<string>`${name}`.as('name'),
                 nameCanonical: sql<string>`${canonicalName}`.as('name_canonical'),
                 inviteSlug: sql<string>`${inviteSlug}`.as('invite_slug'),
-                inviteToken: sql<string>`${inviteSlug}`.as('invite_token'),
+                inviteToken: sql<string | null>`null`.as('invite_token'),
                 captainId: participant.id,
                 unconfirmed: sql<boolean>`0`.as('unconfirmed'),
                 number: sql<number | null>`null`.as('number'),
@@ -206,10 +267,7 @@ export async function createTeam(userId: string, name: string): Promise<TeamData
       ) {
         throw new Error(TEAM_ERRORS.nameTaken, { cause: error });
       }
-      if (
-        message.includes('unique') &&
-        (message.includes('invite_slug') || message.includes('invite_token'))
-      ) {
+      if (message.includes('unique') && message.includes('invite_slug')) {
         if (attempt < 10) continue;
         throw new Error(TEAM_ERRORS.slugUnavailable, { cause: error });
       }
@@ -234,7 +292,7 @@ export async function joinTeamBySlug(userId: string, slug: string): Promise<Team
   if (p.teamId) throw new Error(TEAM_ERRORS.alreadyInTeam);
 
   const t = await db.query.team.findFirst({
-    where: eq(team.inviteToken, slug),
+    where: eq(team.inviteSlug, slug),
     with: { members: { columns: { id: true } } },
   });
   if (!t) throw new Error(TEAM_ERRORS.invalidInvite);
@@ -263,7 +321,7 @@ export async function joinTeamBySlug(userId: string, slug: string): Promise<Team
     if (!current) throw new Error(TEAM_ERRORS.noProfile);
     if (current.teamId) throw new Error(TEAM_ERRORS.alreadyInTeam);
     const currentTeam = await db.query.team.findFirst({
-      where: eq(team.inviteToken, slug),
+      where: eq(team.inviteSlug, slug),
       columns: { number: true },
     });
     if (!currentTeam) throw new Error(TEAM_ERRORS.invalidInvite);

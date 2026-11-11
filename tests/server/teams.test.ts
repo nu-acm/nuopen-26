@@ -55,7 +55,7 @@ it('rejects competing canonical names and gives distinct slugs to different name
     reason: { message: TEAM_ERRORS.nameTaken },
   });
   const teams = await Promise.all([createTeam('c', 'Same Slug!'), createTeam('d', 'Same Slug?')]);
-  expect(new Set(teams.map((team) => team.inviteSlug)).size).toBe(2);
+  expect(teams.map((team) => team.inviteSlug).sort()).toEqual(['same-slug', 'same-slug-2']);
 });
 
 it('rolls back creation when D1 rejects the captain assignment', async () => {
@@ -87,40 +87,13 @@ it('enforces captain permissions and detaches members on dissolution', async () 
   expect(await getTeamByParticipant('member')).toBeNull();
 });
 
-it('uses unpredictable invite tokens and rejects legacy name-based links', async () => {
+it('uses readable invite slugs and transliterates Cyrillic team names', async () => {
   await seedParticipant('captain');
   await seedParticipant('member');
   await expect(createTeam('captain', '!!!')).rejects.toThrow(TEAM_ERRORS.nameNeedsLetters);
-  const created = await createTeam('captain', 'Guessable Team');
-  expect(created.name).toBe('Guessable Team');
-  expect(created.inviteSlug).toMatch(/^[0-9a-f]{32}$/);
-  expect(await getTeamBySlug('guessable-team')).toBeNull();
-  await expect(joinTeamBySlug('member', 'guessable-team')).rejects.toThrow(
-    TEAM_ERRORS.invalidInvite,
-  );
+  const created = await createTeam('captain', 'Қыздар Коды');
+  expect(created.inviteSlug).toBe('kyzdar-kody');
+  expect((await getTeamBySlug(created.inviteSlug))?.name).toBe('Қыздар Коды');
   await joinTeamBySlug('member', created.inviteSlug);
-  expect((await getTeamByParticipant('member'))?.name).toBe('Guessable Team');
-});
-
-it('rotates legacy invite links once, even when members load concurrently', async () => {
-  await seedParticipant('captain');
-  await seedParticipant('member');
-  const created = await createTeam('captain', 'Legacy Team');
-  await joinTeamBySlug('member', created.inviteSlug);
-  await bindings.DB.prepare('UPDATE team SET invite_slug = ?, invite_token = NULL WHERE id = ?')
-    .bind('legacy-team', created.id)
-    .run();
-  await seedParticipant('outsider');
-  expect(await getTeamBySlug('legacy-team')).toBeNull();
-  await expect(joinTeamBySlug('outsider', 'legacy-team')).rejects.toThrow(
-    TEAM_ERRORS.invalidInvite,
-  );
-  const [first, second] = await Promise.all([
-    getTeamByParticipant('captain'),
-    getTeamByParticipant('member'),
-  ]);
-  expect(first?.inviteSlug).toMatch(/^[0-9a-f]{32}$/);
-  expect(second?.inviteSlug).toBe(first?.inviteSlug);
-  expect(first?.name).toBe('Legacy Team');
-  await joinTeamBySlug('outsider', first!.inviteSlug);
+  expect((await getTeamByParticipant('member'))?.name).toBe('Қыздар Коды');
 });

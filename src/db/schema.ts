@@ -9,8 +9,7 @@ import { user } from '@/db/auth-schema';
 
 /**
  * A captain creates a team with up to MAX_TEAM_SIZE members.
- * inviteToken is the random capability used for /invite/$slug links.
- * inviteSlug remains the admin reference and is rotated alongside legacy tokens.
+ * inviteSlug is derived from the team name and used for /invite/$slug links.
  */
 export const team = sqliteTable('team', {
   id: text('id').primaryKey(), // crypto.randomUUID()
@@ -18,7 +17,7 @@ export const team = sqliteTable('team', {
   // Canonicalized name, for case- and spacing-insensitive uniqueness checks.
   nameCanonical: text('name_canonical').notNull().unique(),
   inviteSlug: text('invite_slug').notNull().unique(),
-  // Null for legacy teams until an authenticated member opens the dashboard.
+  // Unused column from the previous invite scheme.
   inviteToken: text('invite_token').unique(),
   captainId: text('captain_id')
     .notNull()
