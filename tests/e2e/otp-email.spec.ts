@@ -61,14 +61,14 @@ test('sends a recognizable, selectable NU Open code without splitting its digits
   expect(email.to).toBe('pilot@example.test');
   expect(email.name).toBe('NU Open');
   expect(email.subject).toBe('012345 is your NU Open verification code');
-  expect(email.body).toContain('verification code is 012345');
-  expect(email.body).toContain('expires in 5 minutes');
+  expect(email.body.startsWith('012345 is your NU Open verification code.')).toBe(true);
+  expect(email.body).toContain('Enter it at nuopen.nuacm.kz.');
+  expect(email.body).toContain('Expires in 5 minutes');
   expect(email.htmlBody).not.toMatch(/<script\b|\son[a-z]+\s*=|javascript:/i);
   await page.setContent(email.htmlBody);
   const code = page.getByText('012345', { exact: true });
   await expect(code).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Verify your email' })).toBeVisible();
-  await expect(page.getByText('Incoming transmission')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'NU Open verification code' })).toBeVisible();
   if (info.project.name === 'mobile') await code.tap();
   else await code.click();
   await expect.poll(() => page.evaluate(() => window.getSelection()?.toString())).toBe('012345');

@@ -16,16 +16,7 @@
  *   { ok: true } or { ok: false, error: '...' }.
  */
 
-const BRAND = {
-  name: 'NU Open',
-  space: '#03040a',
-  panel: '#0c101b',
-  yellow: '#ffe81f',
-  blue: '#3ea8ff',
-  text: '#f7f5ef',
-  muted: '#b8b7b3',
-  border: '#29313e',
-};
+const EVENT_NAME = 'NU Open';
 
 const OTP_PATTERN = /^\d{6}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -56,7 +47,7 @@ function doPost(e) {
 function doGet() {
   return reply({
     ok: true,
-    service: BRAND.name + ' mailer',
+    service: EVENT_NAME + ' mailer',
     quotaLeft: MailApp.getRemainingDailyQuota(),
   });
 }
@@ -69,46 +60,39 @@ function sendOtp(body) {
 
   MailApp.sendEmail({
     to: email,
-    subject: otp + ' is your ' + BRAND.name + ' verification code',
+    subject: otp + ' is your ' + EVENT_NAME + ' verification code',
     body:
-      'Your ' +
-      BRAND.name +
-      ' verification code is ' +
       otp +
-      '.\n\nEnter this code to sign in. It expires in ' +
+      ' is your ' +
+      EVENT_NAME +
+      ' verification code.\n\nEnter it at nuopen.nuacm.kz. Expires in ' +
       CODE_LIFETIME_MINUTES +
-      ' minutes.\n\nIf you did not request this code, you can ignore this email.',
+      ' minutes.\n\nIf you did not request this code, ignore this email.',
     htmlBody: otpHtml(otp),
-    name: BRAND.name,
+    name: EVENT_NAME,
   });
 
   return reply({ ok: true });
 }
 
 function otpHtml(otp) {
-  const sans = 'Arial,Helvetica,sans-serif';
-
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
 </head>
-<body style="margin:0;padding:0;background-color:${BRAND.space};color:${BRAND.text}">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${BRAND.space}" style="width:100%;background-color:${BRAND.space}">
+<body style="margin:0;padding:0;background-color:#ffffff;color:#111111">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="width:100%;background-color:#ffffff">
 <tr><td align="center" style="padding:32px 16px">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:560px;margin:0 auto;font-family:${sans}">
-<tr><td style="padding:0 0 24px;color:${BRAND.yellow};font-size:20px;line-height:26px;font-weight:bold;letter-spacing:2px">NU OPEN <span style="font-size:11px;color:${BRAND.blue};letter-spacing:2px">VII</span></td></tr>
-<tr><td bgcolor="${BRAND.panel}" style="background-color:${BRAND.panel};border:1px solid ${BRAND.border};border-top:3px solid ${BRAND.yellow};padding:32px 24px;color:${BRAND.text}">
-<div style="color:${BRAND.blue};font-size:11px;line-height:18px;font-weight:bold;letter-spacing:2px;text-transform:uppercase">Incoming transmission</div>
-<h1 style="margin:16px 0 12px;font-size:28px;line-height:34px;color:${BRAND.text}">Verify your email</h1>
-<p style="margin:0 0 24px;color:${BRAND.muted};font-size:15px;line-height:24px">Your NU Open verification code is:</p>
-<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="${BRAND.space}" style="background-color:${BRAND.space};border:1px solid ${BRAND.border};padding:18px 24px">
-<span style="font-family:Consolas,Monaco,monospace;font-size:38px;line-height:46px;font-weight:bold;letter-spacing:4px;color:${BRAND.text};-webkit-user-select:all;user-select:all">${otp}</span>
-</td></tr></table>
-<p style="margin:24px 0 0;color:${BRAND.text};font-size:15px;line-height:24px">Enter this code to sign in. It expires in <strong>${CODE_LIFETIME_MINUTES} minutes</strong>.</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:440px;font-family:Arial,Helvetica,sans-serif;text-align:center">
+<tr><td>
+<h1 style="margin:0 0 20px;font-size:16px;line-height:24px;font-weight:normal;color:#555555">${EVENT_NAME} verification code</h1>
+<p style="margin:0 0 20px;font-family:Consolas,Monaco,monospace;font-size:44px;line-height:56px;font-weight:bold;letter-spacing:4px;color:#2563eb"><span style="white-space:nowrap;-webkit-user-select:all;user-select:all">${otp}</span></p>
+<p style="margin:0;font-size:15px;line-height:24px;color:#333333">Enter it at nuopen.nuacm.kz.<br>Expires in ${CODE_LIFETIME_MINUTES} minutes.</p>
+<p style="margin:28px 0 0;font-size:13px;line-height:20px;color:#666666">If you did not request this code, ignore this email.</p>
 </td></tr>
-<tr><td style="padding:24px 0;color:${BRAND.muted};font-size:13px;line-height:21px">If you did not request this code, you can ignore this email.<br><br>ACM@NU &nbsp;·&nbsp; NU Open</td></tr>
 </table>
 </td></tr>
 </table>
@@ -178,8 +162,8 @@ function cleanupOldCodes() {
 
   const cutoff = Date.now() - 24 * 60 * 60 * 1000;
   const suffixes = [
-    ' is your ' + BRAND.name + ' verification code',
-    ' is your ' + BRAND.name + ' code',
+    ' is your ' + EVENT_NAME + ' verification code',
+    ' is your ' + EVENT_NAME + ' code',
   ];
   for (const suffix of suffixes) {
     const threads = GmailApp.search(
