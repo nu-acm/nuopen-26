@@ -22,6 +22,7 @@ export function ColumnToggleBar<T extends object>({ table }: { table: AdminTable
   const allVisible = columns.every((column) => column.getIsVisible());
   return (
     <div className="admin-column-controls">
+      <span className="admin-control-label">Columns</span>
       <Button size="sm" variant="link" onClick={() => table.toggleAllColumnsVisible(!allVisible)}>
         {allVisible ? 'Hide all' : 'Show all'}
       </Button>
@@ -64,6 +65,7 @@ export function AdminDataTable<T extends object>({
               return (
                 <TableHead
                   key={header.id}
+                  data-column={header.column.id}
                   colSpan={header.colSpan}
                   aria-sort={sorted ? (sorted === 'asc' ? 'ascending' : 'descending') : undefined}
                 >
@@ -84,7 +86,11 @@ export function AdminDataTable<T extends object>({
             className={rowPrefix ? 'scroll-mt-24' : undefined}
           >
             {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id} tone={cell.column.columnDef.meta?.tone}>
+              <TableCell
+                key={cell.id}
+                data-column={cell.column.id}
+                tone={cell.column.columnDef.meta?.tone}
+              >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </TableCell>
             ))}

@@ -502,7 +502,7 @@ function AdminPage() {
       <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
         <div className="admin-heading">
           <div>
-            <h1 className="admin-title">Admin</h1>
+            <h1 className="admin-title">Registration report</h1>
             <p className="mt-2 text-sm text-whd-text-muted">
               {registrationOpen
                 ? 'Registration is still open. Finalize the teams once it closes.'
@@ -557,12 +557,12 @@ function AdminPage() {
           <StatCard
             label="Participants"
             value={stats.participants}
-            breakdown={`${eligibleParticipants} eligible / ${stats.participants - eligibleParticipants} not`}
+            breakdown={`${eligibleParticipants} eligible · ${stats.participants - eligibleParticipants} not eligible`}
           />
           <StatCard
             label="Teams"
             value={stats.teams}
-            breakdown={`${stats.eligibleTeams} eligible / ${stats.teams - stats.eligibleTeams} not`}
+            breakdown={`${stats.eligibleTeams} eligible · ${stats.teams - stats.eligibleTeams} not eligible`}
           />
           <StatCard label="Without a team" value={stats.teamless} />
           <StatCard label="Checked in" value={stats.attended} />
@@ -574,8 +574,6 @@ function AdminPage() {
               <TabsTrigger value="participants">Participants</TabsTrigger>
               <TabsTrigger value="teams">Teams</TabsTrigger>
             </TabsList>
-          </div>
-          <div className="admin-toolbar">
             <Input
               value={query}
               onChange={(e) =>
@@ -614,9 +612,16 @@ function AdminPage() {
             )}
           </div>
 
-          <p className="admin-count">{`${shown} of ${inFilter}`}</p>
+          <p className="admin-count">
+            {`${shown} of ${inFilter} ${isParticipants ? 'participants' : 'teams'}`}
+          </p>
 
-          <div className="admin-table-wrap" role="region" aria-label="Columns" tabIndex={0}>
+          <div
+            className="admin-table-wrap"
+            role="region"
+            aria-label={isParticipants ? 'Participants table' : 'Teams table'}
+            tabIndex={0}
+          >
             <TabsContent value="participants">
               <AdminDataTable
                 table={participantTable}

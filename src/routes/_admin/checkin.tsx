@@ -406,8 +406,6 @@ function CheckinPage() {
               <TabsTrigger value="participants">Participants</TabsTrigger>
               <TabsTrigger value="teams">Teams</TabsTrigger>
             </TabsList>
-          </div>
-          <div className="admin-toolbar">
             <Input
               value={isParticipants ? participantQuery : teamQuery}
               onChange={(e) =>
@@ -464,9 +462,16 @@ function CheckinPage() {
             )}
           </div>
 
-          <p className="admin-count">{`${shown} of ${inFilter}`}</p>
+          <p className="admin-count">
+            {`${shown} of ${inFilter} ${isParticipants ? 'participants' : 'teams'}`}
+          </p>
 
-          <div className="admin-table-wrap" role="region" aria-label="Columns" tabIndex={0}>
+          <div
+            className="admin-table-wrap"
+            role="region"
+            aria-label={isParticipants ? 'Participant check-in table' : 'Team check-in table'}
+            tabIndex={0}
+          >
             <TabsContent value="participants">
               <AttendanceActionsContext value={attendanceActions}>
                 <AdminDataTable table={participantTable} variant="checkin" />

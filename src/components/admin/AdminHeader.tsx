@@ -19,6 +19,25 @@ export function AdminHeader({
           <span className="site-brand-wordmark">NU Open</span>
           <span className="site-brand-edition">VII</span>
         </Link>
+        <nav className="admin-nav" aria-label="Admin navigation">
+          <Link to="/dashboard" className={navLinkClass}>
+            Dashboard
+          </Link>
+          <Link
+            to="/admin"
+            className={navLinkClass}
+            activeProps={{ className: 'admin-nav-active', 'aria-current': 'page' }}
+          >
+            Report
+          </Link>
+          <Link
+            to="/checkin"
+            className={navLinkClass}
+            activeProps={{ className: 'admin-nav-active', 'aria-current': 'page' }}
+          >
+            Check-in
+          </Link>
+        </nav>
         <div className="admin-header-actions">
           {onRefresh && (
             <Button
@@ -42,31 +61,6 @@ export function AdminHeader({
             confirmationTone="accent"
           />
         </div>
-      </div>
-      <div className="admin-nav-wrap">
-        <nav className="admin-nav">
-          <Link to="/dashboard" className={navLinkClass}>
-            Dashboard
-          </Link>
-          <Link
-            to="/admin"
-            className={navLinkClass}
-            activeProps={{
-              className: 'admin-nav-active',
-            }}
-          >
-            Report
-          </Link>
-          <Link
-            to="/checkin"
-            className={navLinkClass}
-            activeProps={{
-              className: 'admin-nav-active',
-            }}
-          >
-            Check-in
-          </Link>
-        </nav>
       </div>
     </header>
   );
