@@ -31,7 +31,7 @@ const OTP_PATTERN = /^\d{6}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const CODE_LIFETIME_MINUTES = 5;
 const CV_FOLDER_NAME = 'NU Open 2026 CVs';
-const CV_MAX_BYTES = 5 * 1024 * 1024;
+const CV_MAX_BYTES = 2 * 1024 * 1024;
 const FILE_ID_PATTERN = /^[\w-]{10,200}$/;
 
 function doPost(e) {

@@ -1,6 +1,6 @@
 /** Client-safe CV constants and helpers (no `cloudflare:workers`, no env). */
 
-export const CV_MAX_MB = 5;
+export const CV_MAX_MB = 2;
 export const CV_MAX_BYTES = CV_MAX_MB * 1024 * 1024;
 export const CV_UPLOAD_HINT = `Optional. Upload a PDF up to ${CV_MAX_MB} MB. It is stored in the organisers’ private Google Drive folder. By uploading, you agree that organisers may review your CV and share it with event partners for recruitment.`;
 
@@ -51,7 +51,7 @@ export function cvFileName(fullName: string, userId: string) {
   return `${safeName || 'participant'} - ${userId.slice(0, 8)}.pdf`;
 }
 
-// Spreading a whole 5 MB array into fromCharCode overflows the call stack.
+// Spreading a whole PDF into fromCharCode can overflow the call stack.
 const BASE64_CHUNK = 0x8000;
 
 export function toBase64(bytes: Uint8Array) {
