@@ -34,7 +34,7 @@ export const EVENT = {
     mapHref: 'https://maps.google.com/?q=Nazarbayev+University+Astana',
   },
   team: { min: MIN_TEAM_SIZE, max: MAX_TEAM_SIZE, minAge: MIN_PARTICIPANT_AGE },
-  prize: { text: PRIZE_TEXT, extra: 'plus ACM@NU merch for the winners' },
+  prize: { ...PRIZE, text: PRIZE_TEXT, extra: 'plus ACM@NU merch for the winners' },
   stats: [
     { value: 2100, suffix: '+', label: 'participants' },
     { value: 800, suffix: '+', label: 'teams' },
