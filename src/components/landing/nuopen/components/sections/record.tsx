@@ -84,16 +84,18 @@ export function PreviousEpisodes() {
         <div className="record-photo-wrap">
           <img
             loading="lazy"
-            src="/nuopen/images/nuopen-24.jpg"
-            width={1256}
-            height={660}
-            alt="NU Open 2024 teams on stage with the prize boards"
+            decoding="async"
+            src="/nuopen/images/nuopen-25-1200.webp"
+            srcSet="/nuopen/images/nuopen-25-1200.webp 1200w, /nuopen/images/nuopen-25.webp 2400w"
+            width={2400}
+            height={1600}
+            alt="NU Open 2025 participants and organizers on stage with the prize boards"
             sizes="(min-width: 1240px) 1144px, calc(100vw - 32px)"
             className="record-photo"
           />
           <span aria-hidden className="record-grain" />
         </div>
-        <figcaption className="label">NU Open ’24 · Nazarbayev University</figcaption>
+        <figcaption className="label">NU Open ’25 · Nazarbayev University</figcaption>
       </figure>
     </section>
   );
