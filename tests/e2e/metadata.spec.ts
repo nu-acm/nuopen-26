@@ -40,9 +40,9 @@ test('serves English pages and metadata even with a previous language preference
     ).toHaveCount(0);
     expect(head.titles).toBe(1);
     expect(head.descriptions).toBe(1);
-    expect(head.title).not.toMatch(/[—–]/);
+    expect(head.title).not.toMatch(/[\u2013\u2014]/);
     expect(head.description).toBeTruthy();
-    expect(head.description).not.toMatch(/[—–]/);
+    expect(head.description).not.toMatch(/[\u2013\u2014]/);
     expect(head.canonical).toBe(canonical);
     expect(head.meta['og:url']).toBe(canonical);
     expect(head.meta['og:title']).toBe(head.title);

@@ -46,7 +46,7 @@ const faqs = [
   {
     id: 'howToParticipate',
     question: 'How can I participate?',
-    answer: `Sign in by email, complete your profile, and create or join a team. Registration closes on ${deadline} at 23:59 Astana time.`,
+    answer: `Sign in by email, complete your profile, and create or join a team. Registration closes on ${deadline} at 23:59.`,
   },
   {
     id: 'online',

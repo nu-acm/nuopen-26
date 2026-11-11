@@ -11,5 +11,5 @@ const clock = new Intl.DateTimeFormat('en-GB', {
 export function contestWindow(start: string, end: string) {
   const from = clock.format(new Date(start));
   const to = clock.format(new Date(end));
-  return { range: `${from}–${to}`, zone: 'Astana time (UTC+5)' };
+  return `${from} to ${to}`;
 }

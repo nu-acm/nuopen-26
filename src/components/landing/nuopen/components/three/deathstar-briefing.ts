@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
 import { briefingYaw } from '@/components/landing/nuopen/lib/deathstar-shot';
-import { framingDistance } from '@/components/landing/nuopen/lib/transit';
 
 import { attachDeathStar, lightDeathStar } from './deathstar';
+import { framingDistance } from './fit';
 import type { StageActor, StageContext } from './use-stage';
 
 /** Scroll progress through the section (0..1), scrubbed by GSAP in the component. */

@@ -73,7 +73,7 @@ export function FlightPlan() {
         ))}
       </ol>
 
-      <p className="label schedule-caption">Contest day · All times are Astana time (UTC+5)</p>
+      <p className="label schedule-caption">Contest day</p>
       <ol aria-label="Contest day" className="agenda">
         {EVENT.agenda.map((slot) => (
           <li
@@ -82,7 +82,7 @@ export function FlightPlan() {
             data-main={isMainSlot(slot) ? 'true' : undefined}
           >
             <p className="agenda-time font-mono">
-              {slot.from} – {slot.to}
+              {slot.from} to {slot.to}
             </p>
             <div className="agenda-body">
               <p className={isMainSlot(slot) ? 'agenda-title font-display' : 'agenda-title'}>

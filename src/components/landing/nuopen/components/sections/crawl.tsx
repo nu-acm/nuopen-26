@@ -7,11 +7,11 @@ import { EVENT } from '@/components/landing/nuopen/content/event';
 import { gsap } from '../motion/gsap';
 import { useGsap } from '../motion/use-gsap';
 
-// A New Hope's crawl rolls for well over a minute, about a line every 2.5 s; "Read the crawl" plays ours at that pace.
+// A New Hope's crawl rolls for well over a minute, about a line every 2.5 s.
 const CRAWL_S = 75;
-/** In screen heights: the first line starts at the bottom edge; the last line ends this far up the tilted plane. */
-const ENTER = 0.14;
-const EXIT = 0.85;
+/** Entry and exit offsets along the tilted plane, in viewport heights. */
+const ENTER = 0.38;
+const EXIT = 0.62;
 
 /** The opening crawl, scrubbed by scroll: what NU Open is, told the way every episode starts. */
 export function Crawl() {

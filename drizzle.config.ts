@@ -1,6 +1,6 @@
 import { defineConfig } from 'drizzle-kit';
 
-/** Remote (Cloudflare) config — used by `db:studio:remote`. */
+/** Cloudflare config for `db:studio:remote`. */
 export default defineConfig({
   out: './drizzle',
   schema: ['./src/db/schema.ts', './src/db/auth-schema.ts'],

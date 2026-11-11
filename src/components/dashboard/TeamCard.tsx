@@ -14,9 +14,8 @@ import { webHapticsOptions } from '@/lib/web-haptics';
 const noopSubscribe = () => () => {};
 
 /**
- * The site origin, read only in the browser. The server snapshot is '', and
- * React swaps in the real value after hydration — computing it inline instead
- * left the invite field blank, since hydration keeps the server-rendered value.
+ * The server snapshot is ''. React reads the site origin after hydration.
+ * Reading it inline left the invite field blank because hydration kept the server value.
  */
 function useOrigin() {
   return useSyncExternalStore(

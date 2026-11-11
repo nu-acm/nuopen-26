@@ -26,9 +26,6 @@ export function Footer() {
             <li>
               <a href={`mailto:${EVENT.contacts.email}`}>{EVENT.contacts.email}</a>
             </li>
-            <li>
-              <a href={EVENT.contacts.phoneHref}>{EVENT.contacts.phone}</a>
-            </li>
           </ul>
           <ul className="footer-links" aria-label="Social">
             {EVENT.contacts.social.map((social) => (

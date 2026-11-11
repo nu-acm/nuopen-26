@@ -1,7 +1,7 @@
 export type Star = { x: number; y: number; z: number; size: number };
 
-/** Star speed in depth units per second: a slow drift at rest, full lightspeed at warp 1. */
-export const SPEED = { drift: 0.015, lightspeed: 2.4 } as const;
+/** Star drift in depth units per second. */
+export const DRIFT_SPEED = 0.015;
 
 export function createStars(count: number): Star[] {
   return Array.from({ length: count }, () => ({
@@ -13,11 +13,6 @@ export function createStars(count: number): Star[] {
 }
 
 export const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
-const easeIn = (t: number) => t * t * t;
-
-/** Star speed in depth units per second for a warp level. */
-export const speedOf = (warp: number) =>
-  SPEED.drift + (SPEED.lightspeed - SPEED.drift) * easeIn(clamp01(warp));
 
 /** Screen position and radius of a star; depth 1 is the far plane, the camera sits at 0. */
 export function project(star: Star, width: number, height: number) {

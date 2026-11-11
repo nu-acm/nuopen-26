@@ -52,7 +52,7 @@ function doPost(e) {
   }
 }
 
-/** Visiting the /exec URL in a browser shows this — handy to confirm the deployment is live. */
+/** Visit the /exec URL in a browser to confirm the deployment is live. */
 function doGet() {
   return reply({
     ok: true,

@@ -13,7 +13,7 @@ import { briefingDeathStarActor, type Progress } from '../three/deathstar-briefi
 import { useStage } from '../three/use-stage';
 
 const { contest, venue, team } = EVENT;
-const timing = contestWindow(contest.start, contest.end);
+const timeRange = contestWindow(contest.start, contest.end);
 
 type Fact = { label: string; value: string; detail: string; action?: ReactNode };
 
@@ -22,8 +22,8 @@ function briefingFacts(): Fact[] {
     { label: 'Date', value: contest.dateLabel, detail: contest.weekday },
     {
       label: 'Time',
-      value: timing.range,
-      detail: `${timing.zone} · ${contest.hours} hours`,
+      value: timeRange,
+      detail: `${contest.hours} hours`,
     },
     {
       label: 'Base',
@@ -53,7 +53,7 @@ function briefingFacts(): Fact[] {
     },
     {
       label: 'Crew',
-      value: `${team.min}–${team.max} per team`,
+      value: `${team.min} to ${team.max} per team`,
       detail: `Age ${team.minAge}+, solo or in a team`,
     },
     {

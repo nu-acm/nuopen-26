@@ -1,6 +1,6 @@
 export const CONTACT_EMAIL = 'acm_w@nu.edu.kz';
 
-/** Participant chat — used by the FAQ answers. */
+/** The participant chat linked in the FAQ. */
 export const TELEGRAM_CHAT_URL = 'https://t.me/whd_2026';
 
 export const CODE_OF_CONDUCT_URL =

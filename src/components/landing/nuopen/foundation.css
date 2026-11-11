@@ -152,7 +152,7 @@
     padding-block: clamp(72px, 10vh, 140px);
   }
 
-  /* One shared two-column split: copy on columns 1–5, the main block on 7–12. */
+  /* The shared split puts copy in columns 1 through 5 and the main block in columns 7 through 12. */
   .split {
     display: grid;
     gap: clamp(32px, 5vw, 56px);
@@ -173,7 +173,7 @@
     }
   }
 
-  /* ---- buttons: a lit blade — white core, side-coloured halo ---- */
+  /* Buttons use a white blade core with a side-coloured halo. */
 
   .btn,
   .btn-ghost {

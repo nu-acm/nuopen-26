@@ -129,23 +129,6 @@
 .nuopen-landing .navigation-jump-stars i {
   opacity: var(--streak-opacity);
 }
-.nuopen-landing .allies,
-.nuopen-landing .allies-address,
-.nuopen-landing .allies-chip,
-.nuopen-landing .allies-copy,
-.nuopen-landing .allies-cta,
-.nuopen-landing .allies-head,
-.nuopen-landing .allies-names,
-.nuopen-landing .allies-pitch,
-.nuopen-landing .allies-pitch-text,
-.nuopen-landing .allies-points,
-.nuopen-landing .allies-row,
-.nuopen-landing .allies-side,
-.nuopen-landing .allies-timeline,
-.nuopen-landing .allies-wall,
-.nuopen-landing .allies-wall-block,
-.nuopen-landing .allies-wall-chip,
-.nuopen-landing .allies-year,
 .nuopen-landing .bounty,
 .nuopen-landing .bounty-copy,
 .nuopen-landing .crawl,
@@ -157,9 +140,6 @@
 .nuopen-landing .faq-body,
 .nuopen-landing .header-logo,
 .nuopen-landing .hero,
-.nuopen-landing .hyper,
-.nuopen-landing .hyper-flash,
-.nuopen-landing .hyper-stick,
 .nuopen-landing .navigation-jump,
 .nuopen-landing .navigation-jump-stars,
 .nuopen-landing .record,
@@ -175,18 +155,6 @@
 .nuopen-landing .rules-head,
 .nuopen-landing .rules-list,
 .nuopen-landing .rules-stage,
-.nuopen-landing .schedule,
-.nuopen-landing .side-band,
-.nuopen-landing .side-bar,
-.nuopen-landing .side-choice,
-.nuopen-landing .side-copy,
-.nuopen-landing .side-fact,
-.nuopen-landing .side-facts,
-.nuopen-landing .side-option,
-.nuopen-landing .side-option-title,
-.nuopen-landing .side-reveal,
-.nuopen-landing .side-row,
-.nuopen-landing .side-stage,
-.nuopen-landing .side-title {
+.nuopen-landing .schedule {
   --nuopen-animation-hook: 1;
 }

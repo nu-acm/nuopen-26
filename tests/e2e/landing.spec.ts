@@ -7,13 +7,16 @@ test.use({ reducedMotion: 'reduce' });
 test('shows NU Open event details and expands FAQ answers', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'NU Open', exact: true })).toBeVisible();
+  await expect(page.locator('#top .hero-stage, #top canvas')).toHaveCount(0);
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('.hero-sub')).toHaveText(EVENT.subtitle);
   for (const paragraph of EVENT.crawl)
     await expect(page.locator('#crawl')).toContainText(paragraph);
-  await expect(page.locator('#side')).toContainText('Every pilot picks a side');
+  await expect(page.locator('#side')).toHaveCount(0);
+  await expect(page.locator('#crawl + #briefing')).toHaveCount(1);
   await expect(page.locator('#briefing')).toContainText(EVENT.contest.dateLabel);
-  await expect(page.locator('#briefing')).toContainText('1–3 per team');
+  await expect(page.locator('#briefing')).toContainText('1 to 3 per team');
+  await expect(page.locator('body')).not.toContainText(/[\u2013\u2014]/);
   await expect(page.locator('#record')).toContainText('Six battles behind us');
   await expect(page.locator('#bounty')).toContainText('Prize pool ₸1 000 000');
   await expect(page.locator('#schedule .route-date')).toHaveText([
@@ -47,7 +50,9 @@ test('shows NU Open event details and expands FAQ answers', async ({ page }) => 
   await expect(firstQuestion).toHaveAttribute('aria-expanded', 'false');
   const credits = await page.request.get('/nuopen/models/CREDITS.txt');
   expect(credits.ok()).toBe(true);
-  expect(await credits.text()).toContain('Anakin Skywalker');
+  const modelCredits = await credits.text();
+  expect(modelCredits).toContain('Anakin Skywalker');
+  expect(modelCredits).not.toMatch(/[\u2013\u2014]/);
 });
 
 test('keeps the original landing hero breakpoints and loads its reference photo', async ({
@@ -87,9 +92,7 @@ test('keeps the original landing hero breakpoints and loads its reference photo'
   await page.evaluate(() => scrollTo(0, 0));
 });
 
-test('Force controls synchronize the original header, cards, palette and rules', async ({
-  page,
-}) => {
+test('header Force controls update the palette and rules', async ({ page }) => {
   await page.goto('/');
   const header = page.locator('[data-site-header]');
   const mobile = page.viewportSize()!.width < 1024;
@@ -97,7 +100,10 @@ test('Force controls synchronize the original header, cards, palette and rules',
   await header.getByRole('button', { name: 'Dark side', exact: true }).click();
   await expect(page.locator('html')).toHaveAttribute('data-side', 'dark');
   await expect(page.locator('#rules-title')).toHaveText('The Imperial code');
-  await expect(page.locator('#side .side-option').first()).toHaveAttribute('aria-pressed', 'true');
+  await expect(header.getByRole('button', { name: 'Dark side', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   expect(
     await page.evaluate(() =>
       getComputedStyle(document.documentElement).getPropertyValue('--saber').trim(),
@@ -106,8 +112,9 @@ test('Force controls synchronize the original header, cards, palette and rules',
   if (mobile) {
     await page.keyboard.press('Escape');
     await expect(header.getByRole('button', { name: 'Menu', exact: true })).toBeFocused();
+    await header.getByRole('button', { name: 'Menu', exact: true }).click();
   }
-  await page.locator('#side .side-option').last().click();
+  await header.getByRole('button', { name: 'Light side', exact: true }).click();
   await expect(page.locator('#rules-title')).toHaveText('The Jedi code');
   await expect(page.locator('html')).toHaveAttribute('data-side', 'light');
 });
@@ -115,15 +122,19 @@ test('Force controls synchronize the original header, cards, palette and rules',
 test('saved Force and music choices restore after a fresh navigation', async ({ page }) => {
   await page.goto('/');
   const header = page.locator('[data-site-header]');
-  if (page.viewportSize()!.width < 1024)
-    await header.getByRole('button', { name: 'Menu', exact: true }).click();
+  const mobile = page.viewportSize()!.width < 1024;
+  if (mobile) await header.getByRole('button', { name: 'Menu', exact: true }).click();
   await header.getByRole('button', { name: 'Dark side', exact: true }).click();
   await header.getByRole('button', { name: 'Mute the music', exact: true }).click();
   await expect(header.getByRole('button', { name: 'Play the music', exact: true })).toBeVisible();
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-side', 'dark');
   await expect(page.locator('#rules-title')).toHaveText('The Imperial code');
-  await expect(page.locator('#side .side-option').first()).toHaveAttribute('aria-pressed', 'true');
+  if (mobile) await header.getByRole('button', { name: 'Menu', exact: true }).click();
+  await expect(header.getByRole('button', { name: 'Dark side', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   await expect(header.getByRole('button', { name: 'Play the music', exact: true })).toBeVisible();
   for (const track of ['imperial-march.m4a', 'main-theme.m4a'])
     expect((await page.request.head(`/nuopen/audio/${track}`)).ok()).toBe(true);

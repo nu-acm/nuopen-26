@@ -37,8 +37,8 @@ function failure(err: unknown) {
 
 /**
  * The signed-in participant's CV.
- *   POST   multipart/form-data with a `file` field (PDF) — upload or replace
- *   DELETE — remove
+ *   POST   Upload or replace a PDF via the `file` field in multipart/form-data.
+ *   DELETE Remove the CV.
  * Serves: /api/cv
  */
 export const Route = createFileRoute('/api/cv')({

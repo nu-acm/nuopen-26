@@ -1,20 +1,13 @@
 .nuopen-landing {
   .hero {
-    --stage-h: min(620px, 68svh);
+    --hero-sky-height: min(620px, 68svh);
     min-height: 100svh;
   }
 
-  /* Phones keep the same ship in a shorter sky, so the title and the info strip still fit the screen. */
   @media (max-width: 639px) {
     .hero {
-      --stage-h: 42svh;
+      --hero-sky-height: 42svh;
     }
-  }
-
-  /* The actor places the ship relative to this box, so its top sets where the ship sits. */
-  .hero-stage {
-    top: var(--header-h);
-    height: var(--stage-h);
   }
 
   .hero-vignette {
@@ -24,7 +17,7 @@
   }
 
   .hero-copy {
-    padding-top: calc(var(--header-h) + var(--stage-h) * 0.36 + clamp(8px, 2vh, 20px));
+    padding-top: calc(var(--header-h) + var(--hero-sky-height) * 0.36 + clamp(8px, 2vh, 20px));
   }
 
   .hero-episode {
@@ -124,8 +117,7 @@
   }
 
   @media (max-width: 479px) {
-    .hero-copy .btn,
-    .hero-copy .btn-ghost {
+    .hero-copy .btn {
       width: min(100%, 300px);
     }
   }

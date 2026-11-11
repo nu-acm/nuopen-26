@@ -11,12 +11,10 @@ import { Crawl } from './sections/crawl';
 import { Faq } from './sections/faq';
 import { Footer } from './sections/footer';
 import { Hero } from './sections/hero';
-import { Hyperspace } from './sections/hyperspace';
 import { Intro } from './sections/intro';
 import { PreviousEpisodes } from './sections/record';
 import { Rules } from './sections/rules';
 import { FlightPlan } from './sections/schedule';
-import { SideChoice } from './sections/side-choice';
 import { Trench } from './sections/trench';
 import { Starfield } from './space/starfield';
 import { usePrefetchModels } from './three/prefetch';
@@ -56,8 +54,6 @@ export function Landing({
           <main id="main" tabIndex={-1}>
             <Hero />
             <Crawl />
-            <SideChoice />
-            <Hyperspace />
             <Briefing />
             <PreviousEpisodes />
             <Reward />

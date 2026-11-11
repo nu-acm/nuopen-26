@@ -68,7 +68,7 @@ async function generateTeamName(): Promise<string> {
     examples,
     '',
     'Generate one new team name for NU Open, an ICPC-style programming contest.',
-    `Rules: 2–3 words max, under ${MAX_LENGTH} characters. Easy to pronounce and memorable.`,
+    `Rules: 2 to 3 words max, under ${MAX_LENGTH} characters. Easy to pronounce and memorable.`,
     'Be creative and varied. Take inspiration from the examples but prefer a fresh angle.',
     'Avoid obscure inside jokes and well-known brand names.',
     `Optional vibe: something ${theme}-flavored.`,

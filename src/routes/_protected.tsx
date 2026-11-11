@@ -4,7 +4,7 @@ import { getRequest } from '@tanstack/react-start/server';
 import { getSession } from '@/lib/auth.server';
 import { getParticipant } from '@/lib/onboarding.server';
 
-/** Signed in AND onboarded — anything less gets redirected. */
+/** Redirects users who need to sign in or complete onboarding. */
 const checkAccess = createServerFn({ method: 'GET' }).handler(async () => {
   const session = await getSession(getRequest());
   if (!session?.user) return { state: 'anonymous' as const };

@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 
-/** What an admin page can put in the shared header — today, just its refresh button. */
+/** Lets an admin page put its refresh button in the shared header. */
 export type AdminHeaderControls = {
   onRefresh?: () => void;
   isRefreshing?: boolean;

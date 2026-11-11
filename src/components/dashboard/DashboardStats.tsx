@@ -41,7 +41,7 @@ export function DashboardStats({ team, email }: { team: TeamData | null; email: 
                   : 'You are not in a team yet'}
               </small>
             </div>
-            <b aria-label={ready ? 'Complete' : 'Pending'}>{ready ? '✓' : '—'}</b>
+            {ready ? <b aria-label="Complete">✓</b> : <b>Pending</b>}
           </li>
         </ol>
       </CardContent>

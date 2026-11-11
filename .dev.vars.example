@@ -20,7 +20,7 @@ BETTER_AUTH_SECRET=
 # CONTEST_START=2026-11-14T12:00:00+05:00
 
 # Google Apps Script webhook used to deliver OTP emails and store CVs.
-# Leave blank in development — OTP codes are printed to the server console.
+# Leave blank in development to print OTP codes to the server console.
 GAS_URL=
 GAS_SECRET=
 

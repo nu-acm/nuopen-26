@@ -86,7 +86,7 @@ export function generateContestPassword(): string {
   ).join('');
 }
 
-/** Fisher–Yates, in place. */
+/** In-place Fisher-Yates shuffle. */
 function shuffle<T>(items: T[]): T[] {
   for (let i = items.length - 1; i > 0; i--) {
     const j = randomBelow(i + 1);

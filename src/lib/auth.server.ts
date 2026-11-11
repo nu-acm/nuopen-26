@@ -23,8 +23,7 @@ export function isGoogleSignInEnabled() {
 
 /**
  * Request-time auth instance. Reads the D1 binding and secrets from the Workers
- * env, so it may only be imported from server code (server functions, API
- * routes) — never from a component.
+ * env. Import it only from server functions or API routes.
  */
 export function getAuth() {
   const authEnv = env as unknown as AuthEnv;

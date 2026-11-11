@@ -2,20 +2,17 @@ import { useEffect, useRef } from 'react';
 
 import {
   createStars,
+  DRIFT_SPEED,
   project,
-  speedOf,
   type Star,
 } from '@/components/landing/nuopen/lib/starfield';
-import { warpDrive } from '@/components/landing/nuopen/lib/warp';
 
 import { prefersReducedMotion } from '../motion/gsap';
 
 const TINTS = ['#ffffff', '#d6e9ff', '#fff1dc'];
 const TINT_PATTERN = [0, 0, 0, 1, 2];
-const WARP_TINT = '#cfeeff';
-const STREAK = { width: 0.55, maxWidth: 1.6, tail: 0.35, head: 0.4 };
 const ALPHA_LEVELS = 4;
-const REST_FRAME_MS = 30;
+const FRAME_INTERVAL_MS = 30;
 
 const alphaOf = (star: Star) => Math.min(1, 0.25 + (1 - star.z) * 0.9);
 const levelOf = (alpha: number) => Math.round(((alpha - 0.25) / 0.75) * (ALPHA_LEVELS - 1));
@@ -27,7 +24,7 @@ function respawn(star: Star) {
   star.y = Math.random() * 2 - 1;
 }
 
-/** The sky behind the whole page: drifts at rest and streaks only with the hyperspace section's warp level. */
+/** The starfield behind the landing page. */
 export function Starfield() {
   const canvas = useRef<HTMLCanvasElement>(null);
 
@@ -49,8 +46,9 @@ export function Starfield() {
     const offscreen = (p: { sx: number; sy: number }) =>
       p.sx < -20 || p.sx > w + 20 || p.sy < -20 || p.sy > h + 20;
 
-    // One fill per tint and brightness instead of one per star: the resting sky is drawn on every frame.
-    const drawPoints = () => {
+    // One fill per tint and brightness instead of one per star.
+    const draw = () => {
+      ctx.clearRect(0, 0, w, h);
       for (const bucket of buckets) bucket.length = 0;
       for (let i = 0; i < stars.length; i++) {
         const head = project(stars[i], w, h);
@@ -71,38 +69,6 @@ export function Starfield() {
         }
         ctx.fill();
       });
-    };
-
-    const drawStreaks = (streak: number, warp: number) => {
-      for (let i = 0; i < stars.length; i++) {
-        const s = stars[i];
-        const head = project(s, w, h);
-        if (offscreen(head)) continue;
-        const alpha = alphaOf(s);
-        const tail = project({ ...s, z: Math.min(1.4, s.z * (1 + streak * 6)) }, w, h);
-        ctx.strokeStyle = warp > 0.3 ? WARP_TINT : TINTS[tints[i]];
-        ctx.lineWidth = Math.min(STREAK.maxWidth, Math.max(0.5, head.r * STREAK.width));
-        // Film streaks are motion blur: a faint trail toward the vanishing point and a bright head.
-        ctx.globalAlpha = alpha * STREAK.tail;
-        ctx.beginPath();
-        ctx.moveTo(tail.sx, tail.sy);
-        ctx.lineTo(head.sx, head.sy);
-        ctx.stroke();
-        ctx.globalAlpha = alpha;
-        ctx.beginPath();
-        ctx.moveTo(
-          head.sx + (tail.sx - head.sx) * STREAK.head,
-          head.sy + (tail.sy - head.sy) * STREAK.head,
-        );
-        ctx.lineTo(head.sx, head.sy);
-        ctx.stroke();
-      }
-    };
-
-    const draw = (streak: number, warp: number) => {
-      ctx.clearRect(0, 0, w, h);
-      if (streak > 0.004) drawStreaks(streak, warp);
-      else drawPoints();
       ctx.globalAlpha = 1;
     };
 
@@ -113,7 +79,7 @@ export function Starfield() {
       el.width = Math.round(w * dpr);
       el.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      if (reduced) draw(0, 0);
+      if (reduced) draw();
     };
     const observer = new ResizeObserver(resize);
     observer.observe(el);
@@ -125,17 +91,14 @@ export function Starfield() {
     const tick = () => {
       frame = requestAnimationFrame(tick);
       const now = performance.now();
-      const warp = warpDrive.current();
-      // The resting drift is slow enough that 30 frames a second look the same and halve the work.
-      if (warp === 0 && now - last < REST_FRAME_MS) return;
+      if (now - last < FRAME_INTERVAL_MS) return;
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
-      const speed = speedOf(warp);
       for (const s of stars) {
-        s.z -= speed * dt;
+        s.z -= DRIFT_SPEED * dt;
         if (s.z <= 0.02) respawn(s);
       }
-      draw(warp * 0.9, warp);
+      draw();
     };
     tick();
     return () => {

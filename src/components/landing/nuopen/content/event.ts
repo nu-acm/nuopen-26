@@ -15,7 +15,6 @@ export const EVENT = {
   edition: 7,
   episode: 'VII',
   subtitle: 'The Code Awakens',
-  tagline: 'Five hours. One problem set. Teams of up to three.',
   organizer: 'ACM@NU Student Chapter',
   organizerShort: 'ACM@NU',
   registerHref: '/register',
@@ -56,7 +55,7 @@ export const EVENT = {
     {
       date: DEFAULT_REGISTRATION_DEADLINE.slice(0, 10),
       label: 'Registration closes',
-      note: 'Last call, 23:59 Astana time.',
+      note: '23:59',
     },
     {
       date: CONFIRMATION_DATE,
@@ -149,23 +148,8 @@ export const EVENT = {
       a: `Follow @nuacmsc on Instagram for recruitment calls, or write to ${EMAIL}.`,
     },
   ],
-  partners: [
-    { year: 2020, names: ['EPAM'] },
-    { year: 2021, names: ['EPAM', 'Kolesa Group'] },
-    { year: 2022, names: ['Umag', 'Zapis'] },
-    { year: 2023, names: ['Umag', 'Zapis', 'BTS Digital'] },
-    { year: 2024, names: ['Umag', 'Zapis'] },
-    { year: 2025, names: ['Umag', 'Zapis', 'inDrive'] },
-  ],
-  partnerPitch: [
-    "Access to participants' CVs",
-    'Host a workshop or a talk',
-    'Your brand on merch, print, social media and this site',
-  ],
   contacts: {
     email: EMAIL,
-    phone: '+7 708 214 6675',
-    phoneHref: 'tel:+77082146675',
     social: [
       { label: 'Instagram', href: 'https://www.instagram.com/nuacmsc/' },
       { label: 'LinkedIn', href: 'https://www.linkedin.com/company/nuacmsc' },
@@ -192,7 +176,7 @@ export const EVENT = {
       href: 'https://sketchfab.com/3d-models/darth-vader-1784449656114e55b596fc3e902f083d',
     },
     {
-      model: 'Anakin Skywalker — Battlefront II',
+      model: 'Anakin Skywalker (Battlefront II)',
       author: 'rendysix',
       license: 'CC BY 4.0',
       href: 'https://sketchfab.com/3d-models/anakin-skywalker-battlefront-ii-24c34fbc5a94408bad9bff4402054957',
