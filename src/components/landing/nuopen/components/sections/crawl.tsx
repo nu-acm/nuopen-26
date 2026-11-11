@@ -1,4 +1,3 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import './crawl.css';
 
 import { useRef } from 'react';
@@ -16,7 +15,6 @@ const EXIT = 0.85;
 
 /** The opening crawl, scrubbed by scroll: what NU Open is, told the way every episode starts. */
 export function Crawl() {
-  const text = useLandingText();
   const root = useRef<HTMLElement>(null);
 
   useGsap(({ reduced }) => {
@@ -49,14 +47,12 @@ export function Crawl() {
       <div className="crawl-viewport">
         <div className="crawl-plane">
           <div className="crawl-text">
-            <p className="crawl-episode">
-              {text('Episode {{episode}}', { episode: EVENT.episode })}
-            </p>
+            <p className="crawl-episode">{`Episode ${EVENT.episode}`}</p>
             <h2 id="crawl-title" className="crawl-title">
-              {text(EVENT.subtitle)}
+              {EVENT.subtitle}
             </h2>
             {EVENT.crawl.map((p) => (
-              <p key={p}>{text(p)}</p>
+              <p key={p}>{p}</p>
             ))}
           </div>
         </div>

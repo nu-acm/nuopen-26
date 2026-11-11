@@ -130,8 +130,6 @@ it('claims paid AI allowances atomically and refuses generation after closure', 
   });
   expect(run).toHaveBeenCalledTimes(1);
   bindings.REGISTRATION_DEADLINE = '2000-01-01T00:00:00Z';
-  await expect(generateTeamNameForParticipant('owner')).rejects.toThrow(
-    'onboarding.registrationClosedError',
-  );
+  await expect(generateTeamNameForParticipant('owner')).rejects.toThrow('Registration is closed.');
   expect(run).toHaveBeenCalledTimes(1);
 });

@@ -2,7 +2,7 @@ import { env } from 'cloudflare:workers';
 import { sampleExamples } from '@/lib/team-name-examples';
 import { claimTeamNameGeneration } from '@/lib/ai-limit.server';
 import { getParticipant } from '@/lib/onboarding.server';
-import { isRegistrationOpen, REGISTRATION_CLOSED_I18N_KEY } from '@/lib/registration.server';
+import { isRegistrationOpen, REGISTRATION_CLOSED_ERROR } from '@/lib/registration.server';
 import { TEAM_ERRORS } from '@/lib/team-errors';
 
 interface AiEnv {
@@ -47,7 +47,7 @@ function cleanName(raw: string): string {
 
 /** The same requirements as creating a team, plus a persistent request limit. */
 export async function generateTeamNameForParticipant(userId: string): Promise<string> {
-  if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_I18N_KEY);
+  if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_ERROR);
   const profile = await getParticipant(userId);
   if (!profile) throw new Error(TEAM_ERRORS.noProfile);
   if (profile.teamId) throw new Error(TEAM_ERRORS.alreadyInTeam);
@@ -56,7 +56,7 @@ export async function generateTeamNameForParticipant(userId: string): Promise<st
     return await generateTeamName();
   } catch (error) {
     console.error('[team name] generation failed:', error);
-    throw new Error('dashboard.generateFailed', { cause: error });
+    throw new Error('Could not come up with a name. Try again later.', { cause: error });
   }
 }
 

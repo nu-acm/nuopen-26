@@ -1,5 +1,3 @@
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import { useEffect, useRef, useState } from 'react';
 import { RegistrationLink } from './registration-link';
 
@@ -39,7 +37,6 @@ function useCurrentSection() {
 }
 
 export function Header() {
-  const text = useLandingText();
   const jump = useJump();
   const current = useCurrentSection();
   const [open, setOpen] = useState(false);
@@ -84,7 +81,7 @@ export function Header() {
           href="#top"
           onClick={go}
           className="flex items-baseline gap-2 whitespace-nowrap"
-          aria-label={text('{{name}} home', { name: EVENT.name })}
+          aria-label={`${EVENT.name} home`}
         >
           <span className="header-logo font-logo nu-text-1-05rem nu-tracking-0-02em text-ink">
             NU Open
@@ -94,7 +91,7 @@ export function Header() {
           </span>
         </a>
 
-        <nav aria-label={text('Sections')} className="ml-6 hidden items-center gap-1 lg:flex">
+        <nav aria-label="Sections" className="ml-6 hidden items-center gap-1 lg:flex">
           {NAV.map((item) => (
             <a
               key={item.id}
@@ -103,7 +100,7 @@ export function Header() {
               aria-current={current === item.id ? 'location' : undefined}
               className="site-nav-link"
             >
-              {text(item.label)}
+              {item.label}
             </a>
           ))}
         </nav>
@@ -121,7 +118,7 @@ export function Header() {
               aria-controls="mobile-menu"
               onClick={() => setOpen((v) => !v)}
               className="grid h-11 w-11 place-items-center text-ink lg:hidden"
-              aria-label={text('Menu')}
+              aria-label="Menu"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -136,21 +133,11 @@ export function Header() {
             </button>
           </div>
           <div className="landing-header-secondary">
-            <div className="landing-header-language">
-              <LanguageSwitcher
-                onLanguageChange={() => {
-                  if (open) {
-                    setOpen(false);
-                    menuToggle.current?.focus();
-                  }
-                }}
-              />
-            </div>
             <RegistrationLink
               compact
               className="site-nav-link site-nav-action landing-header-account"
             >
-              {text('Register')}
+              Register
             </RegistrationLink>
           </div>
         </div>
@@ -164,7 +151,7 @@ export function Header() {
       >
         <div className="min-h-0 overflow-hidden">
           <div className="nu-max-h-calc-100svh-var-header-h overflow-y-auto overscroll-contain border-t border-line bg-space nu-px-var-gutter pt-2 pb-6">
-            <nav aria-label={text('Sections menu')} className="flex flex-col">
+            <nav aria-label="Sections menu" className="flex flex-col">
               {NAV.map((item) => (
                 <a
                   key={item.id}
@@ -172,7 +159,7 @@ export function Header() {
                   onClick={go}
                   className="site-nav-link landing-menu-link"
                 >
-                  {text(item.label)}
+                  {item.label}
                 </a>
               ))}
             </nav>

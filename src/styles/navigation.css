@@ -123,18 +123,6 @@
   gap: 16px;
   min-width: 0;
 }
-.landing-header-language,
-.account-header-secondary > .whd-language-group {
-  display: flex;
-  flex-shrink: 0;
-}
-.auth-header .whd-language-toggle,
-.landing-header-language .whd-language-toggle {
-  min-width: 36px;
-  min-height: 44px;
-  padding: 4px 10px;
-  font-size: 12px;
-}
 .landing-menu-preferences {
   margin-top: 20px;
 }
@@ -174,7 +162,7 @@
   .landing-header-secondary {
     grid-column: 1 / -1;
     grid-row: 2;
-    justify-content: space-between;
+    justify-content: flex-end;
   }
   .landing-header-account.site-nav-action,
   .account-back.site-nav-action {
@@ -201,7 +189,7 @@
   }
 }
 
-/* Give localized words room to wrap at spaces rather than splitting headings. */
+/* Give controls and headings room to wrap on small screens. */
 .nuopen-page :is(.btn, .btn-ghost) {
   min-width: 0;
   max-width: 100%;
@@ -236,72 +224,8 @@
 .nuopen-page .hero-episode {
   text-align: center;
 }
-.nuopen-page:is(:lang(ru), :lang(kk)) :is(h2, h3) {
-  overflow-wrap: normal;
-  word-break: normal;
-  hyphens: none;
-}
-@media (min-width: 1024px) {
-  .nuopen-page:is(:lang(ru), :lang(kk)) .split-copy {
-    grid-column: 1 / span 6;
-  }
-  .nuopen-page:is(:lang(ru), :lang(kk)) .rules-copy {
-    grid-column: 1 / span 7;
-  }
-  .nuopen-page:is(:lang(ru), :lang(kk)) .rules-stage {
-    grid-column: 8 / span 5;
-  }
-}
-@media (max-width: 639px) {
-  .nuopen-page:is(:lang(ru), :lang(kk)) .hero-episode::before,
-  .nuopen-page:is(:lang(ru), :lang(kk)) .hero-episode::after {
-    display: none;
-  }
-}
-@media (max-width: 359px) {
-  .nuopen-page:is(:lang(ru), :lang(kk)) .side-row {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   .site-nav-link {
     transition: none;
-  }
-}
-
-.nuopen-page:is(:lang(ru), :lang(kk)) .trench-copy {
-  max-width: 52rem;
-}
-@media (min-width: 1024px) {
-  .nuopen-page:is(:lang(ru), :lang(kk)) :is(.allies-copy, .faq-head) {
-    grid-column: 1 / span 7;
-  }
-  .nuopen-page:is(:lang(ru), :lang(kk)) :is(.allies-side, .faq-body) {
-    grid-column: 8 / span 5;
-  }
-}
-
-@media (min-width: 1024px) {
-  .nuopen-page:is(:lang(ru), :lang(kk)) .allies-copy {
-    grid-column: 1 / span 8;
-  }
-  .nuopen-page:is(:lang(ru), :lang(kk)) .allies-side {
-    grid-column: 9 / span 4;
-  }
-}
-
-.account-page:is(:lang(ru), :lang(kk)) .account-profile-layout .account-page-heading h1 {
-  overflow-wrap: normal;
-  word-break: normal;
-  hyphens: none;
-}
-@media (min-width: 901px) {
-  .account-page:is(:lang(ru), :lang(kk)) .account-profile-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
-  }
-}
-@media (max-width: 680px) {
-  .account-page:is(:lang(ru), :lang(kk)) .account-profile-layout .account-page-heading h1 {
-    font-size: clamp(2rem, 8.5vw, 2.75rem);
   }
 }

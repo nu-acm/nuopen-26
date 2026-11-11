@@ -1,4 +1,3 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import './footer.css';
 
 import { EVENT } from '@/components/landing/nuopen/content/event';
@@ -9,7 +8,6 @@ const YEAR = new Date(EVENT.contest.start).getFullYear();
 const EXTERNAL = { target: '_blank', rel: 'noopener noreferrer' } as const;
 
 export function Footer() {
-  const text = useLandingText();
   return (
     <footer className="site-footer">
       <div className="footer-inner">
@@ -20,11 +18,11 @@ export function Footer() {
 
         <p className="footer-wordmark font-logo outline-crawl">{EVENT.name}</p>
         <p className="footer-episode font-mono">
-          {text('Episode {{episode}}', { episode: EVENT.episode })} · {text(EVENT.subtitle)}
+          {`Episode ${EVENT.episode}`} · {EVENT.subtitle}
         </p>
 
         <div className="footer-contact">
-          <ul className="footer-links" aria-label={text('Contact')}>
+          <ul className="footer-links" aria-label="Contact">
             <li>
               <a href={`mailto:${EVENT.contacts.email}`}>{EVENT.contacts.email}</a>
             </li>
@@ -32,7 +30,7 @@ export function Footer() {
               <a href={EVENT.contacts.phoneHref}>{EVENT.contacts.phone}</a>
             </li>
           </ul>
-          <ul className="footer-links" aria-label={text('Social')}>
+          <ul className="footer-links" aria-label="Social">
             {EVENT.contacts.social.map((social) => (
               <li key={social.label}>
                 <a href={social.href} {...EXTERNAL}>
@@ -48,7 +46,7 @@ export function Footer() {
             © {YEAR} {EVENT.organizer}, {EVENT.venue.name}
           </p>
           <a href="/nuopen/models/CREDITS.txt" className="footer-credits-link">
-            {text('3D model credits')}
+            3D model credits
           </a>
         </div>
       </div>

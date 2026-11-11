@@ -1,11 +1,9 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import { sideStore } from '@/components/landing/nuopen/lib/side';
 import { useSide } from './use-side';
 
 export function SoundToggle() {
-  const text = useLandingText();
   const on = useSide((s) => s.music);
-  const label = text(on ? 'Mute the music' : 'Play the music');
+  const label = on ? 'Mute the music' : 'Play the music';
   return (
     <button
       type="button"

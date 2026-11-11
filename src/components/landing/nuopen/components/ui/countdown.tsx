@@ -1,4 +1,3 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import { useSyncExternalStore } from 'react';
 
 import { pad2, timeLeft } from '@/components/landing/nuopen/lib/countdown';
@@ -27,14 +26,13 @@ export function Countdown({
   end: string;
   className?: string;
 }) {
-  const text = useLandingText();
   const now = useSyncExternalStore(everySecond, currentSecond, noTimeOnServer);
   const left = now === null ? null : timeLeft(now * 1000, Date.parse(target));
   if (left?.done) {
     const over = now !== null && now * 1000 >= Date.parse(end);
     return (
       <p role="timer" className={`label nu-text-var-saber ${className}`}>
-        {text(over ? 'The contest has ended' : 'The contest is live')}
+        {over ? 'The contest has ended' : 'The contest is live'}
       </p>
     );
   }
@@ -42,7 +40,7 @@ export function Countdown({
   return (
     <div
       role="timer"
-      aria-label={text('Time until the contest starts')}
+      aria-label="Time until the contest starts"
       className={`flex items-end gap-4 sm:gap-6 ${className}`}
     >
       {UNITS.map(({ key, label }) => (
@@ -53,7 +51,7 @@ export function Countdown({
           >
             {left ? pad2(left[key]) : '--'}
           </span>
-          <span className="label">{text(label)}</span>
+          <span className="label">{label}</span>
         </div>
       ))}
     </div>

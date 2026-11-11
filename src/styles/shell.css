@@ -62,9 +62,6 @@
   .auth-header-actions {
     gap: 8px;
   }
-  .auth-header-inner .whd-language-toggle {
-    padding-inline: 6px;
-  }
   .auth-header .site-brand-edition {
     display: none;
   }

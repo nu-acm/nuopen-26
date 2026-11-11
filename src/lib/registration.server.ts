@@ -2,11 +2,11 @@ import { env } from 'cloudflare:workers';
 
 import {
   DEFAULT_REGISTRATION_DEADLINE,
-  REGISTRATION_CLOSED_I18N_KEY,
+  REGISTRATION_CLOSED_ERROR,
   type RegistrationStatus,
 } from './registration';
 
-export { REGISTRATION_CLOSED_I18N_KEY };
+export { REGISTRATION_CLOSED_ERROR };
 
 interface AppEnv {
   REGISTRATION_DEADLINE?: string;

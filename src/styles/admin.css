@@ -510,9 +510,6 @@
     grid-row: 2;
     justify-self: end;
   }
-  .admin-header-actions .whd-language-toggle {
-    padding-inline: 6px;
-  }
   .admin-header-actions > .whd-button {
     font-size: 0.75rem;
   }

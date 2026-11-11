@@ -8,8 +8,8 @@ export function nextIndex(timeline: readonly { readonly date: string }[], now: n
   return timeline.findIndex(({ date }) => startOfDay(date) + DAY_MS > now);
 }
 
-export function formatDay(date: string, style: 'short' | 'long' = 'short', locale = 'en'): string {
-  return new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : locale, {
+export function formatDay(date: string, style: 'short' | 'long' = 'short'): string {
+  return new Intl.DateTimeFormat('en-GB', {
     day: 'numeric',
     month: style,
     timeZone: ASTANA,

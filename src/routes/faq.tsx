@@ -1,23 +1,21 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from 'lucide-react';
 import { AuthHeader } from '@/components/AuthHeader';
 import { Starfield } from '@/components/landing/visuals/Starfield';
 import FAQ from '@/components/landing/FAQ';
-import { pageMetadata } from '@/lib/metadata';
+import { FAQ_TITLE, pageMetadata, SITE_TITLE } from '@/lib/metadata';
 
 export const Route = createFileRoute('/faq')({
   component: FAQPage,
-  head: ({ match }) => ({
+  head: () => ({
     meta: pageMetadata(
-      `${match.context.i18n.t('faq.allTitle')} | NU Open 2026`,
-      match.context.i18n.t('metadata.faqDescription'),
+      `${FAQ_TITLE} | ${SITE_TITLE}`,
+      'Answers about NU Open 2026 eligibility, team size, registration, the November 22 schedule, and prizes.',
     ),
   }),
 });
 
 function FAQPage() {
-  const { t } = useTranslation();
   return (
     <div className="landing-page faq-page">
       <Starfield />
@@ -26,16 +24,16 @@ function FAQPage() {
         <div className="landing-container faq-page-back">
           <Link to="/" hash="faq">
             <ArrowLeft size={18} aria-hidden="true" />
-            {t('faq.backToHome')}
+            Back to home
           </Link>
         </div>
-        <FAQ full />
+        <FAQ />
       </main>
       <footer className="landing-container faq-page-footer">
-        <p>{t('footer.rights')}</p>
+        <p>© 2026 ACM@NU All rights reserved.</p>
         <div>
-          <Link to="/privacy">{t('footer.privacy')}</Link>
-          <Link to="/terms">{t('footer.terms')}</Link>
+          <Link to="/privacy">Privacy Policy</Link>
+          <Link to="/terms">Terms of Service</Link>
         </div>
       </footer>
     </div>

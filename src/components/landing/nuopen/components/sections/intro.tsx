@@ -1,4 +1,3 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import { useEffect, useRef } from 'react';
 
 import { INTRO_DONE, INTRO_KEY, INTRO_TITLE } from '@/components/landing/nuopen/lib/intro';
@@ -12,7 +11,6 @@ import { useSide } from '../ui/use-side';
  * With the music on it waits for a click first: browsers allow sound only after one, and the score starts with the title.
  */
 export function Intro() {
-  const text = useLandingText();
   const overlay = useRef<HTMLDivElement>(null);
   const withSound = useSide((s) => s.music);
 
@@ -111,14 +109,14 @@ export function Intro() {
     <div ref={overlay} className="intro">
       <div>
         <p className="intro-line" aria-hidden>
-          {text('A long time ago in a galaxy far,')}
+          A long time ago in a galaxy far,
           <br />
-          {text('far away….')}
+          far away….
         </p>
         {withSound && (
           <p className="intro-begin label">
-            <span className="intro-click">{text('Click anywhere to begin')}</span>
-            <span className="intro-tap">{text('Tap anywhere to begin')}</span>
+            <span className="intro-click">Click anywhere to begin</span>
+            <span className="intro-tap">Tap anywhere to begin</span>
           </p>
         )}
       </div>

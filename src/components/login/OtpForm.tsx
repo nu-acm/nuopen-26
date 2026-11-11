@@ -1,6 +1,5 @@
 import { ArrowUpRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useWebHaptics } from 'web-haptics/react';
 import { Spinner } from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
@@ -22,7 +21,6 @@ export function OtpForm({
   onVerified: () => void;
   onChangeEmail: () => void;
 }) {
-  const { t } = useTranslation();
   const [otp, setOtp] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -43,7 +41,7 @@ export function OtpForm({
     const parsed = otpSchema.safeParse({ otp });
     if (!parsed.success) {
       void trigger('error');
-      setError(t(parsed.error.issues[0].message));
+      setError(parsed.error.issues[0].message);
       return;
     }
 
@@ -55,14 +53,14 @@ export function OtpForm({
       });
       if (verifyError) {
         void trigger('error');
-        setError(t('login.verifyFailed'));
+        setError('That code is not right. Please try again.');
         return;
       }
       void trigger('success');
       onVerified();
     } catch {
       void trigger('error');
-      setError(t('login.verifyFailed'));
+      setError('That code is not right. Please try again.');
     } finally {
       setPending(false);
     }
@@ -76,7 +74,7 @@ export function OtpForm({
       await sendSignInCode(email);
       setCooldown(RESEND_COOLDOWN_SECONDS);
     } catch {
-      setError(t('login.sendFailed'));
+      setError('Could not send the code. Please try again.');
     } finally {
       setResending(false);
     }
@@ -85,12 +83,7 @@ export function OtpForm({
   return (
     <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
       <FieldGroup>
-        <FormField
-          disabled={pending}
-          label={t('login.otpTitle')}
-          error={error ?? undefined}
-          required
-        >
+        <FormField disabled={pending} label="Enter the code" error={error ?? undefined} required>
           {(fieldProps) => (
             <InputOtp7
               {...fieldProps}
@@ -108,7 +101,7 @@ export function OtpForm({
         <Button type="submit" disabled={pending || otp.length !== 6} className="w-full">
           <>
             {pending && <Spinner data-icon="inline-start" />}
-            <span>{pending ? t('common.loading') : t('login.verify')}</span>
+            <span>{pending ? 'Loading…' : 'Verify'}</span>
           </>
           <ArrowUpRight className="account-button-arrow" aria-hidden="true" />
         </Button>
@@ -119,7 +112,7 @@ export function OtpForm({
             onClick={onChangeEmail}
             className="cursor-pointer text-whd-text-muted transition-colors hover:text-whd-pink-bright"
           >
-            {t('login.changeEmail')}
+            Use a different email
           </button>
           <button
             type="button"
@@ -127,7 +120,7 @@ export function OtpForm({
             disabled={cooldown > 0 || resending || pending}
             className="cursor-pointer text-whd-pink-soft transition-colors hover:text-whd-pink-bright disabled:cursor-not-allowed disabled:text-whd-text-dim"
           >
-            {cooldown > 0 ? t('login.resendIn', { seconds: cooldown }) : t('login.resend')}
+            {cooldown > 0 ? `Resend in ${cooldown}s` : 'Resend code'}
           </button>
         </div>
       </FieldGroup>

@@ -1,12 +1,15 @@
-import landingEn from '@/i18n/landing/en.json' with { type: 'json' };
-import landingRu from '@/i18n/landing/ru.json' with { type: 'json' };
-import landingKk from '@/i18n/landing/kk.json' with { type: 'json' };
-import en from '@/i18n/locales/en.json' with { type: 'json' };
-import ru from '@/i18n/locales/ru.json' with { type: 'json' };
-import kk from '@/i18n/locales/kk.json' with { type: 'json' };
 import { test, expect, login, onboard } from './fixtures';
+import type { Locator } from '@playwright/test';
 
 test.use({ reducedMotion: 'reduce' });
+
+function headerActionBounds(action: Locator) {
+  return action.evaluate((element) => {
+    const { x, y, width, height } = element.getBoundingClientRect();
+    const headerTop = element.closest('header')!.getBoundingClientRect().top;
+    return { x, y: y - headerTop, width, height };
+  });
+}
 
 test('team and personal-data tabs keep actions separate and preserve profile edits', async ({
   page,
@@ -16,26 +19,7 @@ test('team and personal-data tabs keep actions separate and preserve profile edi
   await onboard(page, 'Pilot Example');
   await page.evaluate(() => document.fonts.ready);
   await expect(page.locator('.auth-header .account-back')).toBeVisible();
-  await expect(page.locator('.auth-header .whd-language-group')).toBeVisible();
-  let accountControls = { languageX: 0, languageY: 0, actionX: 0, actionY: 0, width: 0, height: 0 };
-  await expect
-    .poll(async () => {
-      accountControls = await page.locator('.auth-header').evaluate((header) => {
-        const headerTop = header.getBoundingClientRect().top;
-        const language = header.querySelector('.whd-language-group')!.getBoundingClientRect();
-        const action = header.querySelector('.account-back')!.getBoundingClientRect();
-        return {
-          languageX: language.x,
-          languageY: language.y - headerTop,
-          actionX: action.x,
-          actionY: action.y - headerTop,
-          width: action.width,
-          height: action.height,
-        };
-      });
-      return accountControls.width > 0 && accountControls.languageX < accountControls.actionX;
-    })
-    .toBe(true);
+  const accountControls = await headerActionBounds(page.locator('.auth-header .account-back'));
   await expect(page.locator('.account-back')).toHaveCSS('background-color', 'rgb(247, 245, 239)');
 
   const nav = page.getByRole('navigation', { name: 'Your account', exact: true });
@@ -76,19 +60,7 @@ test('team and personal-data tabs keep actions separate and preserve profile edi
   await expect(page).toHaveURL(`${app.url}/`);
   await expect(page.getByRole('heading', { name: 'NU Open', exact: true })).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
-  const landingControls = await page.locator('[data-site-header]').evaluate((header) => {
-    const headerTop = header.getBoundingClientRect().top;
-    const language = header.querySelector('.whd-language-group')!.getBoundingClientRect();
-    const action = header.querySelector('.landing-header-account')!.getBoundingClientRect();
-    return {
-      languageX: language.x,
-      languageY: language.y - headerTop,
-      actionX: action.x,
-      actionY: action.y - headerTop,
-      width: action.width,
-      height: action.height,
-    };
-  });
+  const landingControls = await headerActionBounds(page.locator('.landing-header-account'));
   expect(landingControls).toEqual(accountControls);
   await expect(page.locator('.landing-header-account')).toHaveCSS(
     'background-color',
@@ -108,86 +80,69 @@ test('account Force controls work and sign-out lives in personal data', async ({
   await expect(header.getByRole('link', { name: 'Back to landing page' })).toBeVisible();
   await expect(page.locator('input[type="file"]')).toHaveCount(0);
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
-  await page.getByRole('button', { name: en.common.confirm, exact: true }).click();
+  await page.getByRole('button', { name: 'Sure?', exact: true }).click();
   await expect(page).toHaveURL(`${app.url}/`);
   await page.goto('/dashboard');
   await expect(page).toHaveURL(/\/login/);
 });
 
-test('translated team controls fit and language selection follows the Force side', async ({
-  page,
-  app,
-}) => {
-  await login(page, app.codes, 'translated-controls@example.test');
+test('team controls fit on small screens with Cyrillic names', async ({ page, app }) => {
+  await login(page, app.codes, 'team-controls@example.test');
   await onboard(page, 'Александра-Мария Example');
   await page
     .getByRole('textbox', { name: 'Team name', exact: true })
     .fill('Длинное название команды');
   await page.getByRole('button', { name: 'Create a team', exact: true }).click();
   await expect(page.locator('.account-team-danger button')).toBeVisible();
-  for (const [locale, copy] of Object.entries({ en, ru, kk })) {
-    await page.context().addCookies([{ name: 'locale', value: locale, url: app.url }]);
-    await page.goto('/dashboard');
-    await page.evaluate(() => document.fonts.ready);
-    for (const width of [320, 768]) {
-      await page.setViewportSize({ width, height: 900 });
-      const dissolve = page.getByRole('button', { name: copy.dashboard.dissolve, exact: true });
-      for (const armed of [false, true]) {
-        if (armed) await dissolve.click();
-        const issues = await page.evaluate(() => {
-          const issues: string[] = [];
-          if (document.documentElement.scrollWidth > innerWidth + 1) issues.push('page overflow');
-          for (const button of document.querySelectorAll('button')) {
-            const box = button.getBoundingClientRect();
-            if (!box.width || !box.height) continue;
+  await page.goto('/dashboard');
+  await page.evaluate(() => document.fonts.ready);
+  for (const width of [320, 768]) {
+    await page.setViewportSize({ width, height: 900 });
+    const dissolve = page.getByRole('button', { name: 'Dissolve team', exact: true });
+    for (const armed of [false, true]) {
+      if (armed) await dissolve.click();
+      const issues = await page.evaluate(() => {
+        const issues: string[] = [];
+        if (document.documentElement.scrollWidth > innerWidth + 1) issues.push('page overflow');
+        for (const button of document.querySelectorAll('button')) {
+          const box = button.getBoundingClientRect();
+          if (!box.width || !box.height) continue;
+          if (
+            box.left < -1 ||
+            box.right > innerWidth + 1 ||
+            button.scrollWidth > button.clientWidth + 1 ||
+            box.height < 44
+          )
+            issues.push(button.textContent || 'button bounds');
+          const walker = document.createTreeWalker(button, NodeFilter.SHOW_TEXT);
+          for (let node = walker.nextNode(); node; node = walker.nextNode()) {
             if (
-              box.left < -1 ||
-              box.right > innerWidth + 1 ||
-              button.scrollWidth > button.clientWidth + 1 ||
-              box.height < 44
+              !node.textContent?.trim() ||
+              node.parentElement?.closest('.sr-only, [aria-hidden="true"]')
             )
-              issues.push(button.textContent || 'button bounds');
-            const walker = document.createTreeWalker(button, NodeFilter.SHOW_TEXT);
-            for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+              continue;
+            const range = document.createRange();
+            range.selectNodeContents(node);
+            for (const rect of range.getClientRects()) {
               if (
-                !node.textContent?.trim() ||
-                node.parentElement?.closest('.sr-only, [aria-hidden="true"]')
+                rect.width &&
+                (rect.left < box.left + 4 ||
+                  rect.right > box.right - 4 ||
+                  rect.top < box.top ||
+                  rect.bottom > box.bottom)
               )
-                continue;
-              const range = document.createRange();
-              range.selectNodeContents(node);
-              for (const rect of range.getClientRects()) {
-                if (
-                  rect.width &&
-                  (rect.left < box.left + 4 ||
-                    rect.right > box.right - 4 ||
-                    rect.top < box.top ||
-                    rect.bottom > box.bottom)
-                )
-                  issues.push(node.textContent);
-              }
+                issues.push(node.textContent);
             }
           }
-          return issues;
-        });
-        expect(issues, `${locale}/${width}/${armed ? 'armed' : 'idle'}`).toEqual([]);
-        if (armed) {
-          // Refresh disarms the confirmation without invoking the destructive action.
-          await page.reload();
         }
+        return issues;
+      });
+      expect(issues, `${width}/${armed ? 'armed' : 'idle'}`).toEqual([]);
+      if (armed) {
+        // Refresh disarms the confirmation without invoking the destructive action.
+        await page.reload();
       }
     }
-    const header = page.locator('.auth-header');
-    const selected = header.locator('.whd-language-toggle[data-pressed]');
-    const labels: Record<string, Record<string, string>> = {
-      en: landingEn,
-      ru: landingRu,
-      kk: landingKk,
-    };
-    await header.getByRole('button', { name: labels[locale]['Dark side'], exact: true }).click();
-    await expect(selected).toHaveCSS('color', 'rgb(255, 49, 49)');
-    await header.getByRole('button', { name: labels[locale]['Light side'], exact: true }).click();
-    await expect(selected).toHaveCSS('color', 'rgb(62, 168, 255)');
   }
 });
 

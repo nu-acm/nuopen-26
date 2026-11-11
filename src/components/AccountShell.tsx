@@ -1,7 +1,5 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
 import { AuthHeader } from '@/components/AuthHeader';
 import { Starfield } from '@/components/landing/visuals/Starfield';
 import { AccountAtmosphere } from '@/components/landing/visuals/AccountAtmosphere';
@@ -14,8 +12,6 @@ export function AccountShell({
   children: ReactNode;
   accountTab?: 'team' | 'personal';
 }) {
-  const { t } = useTranslation();
-  const text = useLandingText();
   return (
     <div className="account-page">
       <Starfield />
@@ -23,14 +19,14 @@ export function AccountShell({
       <AuthHeader />
       {accountTab && (
         <div className="account-nav-wrap">
-          <nav className="account-nav" aria-label={t('account.navigation')}>
+          <nav className="account-nav" aria-label="Your account">
             <Link
               className="site-nav-link"
               to="/dashboard"
               aria-current={accountTab === 'team' ? 'page' : undefined}
             >
               <span>01</span>
-              {t('account.teamTab')}
+              My team
             </Link>
             <Link
               className="site-nav-link"
@@ -38,23 +34,21 @@ export function AccountShell({
               aria-current={accountTab === 'personal' ? 'page' : undefined}
             >
               <span>02</span>
-              {t('account.personalTab')}
+              Personal data
             </Link>
           </nav>
         </div>
       )}
       {children}
       <footer className="account-footer">
-        <p className="account-footer-brand">
-          NU Open · {text('Episode {{episode}}', { episode: 'VII' })}
-        </p>
-        <nav aria-label={t('footer.documents')}>
-          <Link to="/faq">{t('navbar.faq')}</Link>
+        <p className="account-footer-brand">NU Open · Episode VII</p>
+        <nav aria-label="Legal">
+          <Link to="/faq">FAQ</Link>
           <a href={TELEGRAM_CHAT_URL} target="_blank" rel="noopener noreferrer">
-            {t('faq.contactUs')}
+            Contact us
           </a>
-          <Link to="/privacy">{t('footer.privacy')}</Link>
-          <Link to="/terms">{t('footer.terms')}</Link>
+          <Link to="/privacy">Privacy Policy</Link>
+          <Link to="/terms">Terms of Service</Link>
         </nav>
       </footer>
     </div>

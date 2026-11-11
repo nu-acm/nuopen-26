@@ -1,6 +1,5 @@
 import { Plus, Crown, Copy, Check } from 'lucide-react';
 import { useId, useState, useSyncExternalStore } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useWebHaptics } from 'web-haptics/react';
 import { Button } from '@/components/ui/button';
 import { ConfirmButton } from '@/components/ui/confirm-button';
@@ -47,7 +46,6 @@ export function TeamCard({
   onLeave: () => void;
   onDissolve: () => void;
 }) {
-  const { t } = useTranslation();
   const { trigger } = useWebHaptics(webHapticsOptions);
   const [copied, setCopied] = useState(false);
   const inviteId = useId();
@@ -74,7 +72,7 @@ export function TeamCard({
       <CardHeader variant="team">
         <div className="account-team-heading">
           <div>
-            <p className="account-eyebrow">{t('account.yourSquadron')}</p>
+            <p className="account-eyebrow">Your squadron</p>
             <CardTitle variant="team">{team.name}</CardTitle>
           </div>
           <span className="account-team-count">
@@ -85,12 +83,12 @@ export function TeamCard({
         <div className="account-team-subheading">
           <span className="account-team-badge">
             <i aria-hidden="true" />
-            {t('account.teamRegistered')}
+            Team registered
           </span>
         </div>
       </CardHeader>
       <CardContent variant="team">
-        {!registrationOpen && <Notice>{t('dashboard.registrationLocked')}</Notice>}
+        {!registrationOpen && <Notice>Registration is closed, so team changes are locked.</Notice>}
 
         {/* Members, then the slots still open */}
         <ul className="account-members">
@@ -106,14 +104,14 @@ export function TeamCard({
                 {member.fullName}
                 <span className="account-member-role">
                   {member.isCaptain && <Crown size={12} aria-hidden="true" />}
-                  {member.isCaptain ? t('dashboard.captain') : t('dashboard.member')}
+                  {member.isCaptain ? 'Captain' : 'Member'}
                 </span>
               </span>
               {registrationOpen && isCaptain && !member.isCaptain && (
                 <ConfirmButton
                   variant="ghost"
-                  label={t('dashboard.kick')}
-                  confirmLabel={t('common.confirm')}
+                  label="Remove"
+                  confirmLabel="Sure?"
                   loading={pendingAction === member.id}
                   disabled={busy}
                   onConfirm={() => onKick(member.id)}
@@ -129,7 +127,7 @@ export function TeamCard({
               <span className="account-member-avatar" aria-hidden="true">
                 <Plus size={18} />
               </span>
-              {t('dashboard.emptySlot')}
+              Open slot
             </Item>
           ))}
         </ul>
@@ -138,7 +136,7 @@ export function TeamCard({
           <>
             {/* Invite link */}
             <div className="account-invite">
-              <label htmlFor={inviteId}>{t('dashboard.inviteLink')}</label>
+              <label htmlFor={inviteId}>Invite link</label>
               <div className="account-invite-input">
                 <Input
                   id={inviteId}
@@ -152,10 +150,10 @@ export function TeamCard({
                   ) : (
                     <Copy size={16} aria-hidden="true" />
                   )}
-                  {copied ? t('common.copied') : t('common.copy')}
+                  {copied ? 'Copied' : 'Copy'}
                 </Button>
               </div>
-              <p className="text-sm text-whd-text-muted">{t('dashboard.inviteHint')}</p>
+              <p className="text-sm text-whd-text-muted">Share this link with your teammates.</p>
             </div>
           </>
         )}
@@ -166,20 +164,20 @@ export function TeamCard({
             {isCaptain ? (
               <ConfirmButton
                 size="md"
-                label={t('dashboard.dissolve')}
-                confirmLabel={t('common.confirm')}
+                label="Dissolve team"
+                confirmLabel="Sure?"
                 loading={pendingAction === 'dissolve'}
-                loadingLabel={t('common.loading')}
+                loadingLabel="Loading…"
                 disabled={busy}
                 onConfirm={onDissolve}
               />
             ) : (
               <ConfirmButton
                 size="md"
-                label={t('dashboard.leave')}
-                confirmLabel={t('common.confirm')}
+                label="Leave team"
+                confirmLabel="Sure?"
                 loading={pendingAction === 'leave'}
-                loadingLabel={t('common.loading')}
+                loadingLabel="Loading…"
                 disabled={busy}
                 onConfirm={onLeave}
               />

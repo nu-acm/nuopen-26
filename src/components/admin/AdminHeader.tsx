@@ -1,6 +1,4 @@
-import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Button } from '@/components/ui/button';
 import { ConfirmButton } from '@/components/ui/confirm-button';
 import type { AdminHeaderControls } from '@/lib/admin-header-context';
@@ -14,8 +12,6 @@ export function AdminHeader({
   isRefreshing,
   refreshCooldownSeconds = 0,
 }: AdminHeaderControls & { onSignOut: () => void }) {
-  const { t } = useTranslation();
-
   return (
     <header className="admin-header">
       <div className="admin-header-inner">
@@ -32,17 +28,16 @@ export function AdminHeader({
               disabled={isRefreshing || refreshCooldownSeconds > 0}
             >
               {isRefreshing
-                ? t('admin.refreshing')
+                ? 'Refreshing…'
                 : refreshCooldownSeconds > 0
-                  ? t('admin.refreshIn', { seconds: refreshCooldownSeconds })
-                  : t('admin.refresh')}
+                  ? `Refresh in ${refreshCooldownSeconds}s`
+                  : 'Refresh'}
             </Button>
           )}
-          <LanguageSwitcher />
           <ConfirmButton
             variant="ghost"
-            label={t('common.signOut')}
-            confirmLabel={t('common.confirm')}
+            label="Sign out"
+            confirmLabel="Sure?"
             onConfirm={onSignOut}
             confirmationTone="accent"
           />
@@ -51,7 +46,7 @@ export function AdminHeader({
       <div className="admin-nav-wrap">
         <nav className="admin-nav">
           <Link to="/dashboard" className={navLinkClass}>
-            {t('navbar.dashboard')}
+            Dashboard
           </Link>
           <Link
             to="/admin"
@@ -60,7 +55,7 @@ export function AdminHeader({
               className: 'admin-nav-active',
             }}
           >
-            {t('admin.navReport')}
+            Report
           </Link>
           <Link
             to="/checkin"
@@ -69,7 +64,7 @@ export function AdminHeader({
               className: 'admin-nav-active',
             }}
           >
-            {t('admin.checkin')}
+            Check-in
           </Link>
         </nav>
       </div>

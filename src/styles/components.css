@@ -434,42 +434,6 @@
     padding: 32px;
   }
 }
-.whd-language-group {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.whd-language-toggle {
-  min-height: 44px;
-  border-radius: 8px;
-  padding: 4px 10px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--whd-text-muted);
-  transition:
-    color 150ms,
-    background-color 150ms;
-}
-.whd-language-toggle[data-size='md'] {
-  flex: 1;
-  padding: 6px 12px;
-  font-size: 14px;
-}
-.whd-language-toggle[data-pressed] {
-  background: var(--saber-soft);
-  color: var(--saber);
-}
-.whd-language-toggle:hover {
-  background: color-mix(in srgb, var(--whd-text) 10%, transparent);
-  color: var(--whd-text);
-}
-.whd-language-toggle:focus-visible {
-  outline: 2px solid var(--saber);
-  outline-offset: 2px;
-}
-.whd-language-toggle:active {
-  opacity: 0.8;
-}
 .whd-card-content.whd-stat-content {
   padding: 20px;
 }

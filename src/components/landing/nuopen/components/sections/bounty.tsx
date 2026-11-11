@@ -1,4 +1,3 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import { RegistrationLink } from '../ui/registration-link';
 
 import { type CSSProperties, useRef } from 'react';
@@ -38,7 +37,6 @@ function Reel({ digit }: { digit: number }) {
 
 /** The prize pool as an Imperial readout: each digit reel spins and locks in turn, then a scan line crosses it. */
 export function Reward() {
-  const text = useLandingText();
   const root = useRef<HTMLElement>(null);
 
   useGsap(({ reduced }) => {
@@ -76,11 +74,9 @@ export function Reward() {
   return (
     <section ref={root} id="bounty" aria-labelledby="bounty-title" className="section bounty">
       <div className="bounty-panel hud">
-        <p className="kicker bounty-copy">{text('The reward')}</p>
+        <p className="kicker bounty-copy">The reward</p>
         <h2 id="bounty-title" className="bounty-amount font-display">
-          <span className="sr-only">
-            {text('Prize pool {{amount}}', { amount: EVENT.prize.text })}
-          </span>
+          <span className="sr-only">{`Prize pool ${EVENT.prize.text}`}</span>
           <span aria-hidden className="bounty-figures">
             {CHARS.map((ch, i) => {
               if (/\d/.test(ch)) return <Reel key={i} digit={Number(ch)} />;
@@ -95,13 +91,9 @@ export function Reward() {
           </span>
           <span aria-hidden className="reel-scan" />
         </h2>
-        <p className="lead bounty-copy">{text(EVENT.prize.extra)}</p>
-        <p className="label bounty-copy">
-          {text('Prizes go to teams that register and compete on campus.')}
-        </p>
-        <RegistrationLink className="btn bounty-copy">
-          {text('Win it. Register your team')}
-        </RegistrationLink>
+        <p className="lead bounty-copy">{EVENT.prize.extra}</p>
+        <p className="label bounty-copy">Prizes go to teams that register and compete on campus.</p>
+        <RegistrationLink className="btn bounty-copy">Win it. Register your team</RegistrationLink>
       </div>
     </section>
   );

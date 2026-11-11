@@ -1,12 +1,10 @@
 import { useId, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
 import { authClient } from '@/lib/auth-client';
 import { ConfirmButton } from '@/components/ui/confirm-button';
 
 /** The existing sign-out action lives only in the participant's personal-data view. */
 export function AccountSignOut({ email }: { email: string }) {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const titleId = useId();
   const [pending, setPending] = useState(false);
@@ -26,21 +24,21 @@ export function AccountSignOut({ email }: { email: string }) {
   return (
     <section className="account-session-panel" aria-labelledby={titleId}>
       <div>
-        <h2 id={titleId}>{t('account.session')}</h2>
+        <h2 id={titleId}>Account session</h2>
         <p>{email}</p>
       </div>
       <ConfirmButton
         variant="ghost"
-        label={t('common.signOut')}
-        confirmLabel={t('common.confirm')}
+        label="Sign out"
+        confirmLabel="Sure?"
         loading={pending}
-        loadingLabel={t('common.loading')}
+        loadingLabel="Loading…"
         confirmationTone="accent"
         onConfirm={() => void signOut()}
       />
       {error && (
         <p role="alert" className="account-session-error">
-          {t('account.signOutFailed')}
+          Could not sign out. Please try again.
         </p>
       )}
     </section>

@@ -29,6 +29,5 @@ export type ContestAccess = {
 };
 
 export const CONTEST_ERRORS = {
-  registrationOpen: 'admin.finalizeRegistrationOpen',
-  badNames: 'admin.finalizeBadNames',
+  registrationOpen: 'Registration is still open. Finalize the teams once it closes.',
 } as const;

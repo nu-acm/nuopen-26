@@ -1,5 +1,5 @@
 /** Client-safe registration constants (no `cloudflare:workers`, no env). */
-export const REGISTRATION_CLOSED_I18N_KEY = 'onboarding.registrationClosedError' as const;
+export const REGISTRATION_CLOSED_ERROR = 'Registration is closed.' as const;
 
 export const REGISTRATION_OPEN_DATE = '2026-11-11';
 /** End of November 20 in Astana (UTC+5). */

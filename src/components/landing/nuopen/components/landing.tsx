@@ -1,7 +1,5 @@
-import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import { ScrollTrigger } from './motion/gsap';
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import type { NextStep } from '@/lib/next-step';
 import type { RegistrationStatus } from '@/lib/registration';
 
@@ -32,9 +30,6 @@ export function Landing({
   nextStep: NextStep;
   registration: RegistrationStatus;
 }) {
-  const text = useLandingText();
-  const { i18n } = useTranslation();
-  const language = i18n.resolvedLanguage ?? i18n.language;
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let current = true;
@@ -44,18 +39,18 @@ export function Landing({
     return () => {
       current = false;
     };
-  }, [language]);
+  }, []);
   usePrefetchModels();
   return (
     <RegistrationProvider nextStep={nextStep} registration={registration}>
-      <div className="nuopen-landing nuopen-page" lang={language}>
+      <div className="nuopen-landing nuopen-page">
         <SmoothScroll>
           <Starfield />
           <a
             href="#main"
             className="sr-only-focusable btn btn-sm fixed top-3 nu-left-var-gutter nu-z-90"
           >
-            {text('Skip to content')}
+            Skip to content
           </a>
           <Header />
           <main id="main" tabIndex={-1}>

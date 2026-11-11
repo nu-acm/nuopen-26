@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { getSession } from '@/lib/auth.server';
 import { CvError, deleteCv, uploadCv } from '@/lib/cv.server';
 import { CV_ERRORS, CV_MAX_BYTES } from '@/lib/cv';
-import { isRegistrationOpen, REGISTRATION_CLOSED_I18N_KEY } from '@/lib/registration.server';
+import { isRegistrationOpen, REGISTRATION_CLOSED_ERROR } from '@/lib/registration.server';
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -25,18 +25,18 @@ async function authorize(request: Request) {
   const session = await getSession(request);
   if (!session?.user) return { error: json({ error: 'Unauthorized' }, 401) };
   // Same rule as the profile: frozen once registration closes.
-  if (!isRegistrationOpen()) return { error: json({ error: REGISTRATION_CLOSED_I18N_KEY }, 403) };
+  if (!isRegistrationOpen()) return { error: json({ error: REGISTRATION_CLOSED_ERROR }, 403) };
   return { userId: session.user.id };
 }
 
 function failure(err: unknown) {
-  if (err instanceof CvError) return json({ error: err.key }, 400);
+  if (err instanceof CvError) return json({ error: err.message }, 400);
   console.error('[cv API]', err);
   return json({ error: CV_ERRORS.failed }, 500);
 }
 
 /**
- * The signed-in participant's CV. Error bodies carry an i18n key.
+ * The signed-in participant's CV.
  *   POST   multipart/form-data with a `file` field (PDF) — upload or replace
  *   DELETE — remove
  * Serves: /api/cv

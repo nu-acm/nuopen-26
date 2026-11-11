@@ -3,7 +3,6 @@ import { useWebHaptics } from 'web-haptics/react';
 import { webHapticsOptions } from '@/lib/web-haptics';
 import { CvCard } from '@/components/dashboard/CvCard';
 import { AccountSignOut } from '@/components/AccountSignOut';
-import { useTranslation } from 'react-i18next';
 import { createFileRoute, redirect, useNavigate, useRouter } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
@@ -13,7 +12,7 @@ import { AuthCard } from '@/components/ui/auth-card';
 import { OnboardingForm, type OnboardingDefaults } from '@/components/onboarding/OnboardingForm';
 import { ensureSession, getSession } from '@/lib/auth.server';
 import { getParticipant, upsertParticipant } from '@/lib/onboarding.server';
-import { isRegistrationOpen, REGISTRATION_CLOSED_I18N_KEY } from '@/lib/registration.server';
+import { isRegistrationOpen, REGISTRATION_CLOSED_ERROR } from '@/lib/registration.server';
 import { LinkButton } from '@/components/ui/button';
 import { Notice } from '@/components/ui/notice';
 import { onboardingSchema } from '@/lib/validation';
@@ -62,7 +61,7 @@ const saveProfile = createServerFn({ method: 'POST' })
     const session = await ensureSession(getRequest());
 
     // Re-checked on the server: the client cannot bypass the deadline.
-    if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_I18N_KEY);
+    if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_ERROR);
 
     await upsertParticipant({ userId: session.user.id, ...data });
     return { ok: true };
@@ -86,7 +85,6 @@ export const Route = createFileRoute('/onboarding')({
 });
 
 function OnboardingPage() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const router = useRouter();
   const { defaults, registrationOpen, email, hasCv } = Route.useLoaderData();
@@ -120,17 +118,19 @@ function OnboardingPage() {
     // With a profile the details are frozen; without one, sign-up is over.
     return (
       <AccountShell accountTab="personal">
-        <AuthCard title={t('onboarding.closedTitle')} layout="invitation">
+        <AuthCard title="Registration is closed" layout="invitation">
           <Notice className="mb-5">
-            {defaults ? t('onboarding.closedExisting') : t('onboarding.closedNew')}
+            {defaults
+              ? 'Registration is closed, so your details can no longer be changed.'
+              : 'Registration closed before you finished your details, so you can no longer sign up.'}
           </Notice>
           {defaults ? (
             <LinkButton href="/dashboard" className="w-full">
-              {t('dashboard.title')}
+              Dashboard
             </LinkButton>
           ) : (
             <LinkButton href="/" variant="secondary" className="w-full">
-              {t('onboarding.backHome')}
+              Back to the main page
             </LinkButton>
           )}
           {cvPanel}
@@ -143,14 +143,17 @@ function OnboardingPage() {
   return (
     <AccountShell accountTab="personal">
       <AuthCard
-        title={t('account.profileTitle')}
-        subtitle={t('account.profileIntro')}
+        title={'Put a name\nto the callsign.'}
+        subtitle="A few details for the organisers. Then you’re ready to assemble your team."
         layout="profile"
-        eyebrow={`02 / ${t('account.personalTab')}`}
+        eyebrow={`02 / ${'Personal data'}`}
         headingDetail={
           <div className="profile-help">
-            <p className="account-eyebrow">{t('account.yourClearance')}</p>
-            <p>{t('account.profileHelp')}</p>
+            <p className="account-eyebrow">Your clearance</p>
+            <p>
+              Keep your real name and contact details up to date. Only your name is shared with
+              teammates.
+            </p>
           </div>
         }
         profileExtras={
@@ -164,7 +167,7 @@ function OnboardingPage() {
                     : 'account-feedback account-feedback-success'
                 }
               >
-                {t(cvFeedback.message)}
+                {cvFeedback.message}
               </p>
             )}
             {cvPanel}

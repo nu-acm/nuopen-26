@@ -4,7 +4,7 @@ import { Field, FieldLabel, FieldDescription, FieldError } from '@/components/ui
 type FormFieldProps = {
   label: string;
   hint?: string;
-  /** Already translated; rendered below the control and wired up via aria. */
+  /** Shown below the control and linked with aria-describedby. */
   error?: string;
   required?: boolean;
   disabled?: boolean;

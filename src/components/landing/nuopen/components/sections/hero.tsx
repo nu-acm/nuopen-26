@@ -1,4 +1,3 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import { RegistrationLink } from '../ui/registration-link';
 
 import { useEffect, useRef } from 'react';
@@ -15,7 +14,6 @@ import { useStage } from '../three/use-stage';
 import { Countdown } from '../ui/countdown';
 
 export function Hero() {
-  const text = useLandingText();
   const root = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const flight = useRef<Flight>({ scroll: 0, ready: 0 });
@@ -50,28 +48,22 @@ export function Hero() {
 
       <div className="hero-copy mx-auto flex w-full nu-max-w-1400px flex-col items-center nu-px-var-gutter text-center">
         <p data-hero-rest className="hero-episode font-mono">
-          {text('{{organizer}} presents · Episode {{episode}}', {
-            organizer: EVENT.organizerShort,
-            episode: EVENT.episode,
-          })}
+          {`${EVENT.organizerShort} presents · Episode ${EVENT.episode}`}
         </p>
         <h1 data-hero-title className="hero-title font-logo outline-crawl">
           {EVENT.name}
         </h1>
         <p data-hero-rest className="hero-sub font-display">
-          {text(EVENT.subtitle)}
+          {EVENT.subtitle}
         </p>
         <p data-hero-rest className="lead mt-5 nu-max-w-40rem">
-          {text('The {{edition}}th annual ICPC-style programming contest by {{organizer}}.', {
-            edition: EVENT.edition,
-            organizer: EVENT.organizerShort,
-          })}{' '}
-          {text(EVENT.tagline)}
+          {`The ${EVENT.edition}th annual ICPC-style programming contest by ${EVENT.organizerShort}.`}{' '}
+          {EVENT.tagline}
         </p>
         <div data-hero-rest className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <RegistrationLink className="btn">{text('Register your team')}</RegistrationLink>
+          <RegistrationLink className="btn">Register your team</RegistrationLink>
           <a href="#crawl" onClick={jump} className="btn-ghost">
-            {text('Read the crawl')}
+            Read the crawl
           </a>
         </div>
       </div>
@@ -79,21 +71,21 @@ export function Hero() {
       <div data-hero-rest className="hero-strip mx-auto w-full nu-max-w-1400px">
         <dl className="grid grid-cols-1 border-t border-line sm:nu-grid-cols-1fr-1fr lg:nu-grid-cols-1fr-1-2fr-1-4fr">
           <div className="hero-cell">
-            <dt className="label">{text('Date')}</dt>
+            <dt className="label">Date</dt>
             <dd>
-              {text(EVENT.contest.dateLabel)}{' '}
-              <span className="text-ink-3">· {text(EVENT.contest.weekday)}</span>
+              {EVENT.contest.dateLabel}{' '}
+              <span className="text-ink-3">· {EVENT.contest.weekday}</span>
             </dd>
           </div>
           <div className="hero-cell">
-            <dt className="label">{text('Base')}</dt>
+            <dt className="label">Base</dt>
             <dd>
               {EVENT.venue.name},{' '}
-              <span className="text-ink-3">{text(EVENT.venue.city).split(',')[0]}</span>
+              <span className="text-ink-3">{EVENT.venue.city.split(',')[0]}</span>
             </dd>
           </div>
           <div className="hero-cell sm:col-span-2 lg:col-span-1">
-            <dt className="label">{text('Contest starts in')}</dt>
+            <dt className="label">Contest starts in</dt>
             <dd>
               <Countdown target={EVENT.contest.start} end={EVENT.contest.end} />
             </dd>

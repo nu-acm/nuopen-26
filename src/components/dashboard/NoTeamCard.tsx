@@ -1,6 +1,5 @@
 import { Sparkles, Square, ArrowUpRight, Link as LinkIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useWebHaptics } from 'web-haptics/react';
 import { Button } from '@/components/ui/button';
 import {
@@ -46,7 +45,6 @@ export function NoTeamCard({
   /** Asks the AI for a team name suggestion. */
   onGenerate: () => Promise<string>;
 }) {
-  const { t } = useTranslation();
   const { trigger } = useWebHaptics(webHapticsOptions);
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
@@ -74,8 +72,10 @@ export function NoTeamCard({
     try {
       await onCreate(parsed.data.name);
     } catch (err) {
-      // Server errors may be i18n keys (registration closed); t() passes plain text through.
-      fail(setNameError, err instanceof Error ? err.message : 'dashboard.actionFailed');
+      fail(
+        setNameError,
+        err instanceof Error ? err.message : 'That did not work. Please try again.',
+      );
     } finally {
       setPending(false);
     }
@@ -92,7 +92,10 @@ export function NoTeamCard({
     try {
       await onJoin(parsed.data.slug);
     } catch (err) {
-      fail(setSlugError, err instanceof Error ? err.message : 'dashboard.actionFailed');
+      fail(
+        setSlugError,
+        err instanceof Error ? err.message : 'That did not work. Please try again.',
+      );
     } finally {
       setPending(false);
     }
@@ -110,7 +113,10 @@ export function NoTeamCard({
       void trigger('success');
     } catch (err) {
       if (id !== generationRef.current) return;
-      fail(setNameError, err instanceof Error ? err.message : 'dashboard.generateFailed');
+      fail(
+        setNameError,
+        err instanceof Error ? err.message : 'Could not come up with a name. Try again later.',
+      );
     } finally {
       if (id === generationRef.current) setGenerating(false);
     }
@@ -123,18 +129,18 @@ export function NoTeamCard({
   };
 
   const generateLabel = generating
-    ? t('dashboard.cancelGenerate')
+    ? 'Stop'
     : cooldownSeconds > 0
-      ? t('dashboard.generateCooldown', { seconds: cooldownSeconds })
-      : t('dashboard.generateName');
+      ? `Try again in ${cooldownSeconds}s`
+      : 'Suggest a team name';
 
   if (!registrationOpen) {
     return (
       <Card variant="team">
         <CardHeader variant="no-team">
-          <CardTitle variant="account">{t('dashboard.noTeam')}</CardTitle>
+          <CardTitle variant="account">You are not in a team yet</CardTitle>
           <CardDescription variant="warning">
-            {t('dashboard.registrationClosedNoTeam')}
+            Registration is closed. You can no longer create or join a team.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -145,15 +151,17 @@ export function NoTeamCard({
     <div className="account-no-team-grid">
       <Card variant="team">
         <CardHeader variant="no-team">
-          <p className="account-eyebrow">{t('account.takeLead')}</p>
-          <CardTitle variant="account">{t('account.buildSquadron')}</CardTitle>
-          <CardDescription variant="account">{t('dashboard.noTeamHint')}</CardDescription>
+          <p className="account-eyebrow">Take the lead</p>
+          <CardTitle variant="account">Build your squadron</CardTitle>
+          <CardDescription variant="account">
+            Create a team and invite your teammates, or join one with an invite link.
+          </CardDescription>
         </CardHeader>
         <CardContent variant="no-team">
           <form onSubmit={submitCreate} className="account-team-form" noValidate>
             <FormField
-              label={t('dashboard.teamNameLabel')}
-              error={nameError ? t(nameError) : undefined}
+              label="Team name"
+              error={nameError ?? undefined}
               disabled={pending || generating}
             >
               {(p) => (
@@ -161,7 +169,7 @@ export function NoTeamCard({
                   <InputGroupInput
                     {...p}
                     value={name}
-                    placeholder={t('dashboard.teamNamePlaceholder')}
+                    placeholder="e.g. Binary Blossoms"
                     onChange={(e) => setName(e.target.value)}
                     disabled={pending || generating}
                   />
@@ -185,11 +193,11 @@ export function NoTeamCard({
             </FormField>
             {generating && (
               <p className="-mt-1 text-sm text-whd-text-muted" aria-live="polite">
-                {t('dashboard.generating')}
+                Thinking of a name…
               </p>
             )}
             <Button type="submit" disabled={pending || generating}>
-              <span>{t('dashboard.createTeam')}</span>
+              <span>Create a team</span>
               <ArrowUpRight className="account-button-arrow" aria-hidden="true" />
             </Button>
           </form>
@@ -197,17 +205,15 @@ export function NoTeamCard({
       </Card>
       <Card variant="team">
         <CardHeader variant="no-team">
-          <p className="account-eyebrow">{t('account.answerCall')}</p>
-          <CardTitle variant="account">{t('account.haveCrew')}</CardTitle>
-          <CardDescription variant="account">{t('account.joinHint')}</CardDescription>
+          <p className="account-eyebrow">Answer the call</p>
+          <CardTitle variant="account">Already have a crew?</CardTitle>
+          <CardDescription variant="account">
+            Use the invitation link or code shared by your captain to join their team.
+          </CardDescription>
         </CardHeader>
         <CardContent variant="no-team">
           <form onSubmit={submitJoin} className="account-team-form account-join-form" noValidate>
-            <FormField
-              label={t('dashboard.inviteCodeLabel')}
-              error={slugError ? t(slugError) : undefined}
-              disabled={pending}
-            >
+            <FormField label="Invite code" error={slugError ?? undefined} disabled={pending}>
               {(p) => (
                 <Input
                   {...p}
@@ -220,7 +226,7 @@ export function NoTeamCard({
             </FormField>
             <Button type="submit" variant="secondary" disabled={pending}>
               <LinkIcon size={18} aria-hidden="true" />
-              {t('dashboard.joinTeam')}
+              Join a team
             </Button>
           </form>
         </CardContent>

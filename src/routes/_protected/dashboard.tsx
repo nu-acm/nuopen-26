@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useWebHaptics } from 'web-haptics/react';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
@@ -21,13 +20,13 @@ import {
   kickMember,
   leaveTeam,
 } from '@/lib/team.server';
-import { isRegistrationOpen, REGISTRATION_CLOSED_I18N_KEY } from '@/lib/registration.server';
+import { isRegistrationOpen, REGISTRATION_CLOSED_ERROR } from '@/lib/registration.server';
 import { createTeamSchema, inviteSlugSchema } from '@/lib/validation';
 import { webHapticsOptions } from '@/lib/web-haptics';
 
 /** Every team mutation is blocked once the deadline passes. */
 function assertRegistrationOpen() {
-  if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_I18N_KEY);
+  if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_ERROR);
 }
 
 const loadDashboard = createServerFn({ method: 'GET' }).handler(async () => {
@@ -97,7 +96,6 @@ export const Route = createFileRoute('/_protected/dashboard')({
 type Feedback = { type: 'success' | 'error'; message: string };
 
 function DashboardPage() {
-  const { t } = useTranslation();
   const router = useRouter();
   const { trigger } = useWebHaptics(webHapticsOptions);
   const { userId, email, fullName, team, registrationOpen } = Route.useLoaderData();
@@ -132,10 +130,10 @@ function DashboardPage() {
       await succeed(successMessage);
     } catch (err) {
       void trigger('error');
-      // Server errors may be i18n keys (registration closed); t() passes plain text through.
+
       setFeedback({
         type: 'error',
-        message: err instanceof Error ? err.message : 'dashboard.actionFailed',
+        message: err instanceof Error ? err.message : 'That did not work. Please try again.',
       });
     } finally {
       setPendingAction(null);
@@ -158,7 +156,7 @@ function DashboardPage() {
                   : 'account-feedback account-feedback-success'
               }
             >
-              {t(feedback.message)}
+              {feedback.message}
             </p>
           )
         }
@@ -176,16 +174,12 @@ function DashboardPage() {
               void runTeamAction(
                 id,
                 () => kickMemberFn({ data: { userId: id } }),
-                t('dashboard.feedbackKicked', { name }),
+                `${name} was removed from the team.`,
               );
             }}
-            onLeave={() => runTeamAction('leave', () => leaveTeamFn(), t('dashboard.feedbackLeft'))}
+            onLeave={() => runTeamAction('leave', () => leaveTeamFn(), 'You left the team.')}
             onDissolve={() =>
-              void runTeamAction(
-                'dissolve',
-                () => dissolveTeamFn(),
-                t('dashboard.feedbackDissolved'),
-              )
+              void runTeamAction('dissolve', () => dissolveTeamFn(), 'The team was dissolved.')
             }
           />
         ) : (
@@ -193,11 +187,11 @@ function DashboardPage() {
             registrationOpen={registrationOpen}
             onCreate={async (name) => {
               await createTeamFn({ data: { name } });
-              await succeed(t('dashboard.feedbackCreated', { name }));
+              await succeed(`Team ${name} created.`);
             }}
             onJoin={async (slug) => {
               await joinTeamFn({ data: { slug } });
-              await succeed(t('dashboard.feedbackJoined'));
+              await succeed('You joined the team.');
             }}
             onGenerate={() => generateTeamNameFn()}
           />

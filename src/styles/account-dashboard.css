@@ -443,7 +443,7 @@
   }
 }
 
-/* Keep translated navigation and long names inside their available columns. */
+/* Keep navigation and long names inside their available columns. */
 .account-nav a {
   min-width: 0;
 }
@@ -470,9 +470,6 @@
   min-width: 0;
 }
 @media (max-width: 680px) {
-  :is(html:lang(ru), html:lang(kk)) .dashboard-welcome h1 {
-    font-size: clamp(2rem, 8.5vw, 2.75rem);
-  }
   .account-team-heading > div {
     flex-basis: 160px;
   }

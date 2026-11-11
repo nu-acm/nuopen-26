@@ -1,4 +1,3 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import './side-choice.css';
 
 import { type CSSProperties, useEffect, useRef } from 'react';
@@ -37,7 +36,6 @@ const readSaberColour = () =>
   getComputedStyle(document.documentElement).getPropertyValue('--saber').trim();
 
 function SideCard({ option, chosen }: { option: Option; chosen: boolean }) {
-  const text = useLandingText();
   return (
     <button
       type="button"
@@ -52,14 +50,14 @@ function SideCard({ option, chosen }: { option: Option; chosen: boolean }) {
       className="side-option hud side-reveal"
     >
       <span aria-hidden className="side-bar" />
-      <span className="side-option-title font-display">{text(option.title)}</span>
+      <span className="side-option-title font-display">{option.title}</span>
       <span className="side-facts">
         <span className="side-fact">
-          <span className="label">{text('Blade')}</span>
-          <span>{text(option.blade)}</span>
+          <span className="label">Blade</span>
+          <span>{option.blade}</span>
         </span>
         <span className="side-fact">
-          <span className="label">{text('Soundtrack')}</span>
+          <span className="label">Soundtrack</span>
           <span>{option.music}</span>
         </span>
       </span>
@@ -68,7 +66,6 @@ function SideCard({ option, chosen }: { option: Option; chosen: boolean }) {
 }
 
 export function SideChoice() {
-  const text = useLandingText();
   const root = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const hilt = useRef<Hilt>({ color: '', turn: 0 });
@@ -99,14 +96,12 @@ export function SideChoice() {
       className="side-choice relative isolate overflow-hidden"
     >
       <div className="side-copy">
-        <p className="kicker side-reveal">{text('Choose your side')}</p>
+        <p className="kicker side-reveal">Choose your side</p>
         <h2 id="side-title" className="h2-xl side-title side-reveal font-display">
-          {text('Every pilot picks a side')}
+          Every pilot picks a side
         </h2>
         <p className="lead side-reveal">
-          {text(
-            'Your side sets the blade colour and the soundtrack. The problems are the same either way.',
-          )}
+          Your side sets the blade colour and the soundtrack. The problems are the same either way.
         </p>
       </div>
 

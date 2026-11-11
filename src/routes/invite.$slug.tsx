@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useWebHaptics } from 'web-haptics/react';
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
@@ -12,7 +11,7 @@ import { MAX_TEAM_SIZE } from '@/lib/event';
 import { getSession } from '@/lib/auth.server';
 import { getParticipant } from '@/lib/onboarding.server';
 import { getTeamBySlug, joinTeamBySlug } from '@/lib/team.server';
-import { isRegistrationOpen, REGISTRATION_CLOSED_I18N_KEY } from '@/lib/registration.server';
+import { isRegistrationOpen, REGISTRATION_CLOSED_ERROR } from '@/lib/registration.server';
 import { inviteSlugSchema } from '@/lib/validation';
 import { webHapticsOptions } from '@/lib/web-haptics';
 
@@ -43,7 +42,7 @@ const acceptInvite = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const session = await getSession(getRequest());
     if (!session?.user) throw new Error('Unauthorized');
-    if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_I18N_KEY);
+    if (!isRegistrationOpen()) throw new Error(REGISTRATION_CLOSED_ERROR);
     return joinTeamBySlug(session.user.id, data.slug);
   });
 
@@ -60,7 +59,6 @@ export const Route = createFileRoute('/invite/$slug')({
 });
 
 function InvitePage() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const { slug } = Route.useParams();
   const result = Route.useLoaderData();
@@ -77,17 +75,17 @@ function InvitePage() {
       await navigate({ to: '/dashboard' });
     } catch (err) {
       void trigger('error');
-      // Server errors may be i18n keys (registration closed); t() passes plain text through.
-      setError(err instanceof Error ? err.message : 'dashboard.actionFailed');
+
+      setError(err instanceof Error ? err.message : 'That did not work. Please try again.');
       setPending(false);
     }
   };
 
   const messages: Record<string, string> = {
-    'not-found': t('validation.inviteCodeInvalid'),
-    closed: t('invite.registrationClosed'),
-    'already-in-team': t('invite.alreadyInTeam'),
-    full: t('invite.teamFull'),
+    'not-found': 'That invite code is not valid',
+    closed: 'Registration is closed, so teams can no longer change.',
+    'already-in-team': 'You are already in a team. Leave it first to join another.',
+    full: 'This team is already full.',
   };
 
   return (
@@ -99,32 +97,27 @@ function InvitePage() {
             <>
               <h2 className="invitation-team-name">{result.team.name}</h2>
               <div className="invitation-facts">
-                <span>
-                  {t('dashboard.membersCount', {
-                    count: result.team.memberCount,
-                    max: MAX_TEAM_SIZE,
-                  })}
-                </span>
-                <span>{t('infoCards.whereAnswer')}</span>
+                <span>{`${result.team.memberCount} of ${MAX_TEAM_SIZE}`}</span>
+                <span>Nazarbayev University</span>
               </div>
             </>
           )
         }
-        title={result.status === 'can-join' ? t('invite.title') : t('invite.cannotJoin')}
+        title={result.status === 'can-join' ? 'Join this team' : 'Cannot join'}
         subtitle={
           result.status === 'can-join'
-            ? t('invite.subtitle', { team: result.team.name })
+            ? `You have been invited to join ${result.team.name}.`
             : messages[result.status]
         }
       >
         {result.status === 'can-join' ? (
           <div className="flex flex-col gap-3">
             <Button className="w-full" disabled={pending} onClick={join}>
-              {pending ? t('common.loading') : t('invite.join')}
+              {pending ? 'Loading…' : 'Join team'}
             </Button>
             {error && (
               <p role="alert" className="text-sm text-destructive">
-                {t(error)}
+                {error}
               </p>
             )}
           </div>
@@ -134,7 +127,7 @@ function InvitePage() {
             className="w-full"
             onClick={() => navigate({ to: '/dashboard' })}
           >
-            {t('dashboard.title')}
+            Dashboard
           </Button>
         )}
       </AuthCard>

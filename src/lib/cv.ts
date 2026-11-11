@@ -3,21 +3,20 @@
 export const CV_MAX_MB = 5;
 export const CV_MAX_BYTES = CV_MAX_MB * 1024 * 1024;
 
-/** Error messages are i18n keys, so the API can return them and the UI can translate them. */
 export const CV_ERRORS = {
-  notPdf: 'cv.errorNotPdf',
-  tooLarge: 'cv.errorTooLarge',
-  noProfile: 'cv.errorNoProfile',
-  failed: 'cv.errorFailed',
+  notPdf: 'Please choose a PDF file.',
+  tooLarge: `The file is larger than ${CV_MAX_MB} MB.`,
+  noProfile: 'Fill in your details first.',
+  failed: 'Could not save your CV. Please try again.',
 } as const;
 
-export type CvErrorKey = (typeof CV_ERRORS)[keyof typeof CV_ERRORS];
+export type CvErrorMessage = (typeof CV_ERRORS)[keyof typeof CV_ERRORS];
 
 // Every PDF starts with "%PDF-"; the file extension and MIME type can lie.
 const PDF_MAGIC = [0x25, 0x50, 0x44, 0x46, 0x2d];
 
-/** The i18n key of what is wrong with these bytes, or null for a valid PDF. */
-export function validateCvBytes(bytes: Uint8Array): CvErrorKey | null {
+/** The validation message, or null for a valid PDF. */
+export function validateCvBytes(bytes: Uint8Array): CvErrorMessage | null {
   if (bytes.length > CV_MAX_BYTES) return CV_ERRORS.tooLarge;
   const isPdf = PDF_MAGIC.every((byte, i) => bytes[i] === byte);
   return isPdf ? null : CV_ERRORS.notPdf;

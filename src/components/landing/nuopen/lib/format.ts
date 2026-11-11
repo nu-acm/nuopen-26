@@ -1,4 +1,4 @@
-export const formatCount = (n: number, locale = 'en-US') => Math.round(n).toLocaleString(locale);
+export const formatCount = (n: number) => Math.round(n).toLocaleString('en-US');
 
 // U+2009 thin space: the Kazakh way to group tenge, and it never wraps a number apart.
 export const formatMoney = (amount: number, currency: string) =>

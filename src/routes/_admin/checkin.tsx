@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
@@ -73,9 +72,8 @@ const isTableNumber = (number: number | null, needle: string) =>
   number !== null && (needle === String(number) || needle === formatTeamNumber(number));
 
 function TableNumber({ number }: { number: number | null }) {
-  const { t } = useTranslation();
   return number === null ? (
-    <span className="text-muted-foreground">{t('common.notProvided')}</span>
+    <span className="text-muted-foreground">Not provided</span>
   ) : (
     formatTeamNumber(number)
   );
@@ -111,7 +109,6 @@ function AttendanceCheckbox({
   name: string;
   onChange: (attended: boolean) => void;
 }) {
-  const { t } = useTranslation();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   return (
@@ -120,17 +117,15 @@ function AttendanceCheckbox({
         checked={checked}
         disabled={disabled}
         onCheckedChange={(next) => (next ? onChange(true) : setConfirmOpen(true))}
-        aria-label={
-          checked ? t('admin.markAbsentLabel', { name }) : t('admin.markPresentLabel', { name })
-        }
+        aria-label={checked ? `Mark ${name} as not checked in` : `Mark ${name} as checked in`}
       />
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title={t('admin.confirmAbsentTitle')}
-        description={t('admin.confirmAbsentBody', { name })}
-        confirmLabel={t('admin.markAbsent')}
-        cancelLabel={t('common.cancel')}
+        title="Undo check-in?"
+        description={`${name} will be marked as not checked in.`}
+        confirmLabel="Undo check-in"
+        cancelLabel="Cancel"
         onConfirm={() => onChange(false)}
       />
     </>
@@ -160,7 +155,6 @@ function AttendanceCell({
 }
 
 function CheckinPage() {
-  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { data, isFetching, refetch } = useSuspenseQuery(checkinQueryOptions);
   const { participants, teams } = data;
@@ -253,7 +247,7 @@ function CheckinPage() {
           withAttendance(d, participantId, previousAttended),
         );
       }
-      setError(err instanceof Error ? err.message : t('admin.attendanceFailed'));
+      setError(err instanceof Error ? err.message : 'Could not update attendance. Try again.');
     },
     onSuccess: (row) => {
       queryClient.setQueryData<CheckinData>(checkinQueryKey, (d) =>
@@ -276,68 +270,68 @@ function CheckinPage() {
         accessorFn: (p) => p.attended,
         enableSorting: false,
         enableHiding: false,
-        meta: { label: t('admin.col.attended') },
+        meta: { label: 'Checked in' },
         cell: AttendanceCell,
       },
       {
         id: 'fullName',
         accessorFn: (p) => p.fullName,
-        meta: { label: t('admin.col.fullName') },
+        meta: { label: 'Name' },
         cell: ({ row }) => row.original.fullName,
       },
       {
         id: 'teamNumber',
         accessorFn: (p) => p.teamNumber,
-        meta: { label: t('admin.col.number'), tone: 'numeric' },
+        meta: { label: 'Table', tone: 'numeric' },
         sortFn: (a, b) => compareTeamNumbers(a.original.teamNumber, b.original.teamNumber),
         cell: ({ row }) => <TableNumber number={row.original.teamNumber} />,
       },
       {
         id: 'teamName',
         accessorFn: (p) => p.teamName,
-        meta: { label: t('admin.col.teamName'), tone: 'muted' },
+        meta: { label: 'Team', tone: 'muted' },
         cell: ({ row }) => row.original.teamName,
       },
       {
         id: 'placeOfStudy',
         accessorFn: (p) => p.placeOfStudy,
-        meta: { label: t('admin.col.placeOfStudy'), tone: 'muted' },
+        meta: { label: 'Place of study', tone: 'muted' },
         cell: ({ row }) => row.original.placeOfStudy,
       },
       {
         id: 'educationLevel',
         accessorFn: (p) => p.educationLevel,
-        meta: { label: t('admin.col.educationLevel'), tone: 'muted' },
-        cell: ({ row }) => t(`education.${row.original.educationLevel}`),
+        meta: { label: 'Level', tone: 'muted' },
+        cell: ({ row }) => row.original.educationLevel,
       },
     ],
-    [t],
+    [],
   );
   const teamCols = useMemo<AdminColumnDef<CheckinTeam>[]>(
     () => [
       {
         id: 'number',
         accessorFn: (team) => team.number,
-        meta: { label: t('admin.col.number'), tone: 'numeric' },
+        meta: { label: 'Table', tone: 'numeric' },
         sortFn: (a, b) => compareTeamNumbers(a.original.number, b.original.number),
         cell: ({ row }) => <TableNumber number={row.original.number} />,
       },
       {
         id: 'name',
         accessorFn: (team) => team.name,
-        meta: { label: t('admin.col.name') },
+        meta: { label: 'Team' },
         cell: ({ row }) => row.original.name,
       },
       {
         id: 'captainName',
         accessorFn: (team) => team.captainName,
-        meta: { label: t('admin.col.captainName'), tone: 'muted' },
+        meta: { label: 'Captain', tone: 'muted' },
         cell: ({ row }) => row.original.captainName,
       },
       {
         id: 'members',
         enableSorting: false,
-        meta: { label: t('admin.col.members') },
+        meta: { label: 'Members' },
         cell: ({ row }) =>
           row.original.members.map((member, index) => (
             <span
@@ -352,14 +346,14 @@ function CheckinPage() {
       {
         id: 'attended',
         accessorFn: attendedCount,
-        meta: { label: t('admin.col.attended'), tone: 'numeric' },
+        meta: { label: 'Checked in', tone: 'numeric' },
         sortFn: (a, b) =>
           attendedCount(a.original) - attendedCount(b.original) ||
           a.original.members.length - b.original.members.length,
         cell: ({ row }) => `${attendedCount(row.original)}/${row.original.members.length}`,
       },
     ],
-    [t],
+    [],
   );
   const participantTable = useAdminTable(
     participantMatches,
@@ -386,38 +380,31 @@ function CheckinPage() {
       <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
         <div className="admin-heading">
           <div>
-            <h1 className="admin-title">{t('admin.checkinTitle')}</h1>
+            <h1 className="admin-title">Check-in</h1>
             <p className="mt-2 text-sm text-whd-text-muted">
-              {t('admin.checkinScope', { min: MIN_TEAM_SIZE, max: MAX_TEAM_SIZE })}
+              {`Only teams with ${MIN_TEAM_SIZE} to ${MAX_TEAM_SIZE} members are listed.`}
             </p>
           </div>
         </div>
 
         <div className="admin-stats admin-checkin-stats">
           <StatCard
-            label={t('admin.statEligibleParticipants')}
+            label="Eligible participants"
             value={participants.length}
-            breakdown={t('admin.attendanceBreakdown', {
-              present: presentCount,
-              absent: participants.length - presentCount,
-            })}
+            breakdown={`${presentCount} in / ${participants.length - presentCount} not yet`}
           />
           <StatCard
-            label={t('admin.statEligibleTeams')}
+            label="Eligible teams"
             value={teams.length}
-            breakdown={t('admin.teamStatusBreakdown', {
-              ready: statusCounts.ready,
-              partial: statusCounts.partial,
-              noShow: statusCounts['no-show'],
-            })}
+            breakdown={`${statusCounts.ready} ready / ${statusCounts.partial} partial / ${statusCounts['no-show']} no-show`}
           />
         </div>
 
         <section className="admin-registry">
           <div className="admin-registry-header">
             <TabsList>
-              <TabsTrigger value="participants">{t('admin.tab_participants')}</TabsTrigger>
-              <TabsTrigger value="teams">{t('admin.tab_teams')}</TabsTrigger>
+              <TabsTrigger value="participants">Participants</TabsTrigger>
+              <TabsTrigger value="teams">Teams</TabsTrigger>
             </TabsList>
           </div>
           <div className="admin-toolbar">
@@ -427,12 +414,12 @@ function CheckinPage() {
                 isParticipants ? setParticipantQuery(e.target.value) : setTeamQuery(e.target.value)
               }
               aria-label={
-                isParticipants ? t('admin.searchPlaceholder') : t('admin.teamSearchPlaceholder')
+                isParticipants ? 'Search name, email, team…' : 'Search team, captain, member…'
               }
               placeholder={
                 isParticipants
-                  ? t('admin.checkinSearchPlaceholder')
-                  : t('admin.teamSearchPlaceholder')
+                  ? 'Search by name, IIN, phone or team…'
+                  : 'Search team, captain, member…'
               }
               autoFocus
             />
@@ -449,13 +436,13 @@ function CheckinPage() {
               <>
                 <ColumnToggleBar table={participantTable} />
                 <Segmented
-                  label={t('admin.filterLabel')}
+                  label="Filter"
                   value={participantFilter}
                   onChange={setParticipantFilter}
                   options={[
-                    { value: 'all', label: t('admin.filterAll') },
-                    { value: 'attended', label: t('admin.filterAttended') },
-                    { value: 'not-attended', label: t('admin.filterNotAttended') },
+                    { value: 'all', label: 'All' },
+                    { value: 'attended', label: 'Checked in' },
+                    { value: 'not-attended', label: 'Not checked in' },
                   ]}
                 />
               </>
@@ -463,28 +450,23 @@ function CheckinPage() {
               <>
                 <ColumnToggleBar table={teamTable} />
                 <Segmented
-                  label={t('admin.filterLabel')}
+                  label="Filter"
                   value={teamFilter}
                   onChange={setTeamFilter}
                   options={[
-                    { value: 'all', label: t('admin.filterAll') },
-                    { value: 'ready', label: t('admin.statusReady') },
-                    { value: 'partial', label: t('admin.statusPartial') },
-                    { value: 'no-show', label: t('admin.statusNoShow') },
+                    { value: 'all', label: 'All' },
+                    { value: 'ready', label: 'Ready' },
+                    { value: 'partial', label: 'Partial' },
+                    { value: 'no-show', label: 'No-show' },
                   ]}
                 />
               </>
             )}
           </div>
 
-          <p className="admin-count">{t('admin.showingCount', { shown, total: inFilter })}</p>
+          <p className="admin-count">{`${shown} of ${inFilter}`}</p>
 
-          <div
-            className="admin-table-wrap"
-            role="region"
-            aria-label={t('admin.columns')}
-            tabIndex={0}
-          >
+          <div className="admin-table-wrap" role="region" aria-label="Columns" tabIndex={0}>
             <TabsContent value="participants">
               <AttendanceActionsContext value={attendanceActions}>
                 <AdminDataTable table={participantTable} variant="checkin" />
@@ -497,7 +479,7 @@ function CheckinPage() {
 
           {shown === 0 && (
             <Empty>
-              <EmptyDescription>{t('admin.empty')}</EmptyDescription>
+              <EmptyDescription>Nothing to show</EmptyDescription>
             </Empty>
           )}
         </section>

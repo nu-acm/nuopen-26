@@ -1,7 +1,3 @@
-import {
-  useLandingText,
-  type LandingText,
-} from '@/components/landing/nuopen/content/use-landing-text';
 import './briefing.css';
 
 import { useRef, type ReactNode } from 'react';
@@ -21,18 +17,18 @@ const timing = contestWindow(contest.start, contest.end);
 
 type Fact = { label: string; value: string; detail: string; action?: ReactNode };
 
-function briefingFacts(text: LandingText): Fact[] {
+function briefingFacts(): Fact[] {
   return [
-    { label: text('Date'), value: text(contest.dateLabel), detail: text(contest.weekday) },
+    { label: 'Date', value: contest.dateLabel, detail: contest.weekday },
     {
-      label: text('Time'),
+      label: 'Time',
       value: timing.range,
-      detail: text('{{zone}} · {{hours}} hours', { zone: text(timing.zone), hours: contest.hours }),
+      detail: `${timing.zone} · ${contest.hours} hours`,
     },
     {
-      label: text('Base'),
+      label: 'Base',
       value: venue.name,
-      detail: `${text(venue.address)}, ${text(venue.city)}`,
+      detail: `${venue.address}, ${venue.city}`,
       action: (
         <a
           href={venue.mapHref}
@@ -40,7 +36,7 @@ function briefingFacts(text: LandingText): Fact[] {
           rel="noopener noreferrer"
           className="briefing-map font-mono"
         >
-          {text('Open in maps')}
+          Open in maps
           <svg
             aria-hidden
             width="12"
@@ -56,19 +52,16 @@ function briefingFacts(text: LandingText): Fact[] {
       ),
     },
     {
-      label: text('Crew'),
-      value: text('{{min}}–{{max}} per team', { min: team.min, max: team.max }),
-      detail: text('Age {{age}}+, solo or in a team', { age: team.minAge }),
+      label: 'Crew',
+      value: `${team.min}–${team.max} per team`,
+      detail: `Age ${team.minAge}+, solo or in a team`,
     },
     {
-      label: text('Format'),
-      value: text('{{format}} on {{platform}}', {
-        format: text(contest.format),
-        platform: contest.platform,
-      }),
-      detail: text('Compete in person at Nazarbayev University'),
+      label: 'Format',
+      value: `${contest.format} on ${contest.platform}`,
+      detail: 'Compete in person at Nazarbayev University',
     },
-    { label: text('Entry'), value: text('Free'), detail: text('No participation fee') },
+    { label: 'Entry', value: 'Free', detail: 'No participation fee' },
   ];
 }
 
@@ -113,7 +106,6 @@ function Row({ index, fact }: { index: number; fact: Fact }) {
 }
 
 export function Briefing() {
-  const text = useLandingText();
   const root = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const readout = useRef<HTMLDListElement>(null);
@@ -137,14 +129,13 @@ export function Briefing() {
     <section ref={root} id="briefing" aria-labelledby="briefing-title" className="section">
       <div className="briefing-grid split">
         <header className="briefing-head split-main">
-          <p className="kicker">{text('Mission briefing')}</p>
+          <p className="kicker">Mission briefing</p>
           <h2 id="briefing-title" className="h2 mt-6 font-display">
-            {text('The target.')}
+            The target.
           </h2>
           <p className="lead mt-6">
-            {text(
-              'Five hours, one problem set, and everything you need to plan the day. Read it once, then bring your squadron.',
-            )}
+            Five hours, one problem set, and everything you need to plan the day. Read it once, then
+            bring your squadron.
           </p>
         </header>
         <div className="briefing-target split-copy">
@@ -152,10 +143,10 @@ export function Briefing() {
             <div ref={stage} aria-hidden className="briefing-stage hud" />
             <Reticle />
           </div>
-          <p className="label briefing-caption">{text('Target acquired')}</p>
+          <p className="label briefing-caption">Target acquired</p>
         </div>
         <dl ref={readout} className="briefing-readout hud split-main">
-          {briefingFacts(text).map((fact, i) => (
+          {briefingFacts().map((fact, i) => (
             <Row key={fact.label} index={i + 1} fact={fact} />
           ))}
         </dl>

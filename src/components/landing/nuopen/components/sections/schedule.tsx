@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import './schedule.css';
 
 import { useEffect, useRef, useState } from 'react';
@@ -16,9 +14,6 @@ const isMainSlot = (slot: (typeof EVENT.agenda)[number]) => 'main' in slot && sl
 
 /** Key dates as a hyperspace route, then the contest day's running order. */
 export function FlightPlan() {
-  const text = useLandingText();
-  const { i18n } = useTranslation();
-  const language = i18n.resolvedLanguage ?? i18n.language;
   const root = useRef<HTMLElement>(null);
   const [next, setNext] = useState(-1);
 
@@ -54,34 +49,32 @@ export function FlightPlan() {
   return (
     <section ref={root} id="schedule" aria-labelledby="schedule-title" className="section schedule">
       <div className="schedule-copy">
-        <p className="kicker">{text('Flight plan')}</p>
+        <p className="kicker">Flight plan</p>
         <h2 id="schedule-title" className="h2 font-display">
-          <span className="whitespace-nowrap">{text('The route to')}</span>{' '}
+          <span className="whitespace-nowrap">The route to</span>{' '}
           <span className="whitespace-nowrap">
-            {formatDay(EVENT.contest.start.slice(0, 10), 'long', language)}
+            {formatDay(EVENT.contest.start.slice(0, 10), 'long')}
           </span>
         </h2>
       </div>
 
-      <p className="label schedule-caption">{text('Key dates')}</p>
-      <ol aria-label={text('Key dates')} className="route">
+      <p className="label schedule-caption">Key dates</p>
+      <ol aria-label="Key dates" className="route">
         {EVENT.timeline.map((item, i) => (
           <li key={item.date} className="route-step" data-next={i === next ? 'true' : undefined}>
             <span aria-hidden className="route-node" />
             <time dateTime={item.date} className="route-date font-mono">
-              {formatDay(item.date, 'short', language)}
+              {formatDay(item.date)}
             </time>
-            <h3 className="route-label font-display">{text(item.label)}</h3>
-            <p className="route-note">{text(item.note)}</p>
-            {i === next && <p className="route-now label">{text('Next stop')}</p>}
+            <h3 className="route-label font-display">{item.label}</h3>
+            <p className="route-note">{item.note}</p>
+            {i === next && <p className="route-now label">Next stop</p>}
           </li>
         ))}
       </ol>
 
-      <p className="label schedule-caption">
-        {text('Contest day · All times are Astana time (UTC+5)')}
-      </p>
-      <ol aria-label={text('Contest day')} className="agenda">
+      <p className="label schedule-caption">Contest day · All times are Astana time (UTC+5)</p>
+      <ol aria-label="Contest day" className="agenda">
         {EVENT.agenda.map((slot) => (
           <li
             key={slot.from}
@@ -93,14 +86,12 @@ export function FlightPlan() {
             </p>
             <div className="agenda-body">
               <p className={isMainSlot(slot) ? 'agenda-title font-display' : 'agenda-title'}>
-                {text(slot.title)}
+                {slot.title}
               </p>
-              {slot.venue && <p className="agenda-note">{text(slot.venue)}</p>}
+              {slot.venue && <p className="agenda-note">{slot.venue}</p>}
             </div>
             {isMainSlot(slot) && (
-              <span className="agenda-tag font-mono">
-                {text('{{hours}} hours', { hours: EVENT.contest.hours })}
-              </span>
+              <span className="agenda-tag font-mono">{`${EVENT.contest.hours} hours`}</span>
             )}
           </li>
         ))}

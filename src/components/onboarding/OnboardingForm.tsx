@@ -1,5 +1,4 @@
 import { useId, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
 import { useWebHaptics } from 'web-haptics/react';
 import { Button } from '@/components/ui/button';
@@ -11,11 +10,12 @@ import {
   EDUCATION_LEVELS,
   requiresGuardianPhone,
   onboardingSchema,
+  VALIDATION_MESSAGES,
   type EducationLevel,
   type OnboardingInput,
 } from '@/lib/validation';
 import { webHapticsOptions } from '@/lib/web-haptics';
-import { REGISTRATION_CLOSED_I18N_KEY } from '@/lib/registration';
+import { REGISTRATION_CLOSED_ERROR } from '@/lib/registration';
 import { DOCUMENTS_POLICY_VERSION, REGISTRATION_POLICY_VERSION } from '@/lib/consent';
 import { CODE_OF_CONDUCT_URL, INSTRUCTIONS_AND_RULES_URL } from '@/lib/event';
 
@@ -34,7 +34,6 @@ export function OnboardingForm({
   email?: string;
   onSubmit: (values: OnboardingInput) => Promise<void>;
 }) {
-  const { t } = useTranslation();
   const consentId = useId();
   const documentsId = useId();
   const [values, setValues] = useState({
@@ -70,8 +69,8 @@ export function OnboardingForm({
       const next: Errors = {};
       for (const issue of parsed.error.issues) {
         const key = issue.path[0] as keyof OnboardingInput;
-        // Zod messages are i18n keys; resolve them for display.
-        if (key && !next[key]) next[key] = t(issue.message);
+
+        if (key && !next[key]) next[key] = issue.message;
       }
       void trigger('error');
       setErrors(next);
@@ -95,24 +94,22 @@ export function OnboardingForm({
               if (
                 typeof key === 'string' &&
                 Object.hasOwn(values, key) &&
-                typeof issue.message === 'string' &&
-                issue.message.startsWith('validation.') &&
-                t(issue.message) !== issue.message
+                Object.values(VALIDATION_MESSAGES).some((message) => message === issue.message)
               ) {
                 const field = key as keyof OnboardingInput;
-                if (!next[field]) next[field] = t(issue.message);
+                if (!next[field]) next[field] = issue.message;
               }
             }
           }
         } catch {
-          // Plain errors can contain a translated registration status key.
+          // Plain errors are handled below.
         }
       }
       if (Object.keys(next).length === 0) {
         next.form =
-          err instanceof Error && err.message === REGISTRATION_CLOSED_I18N_KEY
-            ? t(err.message)
-            : t('onboarding.saveFailed');
+          err instanceof Error && err.message === REGISTRATION_CLOSED_ERROR
+            ? err.message
+            : 'Could not save. Please try again.';
       }
       setErrors(next);
     } finally {
@@ -125,17 +122,12 @@ export function OnboardingForm({
       <FieldGroup>
         {email && (
           <div className="profile-verified-email">
-            <FormField label={t('account.emailAddress')} hint={t('account.verifiedAddress')}>
+            <FormField label="Email address" hint="Your verified sign-in address.">
               {(p) => <Input {...p} type="email" value={email} readOnly />}
             </FormField>
           </div>
         )}
-        <FormField
-          disabled={pending}
-          label={t('onboarding.fullName')}
-          error={errors.fullName}
-          required
-        >
+        <FormField disabled={pending} label="Full name" error={errors.fullName} required>
           {(p) => (
             <Input
               {...p}
@@ -147,13 +139,7 @@ export function OnboardingForm({
           )}
         </FormField>
 
-        <FormField
-          disabled={pending}
-          label={t('onboarding.iin')}
-          hint={t('onboarding.iinHint')}
-          error={errors.iin}
-          required
-        >
+        <FormField disabled={pending} label="IIN" hint="12 digits" error={errors.iin} required>
           {(p) => (
             <Input
               {...p}
@@ -166,7 +152,7 @@ export function OnboardingForm({
           )}
         </FormField>
 
-        <FormField disabled={pending} label={t('onboarding.phone')} error={errors.phone} required>
+        <FormField disabled={pending} label="Phone" error={errors.phone} required>
           {(p) => (
             <Input
               {...p}
@@ -180,12 +166,7 @@ export function OnboardingForm({
           )}
         </FormField>
 
-        <FormField
-          disabled={pending}
-          label={t('onboarding.educationLevel')}
-          error={errors.educationLevel}
-          required
-        >
+        <FormField disabled={pending} label="Level of study" error={errors.educationLevel} required>
           {(p) => (
             <Select
               {...p}
@@ -194,11 +175,11 @@ export function OnboardingForm({
               disabled={pending}
             >
               <option value="" disabled>
-                {t('onboarding.educationPlaceholder')}
+                Select your level of study
               </option>
               {EDUCATION_LEVELS.map((level) => (
                 <option key={level} value={level}>
-                  {t(`education.${level}`)}
+                  {level}
                 </option>
               ))}
             </Select>
@@ -208,8 +189,8 @@ export function OnboardingForm({
         {needsParentPhone && (
           <FormField
             disabled={pending}
-            label={t('onboarding.parentPhone')}
-            hint={t('onboarding.parentPhoneHint')}
+            label="Parent or guardian phone"
+            hint="Required if you will be under 18 on November 22, 2026, or your IIN has no usable birth date."
             error={errors.parentPhone}
             required
           >
@@ -228,7 +209,7 @@ export function OnboardingForm({
 
         <FormField
           disabled={pending}
-          label={t('onboarding.placeOfStudy')}
+          label="School, college or university"
           error={errors.placeOfStudy}
           required={values.educationLevel !== 'Not currently studying'}
         >
@@ -242,7 +223,7 @@ export function OnboardingForm({
           )}
         </FormField>
 
-        <FormField disabled={pending} label={t('onboarding.city')} error={errors.city} required>
+        <FormField disabled={pending} label="City" error={errors.city} required>
           {(p) => (
             <Input
               {...p}
@@ -270,16 +251,20 @@ export function OnboardingForm({
               aria-invalid={!!errors.consent}
               aria-describedby={`${consentId}-hint${errors.consent ? ` ${consentId}-error` : ''}`}
             />
-            <FieldLabel htmlFor={consentId}>{t('onboarding.consent')}</FieldLabel>
+            <FieldLabel htmlFor={consentId}>
+              I agree to the terms and consent to the processing of my personal data.
+            </FieldLabel>
           </div>
           <FieldDescription id={`${consentId}-hint`}>
-            <Trans
-              i18nKey="onboarding.consentHint"
-              components={{
-                privacy: <Link to="/privacy" target="_blank" rel="noopener" />,
-                terms: <Link to="/terms" target="_blank" rel="noopener" />,
-              }}
-            />
+            Read the{' '}
+            <Link to="/privacy" target="_blank" rel="noopener">
+              Privacy Policy
+            </Link>{' '}
+            and{' '}
+            <Link to="/terms" target="_blank" rel="noopener">
+              Terms of Service
+            </Link>
+            . CV upload is optional.
           </FieldDescription>
           {errors.consent && <FieldError id={`${consentId}-error`}>{errors.consent}</FieldError>}
           {errors.policyVersion && <FieldError>{errors.policyVersion}</FieldError>}
@@ -301,16 +286,20 @@ export function OnboardingForm({
               aria-invalid={!!errors.documentsRead}
               aria-describedby={`${documentsId}-hint${errors.documentsRead ? ` ${documentsId}-error` : ''}`}
             />
-            <FieldLabel htmlFor={documentsId}>{t('onboarding.documentsRead')}</FieldLabel>
+            <FieldLabel htmlFor={documentsId}>
+              I have read the Code of Conduct and Instructions and Rules.
+            </FieldLabel>
           </div>
           <FieldDescription id={`${documentsId}-hint`}>
-            <Trans
-              i18nKey="onboarding.documentsHint"
-              components={{
-                conduct: <a href={CODE_OF_CONDUCT_URL} target="_blank" rel="noopener" />,
-                rules: <a href={INSTRUCTIONS_AND_RULES_URL} target="_blank" rel="noopener" />,
-              }}
-            />
+            Read the{' '}
+            <a href={CODE_OF_CONDUCT_URL} target="_blank" rel="noopener">
+              Code of Conduct
+            </a>{' '}
+            and{' '}
+            <a href={INSTRUCTIONS_AND_RULES_URL} target="_blank" rel="noopener">
+              Instructions and Rules
+            </a>
+            .
           </FieldDescription>
           {errors.documentsRead && (
             <FieldError id={`${documentsId}-error`}>{errors.documentsRead}</FieldError>
@@ -327,7 +316,7 @@ export function OnboardingForm({
         )}
 
         <Button type="submit" disabled={pending} className="mt-1 w-full">
-          {pending ? t('common.loading') : t('onboarding.submit')}
+          {pending ? 'Loading…' : 'Continue'}
         </Button>
       </FieldGroup>
     </form>

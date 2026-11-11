@@ -1,4 +1,3 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { NEXT_STEP_ROUTE, type NextStep } from '@/lib/next-step';
 import type { RegistrationStatus } from '@/lib/registration';
@@ -37,25 +36,24 @@ export function RegistrationLink({
   className?: string;
   compact?: boolean;
 }) {
-  const text = useLandingText();
   const { nextStep, open } = useContext(RegistrationContext);
   if (!open && nextStep === 'onboarding') return null;
   const label =
     nextStep === 'register'
       ? open
         ? children
-        : text('Sign in')
+        : 'Sign in'
       : nextStep === 'onboarding'
         ? compact
-          ? text('My profile')
-          : text('Complete profile')
+          ? 'My profile'
+          : 'Complete profile'
         : nextStep === 'team'
           ? compact
-            ? text('Join team')
-            : text('Create or join team')
+            ? 'Join team'
+            : 'Create or join team'
           : compact
-            ? text('My team')
-            : text('Manage team');
+            ? 'My team'
+            : 'Manage team';
   return (
     <JumpLink href={NEXT_STEP_ROUTE[nextStep]} className={className}>
       {label}

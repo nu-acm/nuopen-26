@@ -12,7 +12,7 @@ import {
   isDriveFileId,
   toBase64,
   validateCvBytes,
-  type CvErrorKey,
+  type CvErrorMessage,
 } from '@/lib/cv';
 
 interface AppEnv {
@@ -23,10 +23,10 @@ function getAppDb() {
   return getDb((env as unknown as AppEnv).DB);
 }
 
-/** A failure that is safe to show the participant; the message is an i18n key. */
+/** A failure that is safe to show the participant. */
 export class CvError extends Error {
-  constructor(public readonly key: CvErrorKey) {
-    super(key);
+  constructor(message: CvErrorMessage) {
+    super(message);
   }
 }
 

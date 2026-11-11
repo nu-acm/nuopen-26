@@ -1,4 +1,5 @@
 import { expect, it, vi } from 'vite-plus/test';
+import { ZodError } from 'zod';
 import { uploadCv, deleteCv } from '@/lib/cv.server';
 import { CV_ERRORS, CV_MAX_BYTES, driveFileUrl } from '@/lib/cv';
 import { getParticipant, upsertParticipant } from '@/lib/onboarding.server';
@@ -78,7 +79,7 @@ it('refuses profile writes without explicit consent to the current policy', asyn
     { ...valid, consent: undefined },
     { ...valid, policyVersion: 'previous-policy' },
   ]) {
-    await expect(upsertParticipant(data as typeof valid)).rejects.toThrow('validation.');
+    await expect(upsertParticipant(data as typeof valid)).rejects.toBeInstanceOf(ZodError);
   }
   expect((await bindings.DB.prepare('SELECT id FROM participant').all()).results).toHaveLength(0);
 });
@@ -94,7 +95,7 @@ it('refuses document acknowledgment bypasses without changing the saved profile'
     { ...valid, documentsPolicyVersion: undefined },
     { ...valid, documentsPolicyVersion: 'previous-documents' },
   ]) {
-    await expect(upsertParticipant(data as typeof valid)).rejects.toThrow('validation.documents');
+    await expect(upsertParticipant(data as typeof valid)).rejects.toBeInstanceOf(ZodError);
     expect(await getParticipant('documents')).toEqual(original);
   }
 });
@@ -131,7 +132,9 @@ it('enforces guardian contact on the server for a minor attending college', asyn
     iin: '101101600001',
     educationLevel: 'College',
   } as const;
-  await expect(upsertParticipant(minor)).rejects.toThrow('validation.parentPhoneRequired');
+  await expect(upsertParticipant(minor)).rejects.toThrow(
+    'Enter a parent or guardian phone number. It is required for participants under 18 on the event day or when the IIN has no usable birth date.',
+  );
   expect((await getParticipant('college-minor'))?.iin).toBe(profile.iin);
   await upsertParticipant({ ...minor, parentPhone: '+7 702 000 00 00' });
   expect(await getParticipant('college-minor')).toMatchObject({

@@ -1,8 +1,5 @@
 import { test, expect, login, onboard, seedEligibleTeam } from './fixtures';
 import { DOCUMENTS_POLICY_VERSION, REGISTRATION_POLICY_VERSION } from '@/lib/consent';
-import en from '@/i18n/locales/en.json' with { type: 'json' };
-import ru from '@/i18n/locales/ru.json' with { type: 'json' };
-import kk from '@/i18n/locales/kk.json' with { type: 'json' };
 
 test('registers, edits a profile, creates a team, and admits a teammate', async ({
   page,
@@ -30,8 +27,6 @@ test('registers, edits a profile, creates a team, and admits a teammate', async 
     viewport: page.viewportSize(),
   });
   try {
-    await context.addCookies([{ name: 'locale', value: 'en', url: app.url }]);
-    await thirdContext.addCookies([{ name: 'locale', value: 'en', url: app.url }]);
     const teammate = await context.newPage();
     app.observe(teammate);
     await login(teammate, app.codes, 'teammate@example.test');
@@ -124,13 +119,24 @@ test('requires document acknowledgment and restores only acceptance of the curre
   app,
 }) => {
   await login(page, app.codes, 'documents@example.test');
-  const documents = page.getByRole('checkbox', { name: en.onboarding.documentsRead, exact: true });
+  const documents = page.getByRole('checkbox', {
+    name: 'I have read the Code of Conduct and Instructions and Rules.',
+    exact: true,
+  });
   await expect(documents).not.toBeChecked();
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
-  await expect(page.getByText(en.validation.documentsRequired, { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(
+      'Please confirm that you have read the Code of Conduct and Instructions and Rules to continue.',
+      { exact: true },
+    ),
+  ).toBeVisible();
   await expect(documents).toHaveAttribute('aria-invalid', 'true');
   const errorId = await page
-    .getByText(en.validation.documentsRequired, { exact: true })
+    .getByText(
+      'Please confirm that you have read the Code of Conduct and Instructions and Rules to continue.',
+      { exact: true },
+    )
     .getAttribute('id');
   expect(errorId).toBeTruthy();
   expect((await documents.getAttribute('aria-describedby'))?.split(' ')).toContain(errorId);
@@ -153,10 +159,18 @@ test('requires document acknowledgment and restores only acceptance of the curre
     await page.reload();
     await expect(documents).not.toBeChecked();
     await expect(
-      page.getByRole('checkbox', { name: en.onboarding.consent, exact: true }),
+      page.getByRole('checkbox', {
+        name: 'I agree to the terms and consent to the processing of my personal data.',
+        exact: true,
+      }),
     ).toBeChecked();
     await page.getByRole('button', { name: 'Continue', exact: true }).click();
-    await expect(page.getByText(en.validation.documentsRequired, { exact: true })).toBeVisible();
+    await expect(
+      page.getByText(
+        'Please confirm that you have read the Code of Conduct and Instructions and Rules to continue.',
+        { exact: true },
+      ),
+    ).toBeVisible();
     expect(
       await app.db
         .prepare('SELECT documents_acknowledged_at FROM participant')
@@ -170,67 +184,61 @@ test('requires document acknowledgment and restores only acceptance of the curre
   }
 });
 
-test('shows accessible consent and policy links in each language', async ({
-  page,
-  context,
-  app,
-}, testInfo) => {
-  await login(page, app.codes, 'languages@example.test');
+test('shows accessible consent and policy links', async ({ page, context, app }, testInfo) => {
+  await login(page, app.codes, 'consent-links@example.test');
   await context.route('https://drive.google.com/**', (route) =>
     route.fulfill({ contentType: 'text/html', body: '<title>Event document</title>' }),
   );
-  for (const [locale, copy] of Object.entries({ en, ru, kk })) {
-    await context.addCookies([{ name: 'locale', value: locale, url: app.url }]);
-    await page.goto('/onboarding');
-    const consent = page.getByRole('checkbox', { name: copy.onboarding.consent, exact: true });
-    await expect(consent).not.toBeChecked();
-    await expect(consent).toHaveAttribute('aria-required', 'true');
-    await expect(page.locator('form a[href="/privacy"]')).toHaveAttribute('target', '_blank');
-    await expect(page.locator('form a[href="/terms"]')).toHaveAttribute('target', '_blank');
-    const documents = page.getByRole('checkbox', {
-      name: copy.onboarding.documentsRead,
-      exact: true,
-    });
-    await expect(documents).not.toBeChecked();
-    await expect(documents).toHaveAttribute('aria-required', 'true');
-    const documentLinks = [
-      page.locator(
-        'a[href="https://drive.google.com/file/d/1omx4qtnA4DYh6qeLnf9o_lQiF8wSb2HG/view?usp=sharing"]',
-      ),
-      page.locator(
-        'a[href="https://drive.google.com/file/d/1lblOCnzRenDdfWUR13vQMKcli6M9exZf/view?usp=sharing"]',
-      ),
-    ];
-    await documents.focus();
-    await page.keyboard.press('Space');
+  await page.goto('/onboarding');
+  const consent = page.getByRole('checkbox', {
+    name: 'I agree to the terms and consent to the processing of my personal data.',
+    exact: true,
+  });
+  await expect(consent).not.toBeChecked();
+  await expect(consent).toHaveAttribute('aria-required', 'true');
+  await expect(page.locator('form a[href="/privacy"]')).toHaveAttribute('target', '_blank');
+  await expect(page.locator('form a[href="/terms"]')).toHaveAttribute('target', '_blank');
+  const documents = page.getByRole('checkbox', {
+    name: 'I have read the Code of Conduct and Instructions and Rules.',
+    exact: true,
+  });
+  await expect(documents).not.toBeChecked();
+  await expect(documents).toHaveAttribute('aria-required', 'true');
+  const documentLinks = [
+    page.locator(
+      'a[href="https://drive.google.com/file/d/1omx4qtnA4DYh6qeLnf9o_lQiF8wSb2HG/view?usp=sharing"]',
+    ),
+    page.locator(
+      'a[href="https://drive.google.com/file/d/1lblOCnzRenDdfWUR13vQMKcli6M9exZf/view?usp=sharing"]',
+    ),
+  ];
+  await documents.focus();
+  await page.keyboard.press('Space');
+  await expect(documents).toBeChecked();
+  for (const link of documentLinks) {
+    await expect(link).toBeVisible();
+    await expect(link).toHaveAttribute('target', '_blank');
+    await expect(link).toHaveAttribute('rel', 'noopener');
+    const opening = page.waitForEvent('popup');
+    await link.click();
+    const popup = await opening;
+    await expect(popup).toHaveURL((await link.getAttribute('href'))!);
+    await popup.close();
+    await expect(page).toHaveURL(/\/onboarding$/);
     await expect(documents).toBeChecked();
-    for (const link of documentLinks) {
-      await expect(link).toBeVisible();
-      await expect(link).toHaveAttribute('target', '_blank');
-      await expect(link).toHaveAttribute('rel', 'noopener');
-      const opening = page.waitForEvent('popup');
-      await link.click();
-      const popup = await opening;
-      await expect(popup).toHaveURL((await link.getAttribute('href'))!);
-      await popup.close();
-      await expect(page).toHaveURL(/\/onboarding$/);
-      await expect(documents).toBeChecked();
-    }
-    await consent.focus();
-    await page.keyboard.press('Space');
-    await expect(consent).toBeChecked();
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
-      true,
-    );
-    await page.screenshot({
-      path: `output/playwright/screenshots/${testInfo.project.name}-${locale}-consent.png`,
-      fullPage: true,
-    });
   }
+  await consent.focus();
+  await page.keyboard.press('Space');
+  await expect(consent).toBeChecked();
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({
+    path: `output/playwright/screenshots/${testInfo.project.name}-consent.png`,
+    fullPage: true,
+  });
 });
 
-test('requires guardian contact by age and keeps unsaved details when changing language', async ({
+test('requires guardian contact by age and retains unsaved details after validation', async ({
   page,
   app,
 }) => {
@@ -240,24 +248,17 @@ test('requires guardian contact by age and keeps unsaved details when changing l
   await page.getByRole('textbox', { name: 'City' }).fill('Almaty');
   await page.getByRole('combobox', { name: 'Level of study' }).selectOption('College');
   await page.getByRole('textbox', { name: 'IIN' }).fill('101101600001');
-  await expect(page.getByRole('textbox', { name: en.onboarding.parentPhone })).toBeVisible();
-
-  for (const [locale, copy, label] of [
-    ['ru', ru, 'РУС'],
-    ['kk', kk, 'ҚАЗ'],
-    ['en', en, 'EN'],
-  ] as const) {
-    await page.getByRole('button', { name: new RegExp(`/ ${label}$`) }).click();
-    await expect(page.locator('html')).toHaveAttribute('lang', locale);
-    await expect(page.getByRole('textbox', { name: copy.onboarding.city })).toHaveValue('Almaty');
-    await expect(page.getByRole('textbox', { name: copy.onboarding.iin })).toHaveValue(
-      '101101600001',
-    );
-    await expect(page.getByRole('textbox', { name: copy.onboarding.parentPhone })).toBeVisible();
-  }
+  await expect(page.getByRole('textbox', { name: 'Parent or guardian phone' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
-  await expect(page.getByText(en.validation.parentPhoneRequired, { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(
+      'Enter a parent or guardian phone number. It is required for participants under 18 on the event day or when the IIN has no usable birth date.',
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'City' })).toHaveValue('Almaty');
+  await expect(page.getByRole('textbox', { name: 'IIN' })).toHaveValue('101101600001');
   expect(
     await app.db
       .prepare('SELECT iin FROM participant WHERE full_name = ?')
@@ -266,24 +267,26 @@ test('requires guardian contact by age and keeps unsaved details when changing l
   ).toBe('060101600001');
   const phone = page.getByRole('textbox', { name: /^Phone\s*\*?$/ });
   await phone.fill('123456');
-  await page.getByRole('textbox', { name: en.onboarding.parentPhone }).fill('+1234567890123456');
+  await page.getByRole('textbox', { name: 'Parent or guardian phone' }).fill('+1234567890123456');
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
-  await expect(page.getByText(en.validation.phoneInvalid, { exact: true })).toHaveCount(2);
+  await expect(page.getByText('Enter a valid phone number', { exact: true })).toHaveCount(2);
   await expect(page).toHaveURL(/\/onboarding$/);
   await phone.fill('  +7 (701) 000-00-00  ');
-  await page.getByRole('textbox', { name: en.onboarding.parentPhone }).fill('  +7 702 000 00 00  ');
+  await page
+    .getByRole('textbox', { name: 'Parent or guardian phone' })
+    .fill('  +7 702 000 00 00  ');
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
   await page.getByRole('link', { name: 'Edit details' }).click();
-  await expect(page.getByRole('textbox', { name: en.onboarding.parentPhone })).toHaveValue(
+  await expect(page.getByRole('textbox', { name: 'Parent or guardian phone' })).toHaveValue(
     '77020000000',
   );
   await expect(phone).toHaveValue('77010000000');
   await page.getByRole('combobox', { name: 'Level of study' }).selectOption('School');
   await page.getByRole('textbox', { name: 'IIN' }).fill('081114600001');
-  await expect(page.getByRole('textbox', { name: en.onboarding.parentPhone })).toHaveCount(0);
+  await expect(page.getByRole('textbox', { name: 'Parent or guardian phone' })).toHaveCount(0);
   await page.getByRole('textbox', { name: 'IIN' }).fill('000000000001');
-  await expect(page.getByRole('textbox', { name: en.onboarding.parentPhone })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Parent or guardian phone' })).toBeVisible();
 });
 
 test('blocks protected pages and refuses saved mutations after registration closes', async ({
@@ -313,7 +316,7 @@ test('blocks protected pages and refuses saved mutations after registration clos
       data: mutation.body,
       headers: mutation.headers,
     });
-    expect(await response.text()).toContain('onboarding.registrationClosedError');
+    expect(await response.text()).toContain('Registration is closed.');
   }
   await page.reload();
   await expect(page.getByText('Registration is closed, so team changes are locked.')).toBeVisible();

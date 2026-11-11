@@ -1,7 +1,5 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
 import { PilotName } from '@/components/dashboard/PilotName';
 import { DashboardStats } from '@/components/dashboard/DashboardStats';
 import { EVENT } from '@/components/landing/nuopen/content/event';
@@ -23,28 +21,28 @@ export function DashboardLayout({
   children: ReactNode;
   sidebar: ReactNode;
 }) {
-  const { t } = useTranslation();
-  const text = useLandingText();
-  const firstName = fullName.trim().split(/\s+/)[0] || t('account.pilot');
+  const firstName = fullName.trim().split(/\s+/)[0] || 'Pilot';
   return (
     <main className="dashboard-main">
       <section className="dashboard-welcome" aria-labelledby="dashboard-title">
         <div className="dashboard-welcome-copy">
-          <p className="account-eyebrow">03 / {t('account.missionControl')}</p>
+          <p className="account-eyebrow">03 / Mission control</p>
           <h1 id="dashboard-title">
-            {t('account.welcomeAboard')}
+            Welcome aboard,
             <br />
             <PilotName key={firstName} name={firstName} />
           </h1>
           <p className="account-dashboard-lead">
-            {t(team ? 'account.teamIntro' : 'account.teamlessIntro')}
+            {team
+              ? 'Your squadron is registered. Keep your crew ready for contest day.'
+              : 'Your clearance is complete. Assemble a squadron to register for the contest.'}
           </p>
         </div>
         <div className="dashboard-event">
           <span>
-            {text('Episode {{episode}}', { episode: EVENT.episode })} / {text(EVENT.contest.format)}
+            {`Episode ${EVENT.episode}`} / {EVENT.contest.format}
           </span>
-          <strong>{text(EVENT.contest.dateLabel)}</strong>
+          <strong>{EVENT.contest.dateLabel}</strong>
           <span>{EVENT.venue.name}</span>
         </div>
       </section>
@@ -54,20 +52,16 @@ export function DashboardLayout({
         <aside className="dashboard-sidebar">
           <DashboardStats team={team} email={email} />
           <section className="dashboard-brief">
-            <p className="account-eyebrow">{t('account.missionParameters')}</p>
-            <h2>{t('account.stayOnTarget')}</h2>
+            <p className="account-eyebrow">Mission parameters</p>
+            <h2>Stay on target.</h2>
             <p>
-              {t('account.missionCopy', {
-                min: MIN_TEAM_SIZE,
-                max: MAX_TEAM_SIZE,
-                hours: EVENT.contest.hours,
-              })}
+              {`Teams of ${MIN_TEAM_SIZE} to ${MAX_TEAM_SIZE} have ${EVENT.contest.hours} hours to solve the problem set.`}
             </p>
             <p>
-              {t('account.venueCopy', { venue: EVENT.venue.name, city: text(EVENT.venue.city) })}
+              {`All team members must attend in person at ${EVENT.venue.name}, ${EVENT.venue.city}.`}
             </p>
             <Link to="/" hash="rules" className="account-text-button">
-              {t('account.reviewRules')} ↗
+              Review the contest rules ↗
             </Link>
           </section>
           {sidebar}

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
@@ -94,11 +93,19 @@ const teamId = (row: ReportTeam) => row.inviteSlug;
 const matches = (needle: string, ...fields: (string | null)[]) =>
   fields.some((f) => f?.toLowerCase().includes(needle));
 
-/** An i18n key and its values, translated when shown. */
-type Notice = { type: 'success' | 'error'; key: string; values?: Record<string, string | number> };
+type Notice = { type: 'success' | 'error'; message: string };
+
+const dateFormatter = new Intl.DateTimeFormat('en', {
+  dateStyle: 'short',
+  timeZone: 'Asia/Almaty',
+});
+
+function formatDate(iso: string) {
+  const date = new Date(iso);
+  return isNaN(date.getTime()) ? 'Not provided' : dateFormatter.format(date);
+}
 
 function AdminPage() {
-  const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const { data, isFetching, refetch } = useSuspenseQuery(reportQueryOptions);
   const { participants, teams, stats, registrationOpen } = data;
@@ -136,7 +143,7 @@ function AdminPage() {
       } catch (err) {
         setNotice({
           type: 'error',
-          key: err instanceof Error ? err.message : 'admin.unconfirmedFailed',
+          message: err instanceof Error ? err.message : 'Could not update the team. Try again.',
         });
       } finally {
         await refetch();
@@ -153,15 +160,18 @@ function AdminPage() {
       const { assigned, badNames } = await finalizeTeamsFn();
       setNotice(
         badNames.length
-          ? { type: 'error', key: 'admin.finalizeBadNames', values: { names: badNames.join(', ') } }
+          ? {
+              type: 'error',
+              message: `Rename these teams first, without | or line breaks: ${badNames.join(', ')}`,
+            }
           : assigned
-            ? { type: 'success', key: 'admin.finalizeDone', values: { count: assigned } }
-            : { type: 'success', key: 'admin.finalizeNothing' },
+            ? { type: 'success', message: `Teams numbered: ${assigned}.` }
+            : { type: 'success', message: 'Every eligible, confirmed team already has a number.' },
       );
     } catch (err) {
       setNotice({
         type: 'error',
-        key: err instanceof Error ? err.message : 'admin.finalizeFailed',
+        message: err instanceof Error ? err.message : 'Could not finalize the teams. Try again.',
       });
     } finally {
       await refetch();
@@ -188,17 +198,6 @@ function AdminPage() {
     setTab('participants');
     setScrollTarget(`participant-${id}`);
   }, []);
-
-  const formatDate = useMemo(() => {
-    const fmt = new Intl.DateTimeFormat(i18n.language, {
-      dateStyle: 'short',
-      timeZone: 'Asia/Almaty',
-    });
-    return (iso: string) => {
-      const d = new Date(iso);
-      return isNaN(d.getTime()) ? t('common.notProvided') : fmt.format(d);
-    };
-  }, [i18n.language, t]);
 
   const eligibleParticipants = participants.filter((p) => p.teamEligible).length;
 
@@ -259,58 +258,56 @@ function AdminPage() {
       {
         id: 'fullName',
         accessorFn: (p) => p.fullName,
-        meta: { label: t('admin.col.fullName') },
+        meta: { label: 'Name' },
         cell: ({ row }) => row.original.fullName,
       },
       {
         id: 'email',
         accessorFn: (p) => p.email,
-        meta: { label: t('admin.col.email') },
+        meta: { label: 'Email' },
         cell: ({ row }) => row.original.email,
       },
       {
         id: 'iin',
         accessorFn: (p) => p.iin,
-        meta: { label: t('admin.col.iin'), tone: 'numeric' },
+        meta: { label: 'IIN', tone: 'numeric' },
         cell: ({ row }) => row.original.iin,
       },
       {
         id: 'phone',
         accessorFn: (p) => p.phone,
-        meta: { label: t('admin.col.phone') },
+        meta: { label: 'Phone' },
         cell: ({ row }) => row.original.phone,
       },
       {
         id: 'parentPhone',
         accessorFn: (p) => p.parentPhone,
-        meta: { label: t('admin.col.parentPhone') },
+        meta: { label: 'Parent phone' },
         cell: ({ row }) =>
-          row.original.parentPhone ?? (
-            <span className="text-muted-foreground">{t('common.notProvided')}</span>
-          ),
+          row.original.parentPhone ?? <span className="text-muted-foreground">Not provided</span>,
       },
       {
         id: 'city',
         accessorFn: (p) => p.city,
-        meta: { label: t('admin.col.city') },
+        meta: { label: 'City' },
         cell: ({ row }) => row.original.city,
       },
       {
         id: 'placeOfStudy',
         accessorFn: (p) => p.placeOfStudy,
-        meta: { label: t('admin.col.placeOfStudy') },
+        meta: { label: 'Place of study' },
         cell: ({ row }) => row.original.placeOfStudy,
       },
       {
         id: 'educationLevel',
         accessorFn: (p) => p.educationLevel,
-        meta: { label: t('admin.col.educationLevel') },
-        cell: ({ row }) => t(`education.${row.original.educationLevel}`),
+        meta: { label: 'Level' },
+        cell: ({ row }) => row.original.educationLevel,
       },
       {
         id: 'cvUrl',
         accessorFn: (p) => p.cvUrl,
-        meta: { label: t('admin.col.cvUrl') },
+        meta: { label: 'CV' },
         cell: ({ row }) =>
           row.original.cvUrl ? (
             <LinkButton
@@ -320,16 +317,16 @@ function AdminPage() {
               variant="table-link"
               size="none"
             >
-              {t('admin.cvOpen')}
+              Open
             </LinkButton>
           ) : (
-            <span className="text-muted-foreground">{t('cv.none')}</span>
+            <span className="text-muted-foreground">Not uploaded</span>
           ),
       },
       {
         id: 'teamName',
         accessorFn: (p) => p.teamName,
-        meta: { label: t('admin.col.teamName') },
+        meta: { label: 'Team' },
         cell: ({ row }) => {
           const { teamName, teamSlug } = row.original;
           return teamName && teamSlug ? (
@@ -337,36 +334,36 @@ function AdminPage() {
               {teamName}
             </Button>
           ) : (
-            <span className="text-muted-foreground">{t('dashboard.noTeamShort')}</span>
+            <span className="text-muted-foreground">No team yet</span>
           );
         },
       },
       {
         id: 'attended',
         accessorFn: (p) => p.attended,
-        meta: { label: t('admin.col.attended') },
+        meta: { label: 'Checked in' },
         sortFn: (a, b) => Number(a.original.attended) - Number(b.original.attended),
         cell: ({ row }) => (row.original.attended ? '✓' : ''),
       },
       {
         id: 'createdAt',
         accessorFn: (p) => p.createdAt,
-        meta: { label: t('admin.col.createdAt'), tone: 'muted' },
+        meta: { label: 'Registered', tone: 'muted' },
         cell: ({ row }) => formatDate(row.original.createdAt),
       },
     ],
-    [t, formatDate, goToTeam],
+    [goToTeam],
   );
   const teamCols = useMemo<AdminColumnDef<ReportTeam>[]>(
     () => [
       {
         id: 'number',
         accessorFn: (team) => team.number,
-        meta: { label: t('admin.col.number'), tone: 'numeric' },
+        meta: { label: 'Table', tone: 'numeric' },
         sortFn: (a, b) => compareTeamNumbers(a.original.number, b.original.number),
         cell: ({ row }) =>
           row.original.number === null ? (
-            <span className="text-muted-foreground">{t('common.notProvided')}</span>
+            <span className="text-muted-foreground">Not provided</span>
           ) : (
             formatTeamNumber(row.original.number)
           ),
@@ -374,32 +371,32 @@ function AdminPage() {
       {
         id: 'name',
         accessorFn: (team) => team.name,
-        meta: { label: t('admin.col.name') },
+        meta: { label: 'Team' },
         cell: ({ row }) => row.original.name,
       },
       {
         id: 'captainName',
         accessorFn: (team) => team.captainName,
-        meta: { label: t('admin.col.captainName') },
+        meta: { label: 'Captain' },
         cell: ({ row }) => row.original.captainName,
       },
       {
         id: 'memberCount',
         accessorFn: (team) => team.memberCount,
-        meta: { label: t('admin.col.memberCount') },
+        meta: { label: 'Size' },
         sortFn: (a, b) => a.original.memberCount - b.original.memberCount,
         cell: ({ row }) => row.original.memberCount,
       },
       {
         id: 'eligible',
         accessorFn: (team) => team.eligible,
-        meta: { label: t('admin.col.eligible') },
+        meta: { label: 'Eligible' },
         sortFn: (a, b) => Number(a.original.eligible) - Number(b.original.eligible),
         cell: ({ row }) => (
           <span
             className={row.original.eligible ? 'text-whd-pink-bright' : 'text-muted-foreground'}
           >
-            {row.original.eligible ? '✓' : t('common.no')}
+            {row.original.eligible ? '✓' : 'No'}
           </span>
         ),
       },
@@ -407,23 +404,19 @@ function AdminPage() {
         // Unticked for teams that didn't confirm participation; final once a team has a number.
         id: 'confirmed',
         accessorFn: (team) => !team.unconfirmed,
-        meta: { label: t('admin.col.confirmed') },
+        meta: { label: 'Confirmed' },
         sortFn: (a, b) => Number(a.original.unconfirmed) - Number(b.original.unconfirmed),
         cell: ({ row }) => {
           const { eligible, unconfirmed, number, inviteSlug, name } = row.original;
-          if (!eligible)
-            return <span className="text-muted-foreground">{t('common.notApplicable')}</span>;
+          if (!eligible) return <span className="text-muted-foreground">Not applicable</span>;
           return (
             <Checkbox
               checked={!unconfirmed}
               disabled={number !== null || pendingSlugs.has(inviteSlug)}
               onCheckedChange={(checked) => void setUnconfirmed(inviteSlug, !checked)}
-              aria-label={t(
-                unconfirmed ? 'admin.markConfirmedLabel' : 'admin.markUnconfirmedLabel',
-                {
-                  name,
-                },
-              )}
+              aria-label={
+                unconfirmed ? `Mark ${name} as confirmed` : `Mark ${name} as not confirmed`
+              }
             />
           );
         },
@@ -431,7 +424,7 @@ function AdminPage() {
       {
         id: 'members',
         enableSorting: false,
-        meta: { label: t('admin.col.members') },
+        meta: { label: 'Members' },
         cell: ({ row }) =>
           row.original.members.map((member, index) => (
             <span key={member.id}>
@@ -445,17 +438,17 @@ function AdminPage() {
       {
         id: 'inviteSlug',
         accessorFn: (team) => team.inviteSlug,
-        meta: { label: t('admin.col.inviteSlug'), tone: 'slug' },
+        meta: { label: 'Invite code', tone: 'slug' },
         cell: ({ row }) => row.original.inviteSlug,
       },
       {
         id: 'createdAt',
         accessorFn: (team) => team.createdAt,
-        meta: { label: t('admin.col.createdAt'), tone: 'muted' },
+        meta: { label: 'Registered', tone: 'muted' },
         cell: ({ row }) => formatDate(row.original.createdAt),
       },
     ],
-    [t, formatDate, goToParticipant, pendingSlugs, setUnconfirmed],
+    [goToParticipant, pendingSlugs, setUnconfirmed],
   );
   const participantTable = useAdminTable(
     participantMatches,
@@ -492,9 +485,9 @@ function AdminPage() {
     downloadFile(await downloadProctoringCsv(), 'whd-proctoring-teams');
 
   const eligibilityOptions = [
-    { value: 'all', label: t('admin.filterAll') },
-    { value: 'eligible', label: t('admin.filterEligible') },
-    { value: 'not-eligible', label: t('admin.filterNotEligible') },
+    { value: 'all', label: 'All' },
+    { value: 'eligible', label: 'Eligible' },
+    { value: 'not-eligible', label: 'Not eligible' },
   ] as const;
 
   const isParticipants = tab === 'participants';
@@ -509,14 +502,11 @@ function AdminPage() {
       <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
         <div className="admin-heading">
           <div>
-            <h1 className="admin-title">{t('admin.title')}</h1>
+            <h1 className="admin-title">Admin</h1>
             <p className="mt-2 text-sm text-whd-text-muted">
               {registrationOpen
-                ? t('admin.finalizeRegistrationOpen')
-                : t('admin.numberingStatus', {
-                    numbered: stats.numberedTeams,
-                    awaiting: stats.awaitingNumber,
-                  })}
+                ? 'Registration is still open. Finalize the teams once it closes.'
+                : `Numbered: ${stats.numberedTeams} · awaiting a number: ${stats.awaitingNumber}`}
             </p>
           </div>
           <div className="admin-heading-actions">
@@ -526,7 +516,7 @@ function AdminPage() {
               onClick={() => setFinalizeOpen(true)}
               disabled={registrationOpen || stats.awaitingNumber === 0 || finalizing}
             >
-              {t('admin.finalize')}
+              Finalize teams
             </Button>
             <Button
               variant="secondary"
@@ -534,20 +524,20 @@ function AdminPage() {
               onClick={exportProctoring}
               disabled={stats.numberedTeams === 0 || stats.awaitingNumber > 0}
             >
-              {t('admin.exportProctoring')}
+              Export for proctoring
             </Button>
             <Button variant="secondary" size="sm" onClick={exportCsv}>
-              {t('admin.exportCsv')}
+              Export CSV
             </Button>
           </div>
         </div>
         <ConfirmDialog
           open={finalizeOpen}
           onOpenChange={setFinalizeOpen}
-          title={t('admin.finalizeTitle')}
-          description={t('admin.finalizeBody', { count: stats.awaitingNumber })}
-          confirmLabel={t('admin.finalizeConfirm')}
-          cancelLabel={t('common.cancel')}
+          title="Finalize teams?"
+          description={`Eligible, confirmed teams without a number (${stats.awaitingNumber}) get table numbers and Codeforces passwords, in random order. Numbers can never be changed or taken back, and these teams can no longer change their members.`}
+          confirmLabel="Finalize"
+          cancelLabel="Cancel"
           onConfirm={() => void finalize()}
         />
         {notice && (
@@ -559,36 +549,30 @@ function AdminPage() {
                 : 'mb-6 text-sm text-whd-pink-soft'
             }
           >
-            {t(notice.key, notice.values)}
+            {notice.message}
           </p>
         )}
 
         <div className="admin-stats">
           <StatCard
-            label={t('admin.statParticipants')}
+            label="Participants"
             value={stats.participants}
-            breakdown={t('admin.eligibleBreakdown', {
-              eligible: eligibleParticipants,
-              other: stats.participants - eligibleParticipants,
-            })}
+            breakdown={`${eligibleParticipants} eligible / ${stats.participants - eligibleParticipants} not`}
           />
           <StatCard
-            label={t('admin.statTeams')}
+            label="Teams"
             value={stats.teams}
-            breakdown={t('admin.eligibleBreakdown', {
-              eligible: stats.eligibleTeams,
-              other: stats.teams - stats.eligibleTeams,
-            })}
+            breakdown={`${stats.eligibleTeams} eligible / ${stats.teams - stats.eligibleTeams} not`}
           />
-          <StatCard label={t('admin.statTeamless')} value={stats.teamless} />
-          <StatCard label={t('admin.statAttended')} value={stats.attended} />
+          <StatCard label="Without a team" value={stats.teamless} />
+          <StatCard label="Checked in" value={stats.attended} />
         </div>
 
         <section className="admin-registry">
           <div className="admin-registry-header">
             <TabsList>
-              <TabsTrigger value="participants">{t('admin.tab_participants')}</TabsTrigger>
-              <TabsTrigger value="teams">{t('admin.tab_teams')}</TabsTrigger>
+              <TabsTrigger value="participants">Participants</TabsTrigger>
+              <TabsTrigger value="teams">Teams</TabsTrigger>
             </TabsList>
           </div>
           <div className="admin-toolbar">
@@ -598,10 +582,10 @@ function AdminPage() {
                 isParticipants ? setParticipantQuery(e.target.value) : setTeamQuery(e.target.value)
               }
               aria-label={
-                isParticipants ? t('admin.searchPlaceholder') : t('admin.teamSearchPlaceholder')
+                isParticipants ? 'Search name, email, team…' : 'Search team, captain, member…'
               }
               placeholder={
-                isParticipants ? t('admin.searchPlaceholder') : t('admin.teamSearchPlaceholder')
+                isParticipants ? 'Search name, email, team…' : 'Search team, captain, member…'
               }
             />
           </div>
@@ -611,7 +595,7 @@ function AdminPage() {
               <>
                 <ColumnToggleBar table={participantTable} />
                 <Segmented
-                  label={t('admin.filterLabel')}
+                  label="Filter"
                   options={eligibilityOptions}
                   value={participantFilter}
                   onChange={setParticipantFilter}
@@ -621,7 +605,7 @@ function AdminPage() {
               <>
                 <ColumnToggleBar table={teamTable} />
                 <Segmented
-                  label={t('admin.filterLabel')}
+                  label="Filter"
                   options={eligibilityOptions}
                   value={teamFilter}
                   onChange={setTeamFilter}
@@ -630,14 +614,9 @@ function AdminPage() {
             )}
           </div>
 
-          <p className="admin-count">{t('admin.showingCount', { shown, total: inFilter })}</p>
+          <p className="admin-count">{`${shown} of ${inFilter}`}</p>
 
-          <div
-            className="admin-table-wrap"
-            role="region"
-            aria-label={t('admin.columns')}
-            tabIndex={0}
-          >
+          <div className="admin-table-wrap" role="region" aria-label="Columns" tabIndex={0}>
             <TabsContent value="participants">
               <AdminDataTable
                 table={participantTable}
@@ -652,7 +631,7 @@ function AdminPage() {
 
           {shown === 0 && (
             <Empty>
-              <EmptyDescription>{t('admin.empty')}</EmptyDescription>
+              <EmptyDescription>Nothing to show</EmptyDescription>
             </Empty>
           )}
         </section>

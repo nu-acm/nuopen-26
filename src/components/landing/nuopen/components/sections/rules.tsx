@@ -1,4 +1,3 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import './rules.css';
 
 import { useEffect, useRef } from 'react';
@@ -28,7 +27,6 @@ const HEAD: Record<Side, { title: string; aside: string }> = {
 };
 
 export function Rules() {
-  const text = useLandingText();
   const root = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const look = useRef<BustLook>({ progress: 0, pointerX: 0, pointerY: 0 });
@@ -63,20 +61,20 @@ export function Rules() {
 
       <div className="rules-copy split-copy">
         <div className="rules-head">
-          <p className="kicker">{text('Rules of engagement')}</p>
+          <p className="kicker">Rules of engagement</p>
           <h2 id="rules-title" className="h2 font-display">
-            {text(head.title)}
+            {head.title}
           </h2>
-          <p className="rules-aside">{text(head.aside)}</p>
+          <p className="rules-aside">{head.aside}</p>
         </div>
 
         <ol className="rules-list">
           {EVENT.rules.map((rule, i) => (
-            <li key={text(rule.title)} className={i === PUNCHLINE ? 'rule rule-punch hud' : 'rule'}>
+            <li key={rule.title} className={i === PUNCHLINE ? 'rule rule-punch hud' : 'rule'}>
               <span className="rule-num font-mono">{pad2(i + 1)}</span>
               <div>
-                <h3 className="rule-title h3 font-display">{text(rule.title)}</h3>
-                <p className="rule-text">{text(rule.text)}</p>
+                <h3 className="rule-title h3 font-display">{rule.title}</h3>
+                <p className="rule-text">{rule.text}</p>
               </div>
             </li>
           ))}

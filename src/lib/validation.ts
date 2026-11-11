@@ -51,41 +51,44 @@ export function requiresGuardianPhone(iin: string): boolean {
   return age === null || age < 18;
 }
 
-// Validation messages are i18n keys, resolved with t() in the UI.
-const V = {
-  emailRequired: 'validation.emailRequired',
-  invalidEmail: 'validation.invalidEmail',
-  codeMustBe6Digits: 'validation.codeMustBe6Digits',
-  fullNameRequired: 'validation.fullNameRequired',
-  fullNameMax: 'validation.fullNameMax',
-  iinInvalid: 'validation.iinInvalid',
-  participantTooYoung: 'validation.participantTooYoung',
-  phoneRequired: 'validation.phoneRequired',
-  phoneInvalid: 'validation.phoneInvalid',
-  educationInvalid: 'validation.educationInvalid',
-  teamNameMin: 'validation.teamNameMin',
-  teamNameMax: 'validation.teamNameMax',
-  teamNameChars: 'validation.teamNameChars',
-  inviteCodeRequired: 'validation.inviteCodeRequired',
-  inviteCodeInvalid: 'validation.inviteCodeInvalid',
-  cityRequired: 'validation.cityRequired',
-  cityMax: 'validation.cityMax',
-  placeOfStudyRequired: 'validation.placeOfStudyRequired',
-  placeOfStudyMax: 'validation.placeOfStudyMax',
-  parentPhoneInvalid: 'validation.parentPhoneInvalid',
-  parentPhoneRequired: 'validation.parentPhoneRequired',
-  consentRequired: 'validation.consentRequired',
-  policyChanged: 'validation.policyChanged',
-  documentsRequired: 'validation.documentsRequired',
-  documentsChanged: 'validation.documentsChanged',
+export const VALIDATION_MESSAGES = {
+  emailRequired: 'Email is required',
+  invalidEmail: 'Enter a valid email',
+  codeMustBe6Digits: 'The code is 6 digits',
+  fullNameRequired: 'Full name is required',
+  fullNameMax: 'Full name is too long',
+  iinInvalid: 'IIN must be exactly 12 digits',
+  participantTooYoung: 'You must be at least 16 on the day of the contest.',
+  phoneRequired: 'Phone is required',
+  phoneInvalid: 'Enter a valid phone number',
+  educationInvalid: 'Choose your level of study',
+  teamNameMin: 'Team name must be at least 3 characters',
+  teamNameMax: 'Team name must be 30 characters or fewer',
+  teamNameChars: "Team name can't contain | or line breaks",
+  inviteCodeRequired: 'Invite code is required',
+  inviteCodeInvalid: 'That invite code is not valid',
+  cityRequired: 'City is required',
+  cityMax: 'City is too long',
+  placeOfStudyRequired: 'Place of study is required',
+  placeOfStudyMax: 'Place of study is too long',
+  parentPhoneInvalid: 'Enter a valid phone number',
+  parentPhoneRequired:
+    'Enter a parent or guardian phone number. It is required for participants under 18 on the event day or when the IIN has no usable birth date.',
+  consentRequired: 'Please agree to the terms and personal data processing to continue.',
+  policyChanged:
+    'The registration policy has changed. Reload this page and review it before continuing.',
+  documentsRequired:
+    'Please confirm that you have read the Code of Conduct and Instructions and Rules to continue.',
+  documentsChanged:
+    'The documents have changed. Reload this page and review them before confirming again.',
 } as const;
 
 // ── Login step 1: email ──────────────────────────────────────────────────────
 export const emailSchema = z.object({
   email: z
     .string()
-    .min(1, { error: V.emailRequired })
-    .pipe(z.email({ error: V.invalidEmail })),
+    .min(1, { error: VALIDATION_MESSAGES.emailRequired })
+    .pipe(z.email({ error: VALIDATION_MESSAGES.invalidEmail })),
 });
 export type EmailInput = z.infer<typeof emailSchema>;
 
@@ -93,8 +96,8 @@ export type EmailInput = z.infer<typeof emailSchema>;
 export const otpSchema = z.object({
   otp: z
     .string()
-    .length(6, { error: V.codeMustBe6Digits })
-    .regex(/^\d{6}$/, { error: V.codeMustBe6Digits }),
+    .length(6, { error: VALIDATION_MESSAGES.codeMustBe6Digits })
+    .regex(/^\d{6}$/, { error: VALIDATION_MESSAGES.codeMustBe6Digits }),
 });
 export type OtpInput = z.infer<typeof otpSchema>;
 
@@ -115,26 +118,38 @@ export const onboardingSchema = z
     fullName: z
       .string()
       .trim()
-      .min(1, { error: V.fullNameRequired })
-      .max(100, { error: V.fullNameMax }),
-    iin: z.string().regex(IIN_PATTERN, { error: V.iinInvalid }),
-    phone: z.string().trim().min(1, { error: V.phoneRequired }).pipe(phoneSchema(V.phoneInvalid)),
-    city: z.string().trim().min(1, { error: V.cityRequired }).max(100, { error: V.cityMax }),
-    placeOfStudy: z.string().trim().max(100, { error: V.placeOfStudyMax }),
+      .min(1, { error: VALIDATION_MESSAGES.fullNameRequired })
+      .max(100, { error: VALIDATION_MESSAGES.fullNameMax }),
+    iin: z.string().regex(IIN_PATTERN, { error: VALIDATION_MESSAGES.iinInvalid }),
+    phone: z
+      .string()
+      .trim()
+      .min(1, { error: VALIDATION_MESSAGES.phoneRequired })
+      .pipe(phoneSchema(VALIDATION_MESSAGES.phoneInvalid)),
+    city: z
+      .string()
+      .trim()
+      .min(1, { error: VALIDATION_MESSAGES.cityRequired })
+      .max(100, { error: VALIDATION_MESSAGES.cityMax }),
+    placeOfStudy: z.string().trim().max(100, { error: VALIDATION_MESSAGES.placeOfStudyMax }),
     parentPhone: z
       .string()
       .trim()
       .optional()
       .transform((v) => v || undefined)
-      .pipe(phoneSchema(V.parentPhoneInvalid).optional()),
-    educationLevel: z.enum(EDUCATION_LEVELS, { error: V.educationInvalid }),
-    consent: z.literal(true, { error: V.consentRequired }),
-    policyVersion: z.literal(REGISTRATION_POLICY_VERSION, { error: V.policyChanged }),
-    documentsRead: z.literal(true, { error: V.documentsRequired }),
-    documentsPolicyVersion: z.literal(DOCUMENTS_POLICY_VERSION, { error: V.documentsChanged }),
+      .pipe(phoneSchema(VALIDATION_MESSAGES.parentPhoneInvalid).optional()),
+    educationLevel: z.enum(EDUCATION_LEVELS, { error: VALIDATION_MESSAGES.educationInvalid }),
+    consent: z.literal(true, { error: VALIDATION_MESSAGES.consentRequired }),
+    policyVersion: z.literal(REGISTRATION_POLICY_VERSION, {
+      error: VALIDATION_MESSAGES.policyChanged,
+    }),
+    documentsRead: z.literal(true, { error: VALIDATION_MESSAGES.documentsRequired }),
+    documentsPolicyVersion: z.literal(DOCUMENTS_POLICY_VERSION, {
+      error: VALIDATION_MESSAGES.documentsChanged,
+    }),
   })
   .refine((d) => d.educationLevel === 'Not currently studying' || !!d.placeOfStudy, {
-    message: V.placeOfStudyRequired,
+    message: VALIDATION_MESSAGES.placeOfStudyRequired,
     path: ['placeOfStudy'],
   })
   .refine(
@@ -143,10 +158,10 @@ export const onboardingSchema = z
       const age = ageOnEventDay(d.iin);
       return age === null || age >= MIN_PARTICIPANT_AGE;
     },
-    { message: V.participantTooYoung, path: ['iin'] },
+    { message: VALIDATION_MESSAGES.participantTooYoung, path: ['iin'] },
   )
   .refine((d) => !requiresGuardianPhone(d.iin) || !!d.parentPhone, {
-    message: V.parentPhoneRequired,
+    message: VALIDATION_MESSAGES.parentPhoneRequired,
     path: ['parentPhone'],
   });
 
@@ -160,17 +175,19 @@ export const createTeamSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(3, { error: V.teamNameMin })
-    .max(30, { error: V.teamNameMax })
-    .refine((name) => !TEAM_NAME_FORBIDDEN.test(name), { error: V.teamNameChars }),
+    .min(3, { error: VALIDATION_MESSAGES.teamNameMin })
+    .max(30, { error: VALIDATION_MESSAGES.teamNameMax })
+    .refine((name) => !TEAM_NAME_FORBIDDEN.test(name), {
+      error: VALIDATION_MESSAGES.teamNameChars,
+    }),
 });
 export type CreateTeamInput = z.infer<typeof createTeamSchema>;
 
 export const inviteSlugSchema = z.object({
   slug: z
     .string()
-    .min(1, { error: V.inviteCodeRequired })
+    .min(1, { error: VALIDATION_MESSAGES.inviteCodeRequired })
     .max(50)
-    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, { error: V.inviteCodeInvalid }),
+    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, { error: VALIDATION_MESSAGES.inviteCodeInvalid }),
 });
 export type InviteSlugInput = z.infer<typeof inviteSlugSchema>;

@@ -5,10 +5,8 @@ import {
   EDUCATION_LEVELS,
   onboardingSchema,
   requiresGuardianPhone,
+  VALIDATION_MESSAGES,
 } from '@/lib/validation';
-import en from '@/i18n/locales/en.json';
-import ru from '@/i18n/locales/ru.json';
-import kk from '@/i18n/locales/kk.json';
 import { profile } from './support';
 
 it('carries valid invite paths through login while discarding unsafe redirects', () => {
@@ -76,7 +74,7 @@ it('validates both phone fields as E.164 and preserves digits-only storage', () 
     for (const field of ['phone', 'parentPhone'] as const) {
       const result = onboardingSchema.safeParse({ ...profile, [field]: input });
       expect(result.error?.issues).toContainEqual(
-        expect.objectContaining({ path: [field], message: `validation.${field}Invalid` }),
+        expect.objectContaining({ path: [field], message: VALIDATION_MESSAGES[`${field}Invalid`] }),
       );
     }
   }
@@ -85,14 +83,18 @@ it('validates both phone fields as E.164 and preserves digits-only storage', () 
 it('preserves required and optional phone errors after trimming', () => {
   for (const phone of ['', '   ']) {
     expect(onboardingSchema.safeParse({ ...profile, phone }).error?.issues).toContainEqual(
-      expect.objectContaining({ path: ['phone'], message: 'validation.phoneRequired' }),
+      expect.objectContaining({ path: ['phone'], message: 'Phone is required' }),
     );
   }
   for (const parentPhone of [undefined, '', '   ']) {
     expect(onboardingSchema.parse({ ...profile, parentPhone }).parentPhone).toBeUndefined();
     const minor = { ...profile, iin: '101101600001', parentPhone };
     expect(onboardingSchema.safeParse(minor).error?.issues).toContainEqual(
-      expect.objectContaining({ path: ['parentPhone'], message: 'validation.parentPhoneRequired' }),
+      expect.objectContaining({
+        path: ['parentPhone'],
+        message:
+          'Enter a parent or guardian phone number. It is required for participants under 18 on the event day or when the IIN has no usable birth date.',
+      }),
     );
   }
 });
@@ -114,7 +116,7 @@ it('checks age on the event date and requires a contact for unusable IIN birth d
   }
   const invalidIin = onboardingSchema.safeParse({ ...profile, iin: 'not-an-iin' });
   expect(invalidIin.error?.issues).toContainEqual(
-    expect.objectContaining({ path: ['iin'], message: 'validation.iinInvalid' }),
+    expect.objectContaining({ path: ['iin'], message: 'IIN must be exactly 12 digits' }),
   );
 });
 
@@ -122,14 +124,17 @@ it('accepts non-students and enforces the minimum age on the event date', () => 
   const nonStudent = { ...profile, educationLevel: 'Not currently studying', placeOfStudy: '' };
   expect(onboardingSchema.safeParse(nonStudent).success).toBe(true);
   expect(onboardingSchema.safeParse({ ...profile, placeOfStudy: '' }).error?.issues).toContainEqual(
-    expect.objectContaining({ path: ['placeOfStudy'], message: 'validation.placeOfStudyRequired' }),
+    expect.objectContaining({ path: ['placeOfStudy'], message: 'Place of study is required' }),
   );
   const entrant = { ...nonStudent, parentPhone: '77020000000' };
   expect(onboardingSchema.safeParse({ ...entrant, iin: '101122600001' }).success).toBe(true);
   expect(
     onboardingSchema.safeParse({ ...entrant, iin: '101123600001' }).error?.issues,
   ).toContainEqual(
-    expect.objectContaining({ path: ['iin'], message: 'validation.participantTooYoung' }),
+    expect.objectContaining({
+      path: ['iin'],
+      message: 'You must be at least 16 on the day of the contest.',
+    }),
   );
 });
 
@@ -139,22 +144,8 @@ it('rejects team names the Codeforces users file cannot carry', () => {
   });
   for (const name of ['Bits | Bytes', 'Line\nBreak', 'Carriage\rReturn'])
     expect(createTeamSchema.safeParse({ name }).error?.issues[0]?.message).toBe(
-      'validation.teamNameChars',
+      "Team name can't contain | or line breaks",
     );
-});
-
-it('provides the same translation keys in each supported language', () => {
-  function keys(value: object, prefix = ''): string[] {
-    return Object.entries(value)
-      .flatMap(([key, child]) =>
-        typeof child === 'object' && child !== null
-          ? keys(child, `${prefix}${key}.`)
-          : [`${prefix}${key}`],
-      )
-      .sort();
-  }
-  expect(keys(ru)).toEqual(keys(en));
-  expect(keys(kk)).toEqual(keys(en));
 });
 
 it('requires explicit consent to the current policy version', () => {
@@ -163,7 +154,10 @@ it('requires explicit consent to the current policy version', () => {
     expect(result.success).toBe(false);
     if (!result.success)
       expect(result.error.issues).toContainEqual(
-        expect.objectContaining({ path: ['consent'], message: 'validation.consentRequired' }),
+        expect.objectContaining({
+          path: ['consent'],
+          message: 'Please agree to the terms and personal data processing to continue.',
+        }),
       );
   }
   expect(onboardingSchema.safeParse({ ...profile, policyVersion: '2026-10-01' }).success).toBe(
@@ -176,7 +170,11 @@ it('requires explicit document acknowledgment of the current version', () => {
   for (const documentsRead of [undefined, false, 'true']) {
     const result = onboardingSchema.safeParse({ ...profile, documentsRead });
     expect(result.error?.issues).toContainEqual(
-      expect.objectContaining({ path: ['documentsRead'], message: 'validation.documentsRequired' }),
+      expect.objectContaining({
+        path: ['documentsRead'],
+        message:
+          'Please confirm that you have read the Code of Conduct and Instructions and Rules to continue.',
+      }),
     );
   }
   for (const documentsPolicyVersion of [undefined, 'previous-documents']) {
@@ -184,7 +182,8 @@ it('requires explicit document acknowledgment of the current version', () => {
     expect(result.error?.issues).toContainEqual(
       expect.objectContaining({
         path: ['documentsPolicyVersion'],
-        message: 'validation.documentsChanged',
+        message:
+          'The documents have changed. Reload this page and review them before confirming again.',
       }),
     );
   }

@@ -1,6 +1,5 @@
 import { ArrowUpRight, Eye, EyeOff, KeyRound } from 'lucide-react';
 import { useId, useState, useSyncExternalStore } from 'react';
-import { useTranslation } from 'react-i18next';
 import { LinkButton } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldLabel } from '@/components/ui/field';
@@ -32,7 +31,6 @@ function useStarted(start: string | null) {
  * the teams are finalized, for good; the upload button joins it at the contest start.
  */
 export function ContestCard({ contest }: { contest: ContestAccess }) {
-  const { t } = useTranslation();
   const [shown, setShown] = useState(false);
   const loginId = useId();
   const passwordId = useId();
@@ -43,16 +41,17 @@ export function ContestCard({ contest }: { contest: ContestAccess }) {
       <CardHeader variant="team">
         <p className="account-eyebrow">
           <KeyRound size={16} aria-hidden="true" />
-          {t('dashboard.contestEyebrow')}
+          Contest access
         </p>
-        <CardTitle variant="team">
-          {t('dashboard.tableNumber', { number: contest.tableNumber })}
-        </CardTitle>
-        <CardDescription variant="account">{t('dashboard.contestHint')}</CardDescription>
+        <CardTitle variant="team">{`Table ${contest.tableNumber}`}</CardTitle>
+        <CardDescription variant="account">
+          Sign in to Codeforces with these during the contest. Don't share the password outside your
+          team.
+        </CardDescription>
       </CardHeader>
       <CardContent variant="team">
         <Field>
-          <FieldLabel htmlFor={loginId}>{t('dashboard.cfLogin')}</FieldLabel>
+          <FieldLabel htmlFor={loginId}>Codeforces login</FieldLabel>
           <Input
             id={loginId}
             readOnly
@@ -61,7 +60,7 @@ export function ContestCard({ contest }: { contest: ContestAccess }) {
           />
         </Field>
         <Field>
-          <FieldLabel htmlFor={passwordId}>{t('dashboard.cfPassword')}</FieldLabel>
+          <FieldLabel htmlFor={passwordId}>Codeforces password</FieldLabel>
           <InputGroup>
             <InputGroupInput
               id={passwordId}
@@ -74,9 +73,9 @@ export function ContestCard({ contest }: { contest: ContestAccess }) {
             <InputGroupAddon align="inline-end">
               <InputGroupButton
                 onClick={() => setShown((value) => !value)}
-                aria-label={t('dashboard.showPassword')}
+                aria-label="Show password"
                 aria-pressed={shown}
-                title={t('dashboard.showPassword')}
+                title="Show password"
               >
                 {shown ? (
                   <EyeOff size={18} aria-hidden="true" />
@@ -89,7 +88,7 @@ export function ContestCard({ contest }: { contest: ContestAccess }) {
         </Field>
         {started && (
           <LinkButton href={contest.uploadUrl} target="_blank" rel="noopener noreferrer">
-            <span>{t('dashboard.uploadVideo')}</span>
+            <span>Upload video</span>
             <ArrowUpRight className="account-button-arrow" aria-hidden="true" />
           </LinkButton>
         )}

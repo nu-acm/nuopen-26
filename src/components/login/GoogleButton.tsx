@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
 
@@ -9,7 +8,6 @@ import { authClient } from '@/lib/auth-client';
  * invite link they started from.
  */
 export function GoogleButton({ redirect }: { redirect?: string }) {
-  const { t } = useTranslation();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,12 +23,12 @@ export function GoogleButton({ redirect }: { redirect?: string }) {
         errorCallbackURL: loginUrl,
       });
       if (signInError) {
-        setError(t('login.googleFailed'));
+        setError('Could not start Google sign-in. Please try again.');
         setPending(false);
       }
       // On success the browser is navigating away; keep the button disabled.
     } catch {
-      setError(t('login.googleFailed'));
+      setError('Could not start Google sign-in. Please try again.');
       setPending(false);
     }
   };
@@ -45,7 +43,7 @@ export function GoogleButton({ redirect }: { redirect?: string }) {
         className="w-full"
       >
         <img src="/images/google.svg" alt="" aria-hidden className="h-5 w-5 shrink-0" />
-        {pending ? t('common.loading') : t('login.google')}
+        {pending ? 'Loading…' : 'Continue with Google'}
       </Button>
       {error && (
         <p role="alert" className="text-sm text-destructive">

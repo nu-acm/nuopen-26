@@ -1,21 +1,12 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
-import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { SideToggle } from '@/components/landing/nuopen/components/ui/side-toggle';
 import { SoundToggle } from '@/components/landing/nuopen/components/ui/sound-toggle';
 
 export function AuthHeader() {
-  const { t } = useTranslation();
-  const text = useLandingText();
   return (
     <header className="auth-header nuopen-landing">
       <div className="auth-header-inner">
-        <Link
-          to="/"
-          className="account-brand"
-          aria-label={text('{{name}} home', { name: 'NU Open' })}
-        >
+        <Link to="/" className="account-brand" aria-label="NU Open home">
           <span className="site-brand-wordmark">NU Open</span>
           <span className="site-brand-edition">VII</span>
         </Link>
@@ -25,13 +16,12 @@ export function AuthHeader() {
             <SoundToggle />
           </div>
           <div className="account-header-secondary">
-            <LanguageSwitcher />
             <Link
               to="/"
               className="account-back site-nav-link site-nav-action"
-              aria-label={t('account.backToLanding')}
+              aria-label="Back to landing page"
             >
-              <span aria-hidden="true">←</span> {t('account.backToStory')}
+              <span aria-hidden="true">←</span> Back to the story
             </Link>
           </div>
         </div>

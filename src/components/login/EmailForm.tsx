@@ -1,6 +1,5 @@
 import { ArrowUpRight } from 'lucide-react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useWebHaptics } from 'web-haptics/react';
 import { Spinner } from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,6 @@ import { emailSchema } from '@/lib/validation';
 import { webHapticsOptions } from '@/lib/web-haptics';
 
 export function EmailForm({ onSent }: { onSent: (email: string) => void }) {
-  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -24,9 +22,8 @@ export function EmailForm({ onSent }: { onSent: (email: string) => void }) {
 
     const parsed = emailSchema.safeParse({ email });
     if (!parsed.success) {
-      // Zod messages are i18n keys, resolved here.
       void trigger('error');
-      setError(t(parsed.error.issues[0].message));
+      setError(parsed.error.issues[0].message);
       return;
     }
 
@@ -37,7 +34,7 @@ export function EmailForm({ onSent }: { onSent: (email: string) => void }) {
       onSent(parsed.data.email);
     } catch {
       void trigger('error');
-      setError(t('login.sendFailed'));
+      setError('Could not send the code. Please try again.');
     } finally {
       setPending(false);
     }
@@ -46,12 +43,7 @@ export function EmailForm({ onSent }: { onSent: (email: string) => void }) {
   return (
     <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
       <FieldGroup>
-        <FormField
-          disabled={pending}
-          label={t('login.emailLabel')}
-          error={error ?? undefined}
-          required
-        >
+        <FormField disabled={pending} label="Email" error={error ?? undefined} required>
           {(fieldProps) => (
             <Input
               {...fieldProps}
@@ -60,7 +52,7 @@ export function EmailForm({ onSent }: { onSent: (email: string) => void }) {
               autoComplete="email"
               inputMode="email"
               autoFocus
-              placeholder={t('login.emailPlaceholder')}
+              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={pending}
@@ -71,7 +63,7 @@ export function EmailForm({ onSent }: { onSent: (email: string) => void }) {
         <Button type="submit" disabled={pending} className="w-full">
           <>
             {pending && <Spinner data-icon="inline-start" />}
-            <span>{pending ? t('common.loading') : t('login.sendCode')}</span>
+            <span>{pending ? 'Loading…' : 'Send code'}</span>
           </>
           <ArrowUpRight className="account-button-arrow" aria-hidden="true" />
         </Button>

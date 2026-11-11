@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
@@ -19,13 +18,12 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
  */
 
 export function ColumnToggleBar<T extends object>({ table }: { table: AdminTable<T> }) {
-  const { t } = useTranslation();
   const columns = table.getAllLeafColumns().filter((column) => column.getCanHide());
   const allVisible = columns.every((column) => column.getIsVisible());
   return (
     <div className="admin-column-controls">
       <Button size="sm" variant="link" onClick={() => table.toggleAllColumnsVisible(!allVisible)}>
-        {allVisible ? t('admin.hideAll') : t('admin.showAll')}
+        {allVisible ? 'Hide all' : 'Show all'}
       </Button>
       <ToggleGroup
         multiple
@@ -35,7 +33,7 @@ export function ColumnToggleBar<T extends object>({ table }: { table: AdminTable
           for (const column of columns)
             if (column.getIsVisible() !== values.includes(column.id)) column.toggleVisibility();
         }}
-        aria-label={t('admin.columns')}
+        aria-label="Columns"
       >
         {columns.map((column) => (
           <ToggleGroupItem key={column.id} value={column.id} variant="columns">

@@ -2,4 +2,4 @@
 export const AI_COOLDOWN_MS = 5_000;
 export const AI_WINDOW_MS = 60 * 60 * 1_000;
 export const AI_REQUESTS_PER_WINDOW = 30;
-export const AI_RATE_LIMIT_ERROR = 'dashboard.generateRateLimited';
+export const AI_RATE_LIMIT_ERROR = 'Too many name suggestions. Please try again later.';

@@ -1,6 +1,5 @@
 import { FileText, CircleCheck } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import {
   Card,
@@ -16,7 +15,6 @@ import { CV_ERRORS, CV_MAX_BYTES, CV_MAX_MB } from '@/lib/cv';
 
 type Pending = 'upload' | 'delete' | null;
 
-/** Calls /api/cv; resolves on success, throws an i18n key on failure. */
 async function requestCv(init: RequestInit) {
   let res: Response;
   try {
@@ -45,7 +43,6 @@ export function CvCard({
   onDone: (message: string) => Promise<void>;
   onError: (message: string) => void;
 }) {
-  const { t } = useTranslation();
   const busyRef = useRef(false);
   const [uploadName, setUploadName] = useState('');
   const [error, setError] = useState('');
@@ -64,9 +61,7 @@ export function CvCard({
       await action();
       await onDone(done);
     } catch (err) {
-      // Error messages are i18n keys from /api/cv; t() passes anything else through.
-      const key = err instanceof Error ? err.message : CV_ERRORS.failed;
-      reportError(t(key, { mb: CV_MAX_MB }));
+      reportError(err instanceof Error ? err.message : CV_ERRORS.failed);
     } finally {
       busyRef.current = false;
       setPending(null);
@@ -76,20 +71,20 @@ export function CvCard({
 
   const upload = (files: File[]) => {
     if (busyRef.current || !registrationOpen) return;
-    if (files.length !== 1) return reportError(t('cv.errorSingleFile'));
+    if (files.length !== 1) return reportError('Please upload one PDF file at a time.');
     const file = files[0];
     // Checked again on the server; this just saves a pointless upload.
-    if (file.size > CV_MAX_BYTES) return reportError(t(CV_ERRORS.tooLarge, { mb: CV_MAX_MB }));
+    if (file.size > CV_MAX_BYTES) return reportError(CV_ERRORS.tooLarge);
     if (
       (file.type && file.type !== 'application/pdf') ||
       (!file.type && !/\.pdf$/i.test(file.name))
     ) {
-      return reportError(t(CV_ERRORS.notPdf));
+      return reportError(CV_ERRORS.notPdf);
     }
     setUploadName(file.name);
     const body = new FormData();
     body.append('file', file);
-    return run('upload', () => requestCv({ method: 'POST', body }), t('cv.feedbackUploaded'));
+    return run('upload', () => requestCv({ method: 'POST', body }), 'Your CV was uploaded.');
   };
 
   return (
@@ -97,17 +92,19 @@ export function CvCard({
       <CardHeader variant="cv">
         <FileText className="account-section-icon" aria-hidden="true" />
         <div className="account-card-heading">
-          <CardTitle variant="account">{t('cv.title')}</CardTitle>
+          <CardTitle variant="account">Your CV</CardTitle>
           <CardAction>
             <Badge variant="status" complete={hasCv}>
               {hasCv && <CircleCheck size={14} aria-hidden="true" />}
-              {hasCv ? t('cv.uploaded') : t('cv.none')}
+              {hasCv ? 'Uploaded' : 'Not uploaded'}
             </Badge>
           </CardAction>
         </div>
 
         <CardDescription variant="account">
-          {registrationOpen ? t('cv.hint', { mb: CV_MAX_MB }) : t('cv.locked')}
+          {registrationOpen
+            ? `Optional. Upload a PDF up to ${CV_MAX_MB} MB. It is stored in the organisers’ private Google Drive folder. By uploading, you agree that organisers may review your CV and share it with event partners for recruitment.`
+            : 'Registration is closed, so your CV can no longer be changed.'}
         </CardDescription>
       </CardHeader>
 
@@ -120,21 +117,21 @@ export function CvCard({
               disabled={pending !== null}
               uploading={pending === 'upload'}
               fileName={uploadName}
-              title={t('cv.dropTitle')}
-              hint={t('cv.dropHint', { mb: CV_MAX_MB })}
-              buttonLabel={hasCv ? t('cv.replace') : t('cv.chooseFile')}
-              uploadingLabel={t('cv.uploading')}
+              title="Drop your CV here"
+              hint={`One PDF · up to ${CV_MAX_MB} MB`}
+              buttonLabel={hasCv ? 'Replace' : 'Choose file'}
+              uploadingLabel="Uploading…"
               error={error}
             />
             {hasCv && (
               <ConfirmButton
-                label={t('cv.delete')}
-                confirmLabel={t('cv.deleteConfirm')}
+                label="Delete"
+                confirmLabel="Click again to delete"
                 loading={pending === 'delete'}
-                loadingLabel={t('common.loading')}
+                loadingLabel="Loading…"
                 disabled={pending !== null}
                 onConfirm={() =>
-                  run('delete', () => requestCv({ method: 'DELETE' }), t('cv.feedbackDeleted'))
+                  run('delete', () => requestCv({ method: 'DELETE' }), 'Your CV was deleted.')
                 }
               />
             )}

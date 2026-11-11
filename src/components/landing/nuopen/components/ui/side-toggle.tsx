@@ -1,4 +1,3 @@
-import { useLandingText } from '@/components/landing/nuopen/content/use-landing-text';
 import { type Side, sideStore } from '@/components/landing/nuopen/lib/side';
 
 import { useSide } from './use-side';
@@ -16,22 +15,21 @@ const LIT =
 
 /** Dark | Light switch; the chosen segment glows in the page's --saber. */
 export function SideToggle() {
-  const text = useLandingText();
   const side = useSide((s) => s.side);
   return (
-    <div role="group" aria-label={text('Side')} className="flex h-11">
+    <div role="group" aria-label="Side" className="flex h-11">
       {SEGMENTS.map((segment, index) => {
         const pressed = side === segment.side;
         return (
           <button
             key={segment.side}
             type="button"
-            aria-label={text(`${segment.label} side`)}
+            aria-label={`${segment.label} side`}
             aria-pressed={pressed}
             onClick={() => sideStore.choose(segment.side)}
             className={`${SEGMENT} ${index > 0 ? '-ml-px' : ''} ${pressed ? LIT : IDLE}`}
           >
-            {text(segment.label)}
+            {segment.label}
           </button>
         );
       })}

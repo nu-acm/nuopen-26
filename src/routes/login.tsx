@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
@@ -48,7 +47,6 @@ export const Route = createFileRoute('/login')({
 });
 
 function LoginPage() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const { googleEnabled, registrationOpen } = Route.useLoaderData();
   const search = Route.useSearch();
@@ -64,18 +62,23 @@ function LoginPage() {
     <AccountShell>
       {email === null ? (
         <AuthCard
-          title={t('login.title')}
+          title="Sign in"
           contentKey="email"
-          subtitle={t('login.subtitle')}
+          subtitle="Enter your email and we will send you a 6-digit code."
           illustration={<LoginVisual />}
         >
-          {!registrationOpen && <Notice className="mb-5">{t('login.registrationClosed')}</Notice>}
+          {!registrationOpen && (
+            <Notice className="mb-5">
+              Registration is closed. If you already registered, you can still sign in to see your
+              team.
+            </Notice>
+          )}
           {googleEnabled && (
             <>
               <GoogleButton redirect={search.redirect} />
               <div className="account-form-divider">
                 <span className="h-px flex-1 bg-whd-border" />
-                <span className="text-sm text-whd-text-muted">{t('login.or')}</span>
+                <span className="text-sm text-whd-text-muted">or</span>
                 <span className="h-px flex-1 bg-whd-border" />
               </div>
             </>
@@ -84,9 +87,9 @@ function LoginPage() {
         </AuthCard>
       ) : (
         <AuthCard
-          title={t('login.otpTitle')}
+          title="Enter the code"
           contentKey="otp"
-          subtitle={t('login.otpSubtitle', { email })}
+          subtitle={`We sent a 6-digit code to ${email}.`}
           illustration={<LoginVisual />}
         >
           <OtpForm email={email} onVerified={handleVerified} onChangeEmail={() => setEmail(null)} />
