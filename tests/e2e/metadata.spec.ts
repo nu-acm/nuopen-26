@@ -54,7 +54,7 @@ test('serves English pages and metadata even with a previous language preference
     expect(head.meta['twitter:image']).toBe(head.meta['og:image']);
 
     if (path === '/') {
-      expect(head.title).toBe('NU Open 2026 · Episode VII: The Code Awakens');
+      expect(head.title).toBe('NU Open 2026');
       expect(head.description).toContain('ICPC-style programming contest');
       const image = await page.request.get('/social-preview.png');
       expect(image.ok()).toBe(true);

@@ -16,7 +16,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { AccountShell } from '@/components/AccountShell';
 import { Button } from '@/components/ui/button';
 import { buttonVariants } from '@/components/ui/button-variants';
-import { pageMetadata, SITE_TITLE, SITE_URL } from '@/lib/metadata';
+import { pageMetadata, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from '@/lib/metadata';
 import appCss from '@/styles.css?url';
 
 function NotFoundPage() {
@@ -72,20 +72,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   notFoundComponent: NotFoundPage,
   errorComponent: RootErrorPage,
   head: ({ matches }) => {
-    const isLanding = matches.at(-1)?.pathname === '/';
-    const title = isLanding
-      ? `${SITE_TITLE} · Episode ${EVENT.episode}: ${EVENT.subtitle}`
-      : SITE_TITLE;
-    const description = isLanding
-      ? `The ${EVENT.edition}th annual ICPC-style programming contest by ${EVENT.organizerShort}. Teams of up to three, five hours, ${EVENT.contest.dateLabel} at ${EVENT.venue.name}.`
-      : 'NU Open 2026 is a five-hour programming contest on November 22 at Nazarbayev University in Astana. Compete solo or in a team of up to three for a ₸1,000,000 prize pool.';
     const canonicalUrl = new URL(matches.at(-1)?.pathname ?? '/', SITE_URL).href;
     const imageUrl = `${SITE_URL}/social-preview.png`;
     return {
       meta: [
         { charSet: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=5.0' },
-        ...pageMetadata(title, description),
+        ...pageMetadata(SITE_TITLE, SITE_DESCRIPTION),
         { property: 'og:type', content: 'website' },
         { property: 'og:site_name', content: EVENT.name },
         { property: 'og:url', content: canonicalUrl },
