@@ -1,4 +1,60 @@
-import { test, expect } from './fixtures';
+import { test, expect, seedEligibleTeam } from './fixtures';
+
+test('serves team invitation metadata before continuing to sign-in', async ({ page, app }) => {
+  await seedEligibleTeam(app.db);
+
+  for (const [slug, title] of [
+    ['eligible-team', 'Join Eligible Team | NU Open 2026'],
+    ['missing-team', 'Team invitation | NU Open 2026'],
+  ]) {
+    const response = await page.request.get(`/invite/${slug}`, { maxRedirects: 0 });
+    expect(response.status()).toBe(200);
+    expect(response.headers().location).toBeUndefined();
+    const html = await response.text();
+    const head = await page.evaluate((html) => {
+      const document = new DOMParser().parseFromString(html, 'text/html');
+      return {
+        title: document.title,
+        titles: document.querySelectorAll('title').length,
+        descriptions: document.querySelectorAll('meta[name="description"]').length,
+        canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+        meta: Object.fromEntries(
+          Array.from(document.querySelectorAll('meta[property], meta[name]')).map((meta) => [
+            meta.getAttribute('property') ?? meta.getAttribute('name'),
+            meta.getAttribute('content'),
+          ]),
+        ),
+      };
+    }, html);
+
+    expect(head.title).toBe(title);
+    expect(head.titles).toBe(1);
+    expect(head.descriptions).toBe(1);
+    expect(head.meta['og:title']).toBe(title);
+    expect(head.meta['twitter:title']).toBe(title);
+    expect(head.meta['og:description']).toBe(head.meta.description);
+    expect(head.meta['twitter:description']).toBe(head.meta.description);
+    expect(head.canonical).toBe(`https://nuopen.nuacm.kz/invite/${slug}`);
+    expect(head.meta['og:url']).toBe(head.canonical);
+    expect(html).not.toContain('captain@example.test');
+
+    if (slug === 'eligible-team') {
+      expect(head.meta.description).toBe(
+        'You have been invited to join Eligible Team at NU Open 2026. Sign in to accept your invitation and compete on November 22 at Nazarbayev University, Astana.',
+      );
+    } else {
+      expect(head.meta.description).not.toContain('Eligible Team');
+    }
+  }
+
+  await page.goto('/invite/eligible-team');
+  await expect(page).toHaveURL((url) => {
+    return (
+      url.pathname === '/login' && url.searchParams.get('redirect') === '/invite/eligible-team'
+    );
+  });
+  await expect(page.getByRole('button', { name: 'Send code', exact: true })).toBeVisible();
+});
 
 test('serves English pages and metadata even with a previous language preference', async ({
   page,

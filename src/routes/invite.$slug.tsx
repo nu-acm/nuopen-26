@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useWebHaptics } from 'web-haptics/react';
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 
 import { AccountShell } from '@/components/AccountShell';
 import { AuthCard } from '@/components/ui/auth-card';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { MAX_TEAM_SIZE } from '@/lib/event';
 import { getSession } from '@/lib/auth.server';
 import { getParticipant } from '@/lib/onboarding.server';
@@ -14,10 +14,11 @@ import { getTeamBySlug, joinTeamBySlug } from '@/lib/team.server';
 import { isRegistrationOpen, REGISTRATION_CLOSED_ERROR } from '@/lib/registration.server';
 import { inviteSlugSchema } from '@/lib/validation';
 import { webHapticsOptions } from '@/lib/web-haptics';
+import { pageMetadata, SITE_TITLE } from '@/lib/metadata';
 
 /**
- * Resolve an invite link. Anonymous or un-onboarded visitors are sent through
- * login/onboarding first; the slug is preserved so they land back here.
+ * Resolve the public invitation before the browser continues to login/onboarding,
+ * so link previews can read the team's metadata from the initial HTML.
  */
 const resolveInvite = createServerFn({ method: 'GET' })
   .validator(inviteSlugSchema)
@@ -47,13 +48,17 @@ const acceptInvite = createServerFn({ method: 'POST' })
   });
 
 export const Route = createFileRoute('/invite/$slug')({
-  loader: async ({ params }) => {
-    const result = await resolveInvite({ data: { slug: params.slug } });
-    // Come back here after signing in / finishing the profile.
-    const search = { redirect: `/invite/${params.slug}` };
-    if (result.status === 'anonymous') throw redirect({ to: '/login', search });
-    if (result.status === 'needs-onboarding') throw redirect({ to: '/onboarding', search });
-    return result;
+  loader: ({ params }) => resolveInvite({ data: { slug: params.slug } }),
+  head: ({ loaderData }) => {
+    const team = loaderData && 'team' in loaderData ? loaderData.team : undefined;
+    return {
+      meta: pageMetadata(
+        team ? `Join ${team.name} | ${SITE_TITLE}` : `Team invitation | ${SITE_TITLE}`,
+        team
+          ? `You have been invited to join ${team.name} at ${SITE_TITLE}. Sign in to accept your invitation and compete on November 22 at Nazarbayev University, Astana.`
+          : 'Open your NU Open team invitation to see the team and join the contest.',
+      ),
+    };
   },
   component: InvitePage,
 });
@@ -65,6 +70,16 @@ function InvitePage() {
   const { trigger } = useWebHaptics(webHapticsOptions);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const needsAccount = result.status === 'anonymous' || result.status === 'needs-onboarding';
+
+  useEffect(() => {
+    if (result.status !== 'anonymous' && result.status !== 'needs-onboarding') return;
+    void navigate({
+      to: result.status === 'anonymous' ? '/login' : '/onboarding',
+      search: { redirect: `/invite/${slug}` },
+      replace: true,
+    });
+  }, [navigate, result.status, slug]);
 
   const join = async () => {
     setError(null);
@@ -83,6 +98,8 @@ function InvitePage() {
 
   const messages: Record<string, string> = {
     'not-found': 'That invite code is not valid',
+    anonymous: 'Sign in or register to accept this invitation.',
+    'needs-onboarding': 'Complete your profile to accept this invitation.',
     closed: 'Registration is closed, so teams can no longer change.',
     'already-in-team': 'You are already in a team. Leave it first to join another.',
     full: 'This team is already full.',
@@ -103,7 +120,7 @@ function InvitePage() {
             </>
           )
         }
-        title={result.status === 'can-join' ? 'Join this team' : 'Cannot join'}
+        title={result.status === 'can-join' || needsAccount ? 'Join this team' : 'Cannot join'}
         subtitle={
           result.status === 'can-join'
             ? `You have been invited to join ${result.team.name}.`
@@ -121,6 +138,14 @@ function InvitePage() {
               </p>
             )}
           </div>
+        ) : needsAccount ? (
+          <Link
+            to={result.status === 'anonymous' ? '/login' : '/onboarding'}
+            search={{ redirect: `/invite/${slug}` }}
+            className={buttonVariants({ className: 'w-full' })}
+          >
+            {result.status === 'anonymous' ? 'Sign in to join' : 'Complete profile'}
+          </Link>
         ) : (
           <Button
             variant="secondary"
