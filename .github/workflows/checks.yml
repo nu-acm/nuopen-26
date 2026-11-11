@@ -50,8 +50,9 @@ jobs:
           cache: true
           run-install: |
             args: ['--frozen-lockfile']
-      - name: Install Chromium for the browser tests
-        run: vp exec playwright install --with-deps chromium
+      # GitHub's Ubuntu image already includes the shared libraries Chromium needs.
+      - name: Install headless Chromium for the browser tests
+        run: vp exec playwright install --only-shell chromium
       - run: vp run test:e2e --project=${{ matrix.project }}
       - name: Upload the browser test report
         if: failure()
