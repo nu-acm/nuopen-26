@@ -77,10 +77,9 @@ export const VALIDATION_MESSAGES = {
   consentRequired: 'Please agree to the terms and personal data processing to continue.',
   policyChanged:
     'The registration policy has changed. Reload this page and review it before continuing.',
-  documentsRequired:
-    'Please confirm that you have read the Code of Conduct and Instructions and Rules to continue.',
+  documentsRequired: 'Confirm that you have read the Code of Conduct to continue.',
   documentsChanged:
-    'The documents have changed. Reload this page and review them before confirming again.',
+    'The Code of Conduct has changed. Reload this page and read it before confirming again.',
 } as const;
 
 // ── Login step 1: email ──────────────────────────────────────────────────────

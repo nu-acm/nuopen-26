@@ -3,7 +3,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { Faq6 } from '@/components/ui/faq-06';
 import { EVENT } from '@/components/landing/nuopen/content/event';
 import { formatDay } from '@/components/landing/nuopen/lib/schedule';
-import { TELEGRAM_CHAT_URL } from '@/lib/event';
+import { CONTACT_EMAIL, TELEGRAM_CHAT_URL } from '@/lib/event';
 import { FAQ_TITLE } from '@/lib/metadata';
 import { DEFAULT_REGISTRATION_DEADLINE } from '@/lib/registration';
 
@@ -37,9 +37,8 @@ const faqs = [
     question: "What if I don't have a team?",
     answer: (
       <>
-        {'Create a one-person team to compete solo, or find teammates in the '}
-        <FAQLink href={TELEGRAM_CHAT_URL}>Telegram chat</FAQLink>
-        {'.'}
+        Create a one-person team to compete solo, or find teammates in the{' '}
+        <FAQLink href={TELEGRAM_CHAT_URL}>NU Open Telegram chat</FAQLink>.
       </>
     ),
   },
@@ -65,12 +64,6 @@ const faqs = [
     answer: 'The ACM Student Chapter at Nazarbayev University (ACM@NU) organises NU Open.',
   },
   {
-    id: 'otherEvents',
-    question: 'Are there any other events for girls?',
-    answer:
-      'Yes! CodeW is an individual programming contest. Code Girl Summer is a two-week web development camp. WISH is a 24-hour hackathon for women. Follow our Telegram and Instagram for details.',
-  },
-  {
     id: 'certificates',
     question: 'Will there be prizes?',
     answer: `The prize pool is ${EVENT.prize.text}.`,
@@ -80,12 +73,14 @@ const faqs = [
     question: "I didn't find an answer to my question. What should I do?",
     answer: (
       <>
-        {'Join our '}
-        <FAQLink href={TELEGRAM_CHAT_URL}>Telegram chat</FAQLink>
-        {' and ask your questions there, or contact us via email: '}
-        <FAQLink href="https://mail.google.com/mail/u/0/?fs=1&amp;to=acm_w@nu.edu.kz&amp;su&amp;body&amp;tf=cm">
-          acm_w@nu.edu.kz.
-        </FAQLink>
+        Ask in the <FAQLink href={TELEGRAM_CHAT_URL}>NU Open Telegram chat</FAQLink> or email{' '}
+        <a
+          href={`mailto:${CONTACT_EMAIL}`}
+          className="text-whd-pink-bright underline decoration-whd-pink-bright/40 underline-offset-4 transition-colors duration-200 hover:text-whd-pink-soft"
+        >
+          {CONTACT_EMAIL}
+        </a>
+        .
       </>
     ),
   },

@@ -1,7 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { ContactLink, LegalPage, LegalSection } from '@/components/LegalPage';
-import { CONTACT_EMAIL } from '@/lib/event';
-import { pageMetadata } from '@/lib/metadata';
+import {
+  CODE_OF_CONDUCT_URL,
+  CONTACT_EMAIL,
+  MAX_TEAM_SIZE,
+  MIN_PARTICIPANT_AGE,
+} from '@/lib/event';
+import { pageMetadata, SITE_URL } from '@/lib/metadata';
 
 export const Route = createFileRoute('/terms')({
   component: TermsPage,
@@ -15,21 +20,21 @@ export const Route = createFileRoute('/terms')({
 
 function TermsPage() {
   return (
-    <LegalPage title="Terms of Service" updated="November 2, 2026">
+    <LegalPage title="Terms of Service" updated="November 11, 2026">
       <LegalSection title="1. Acceptance of terms">
         <p>
-          By registering for NU Open and using this platform (whd.nuacmw.kz), you agree to these
-          Terms of Service. If you do not agree, please do not use the registration system.
+          These terms apply to registration for NU Open at {new URL(SITE_URL).hostname}. You must
+          accept them before submitting your registration details.
         </p>
       </LegalSection>
 
       <LegalSection title="2. Eligibility">
         <p>
-          NU Open is a team competition for school, college and university students. You must meet
-          the eligibility criteria published by the organizers to take part. Participation is
-          subject to verification by the organizers. Participants who will be under 18 on November
-          14, 2026 must provide a parent or guardian contact number. A contact is also required if
-          the IIN does not contain a usable birth date for the age check.
+          You must be at least {MIN_PARTICIPANT_AGE} years old on the day of the contest and compete
+          in person at Nazarbayev University. Participants who will be under 18 on the contest date
+          must provide a parent or guardian’s phone number. The registration form also asks for a
+          guardian’s number if it cannot determine your age from your IIN. Organizers verify
+          eligibility and obtain guardian consent through Telegram for participants under 18.
         </p>
       </LegalSection>
 
@@ -42,17 +47,19 @@ function TermsPage() {
 
       <LegalSection title="4. Teams">
         <p>
-          Teams must have exactly 3 members to compete. A team of any other size at the end of
-          registration is not eligible. The team captain may remove members while registration is
-          open.
+          Teams can have one to {MAX_TEAM_SIZE} members, including solo participants. The team
+          captain may remove members while registration is open.
         </p>
       </LegalSection>
 
       <LegalSection title="5. Code of conduct">
         <p>
-          All participants must follow the event’s rules and any instructions from the organizers.
-          Harassment, cheating or disruptive behaviour will not be tolerated and may result in
-          immediate removal from the event.
+          All participants must follow the{' '}
+          <a href={CODE_OF_CONDUCT_URL} className="underline">
+            Code of Conduct
+          </a>{' '}
+          and any instructions from the organizers. Harassment, cheating or disruptive behaviour may
+          result in removal from the event.
         </p>
       </LegalSection>
 
@@ -73,8 +80,8 @@ function TermsPage() {
 
       <LegalSection title="8. Changes">
         <p>
-          We may update these terms from time to time. Continued use of the platform after changes
-          constitutes acceptance of the updated terms.
+          If these terms change, the registration form will ask you to accept the updated version
+          when you next submit or edit your registration details.
         </p>
       </LegalSection>
 

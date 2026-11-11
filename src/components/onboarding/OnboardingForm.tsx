@@ -20,7 +20,7 @@ import {
 import { webHapticsOptions } from '@/lib/web-haptics';
 import { REGISTRATION_CLOSED_ERROR } from '@/lib/registration';
 import { DOCUMENTS_POLICY_VERSION, REGISTRATION_POLICY_VERSION } from '@/lib/consent';
-import { CODE_OF_CONDUCT_URL, INSTRUCTIONS_AND_RULES_URL } from '@/lib/event';
+import { CODE_OF_CONDUCT_URL } from '@/lib/event';
 
 export type OnboardingDefaults = Partial<
   Record<Exclude<keyof OnboardingInput, 'consent' | 'documentsRead'>, string>
@@ -297,18 +297,12 @@ export function OnboardingForm({
               aria-invalid={!!errors.documentsRead}
               aria-describedby={`${documentsId}-hint${errors.documentsRead ? ` ${documentsId}-error` : ''}`}
             />
-            <FieldLabel htmlFor={documentsId}>
-              I have read the Code of Conduct and Instructions and Rules.
-            </FieldLabel>
+            <FieldLabel htmlFor={documentsId}>I have read the Code of Conduct.</FieldLabel>
           </div>
           <FieldDescription id={`${documentsId}-hint`}>
             Read the{' '}
             <a href={CODE_OF_CONDUCT_URL} target="_blank" rel="noopener">
               Code of Conduct
-            </a>{' '}
-            and{' '}
-            <a href={INSTRUCTIONS_AND_RULES_URL} target="_blank" rel="noopener">
-              Instructions and Rules
             </a>
             .
           </FieldDescription>

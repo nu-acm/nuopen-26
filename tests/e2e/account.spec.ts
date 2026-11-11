@@ -174,24 +174,18 @@ test('requires document acknowledgment and restores only acceptance of the curre
 }) => {
   await login(page, app.codes, 'documents@example.test');
   const documents = page.getByRole('checkbox', {
-    name: 'I have read the Code of Conduct and Instructions and Rules.',
+    name: 'I have read the Code of Conduct.',
     exact: true,
   });
   await expect(documents).not.toBeChecked();
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
-  await expect(
-    page.getByText(
-      'Please confirm that you have read the Code of Conduct and Instructions and Rules to continue.',
-      { exact: true },
-    ),
-  ).toBeVisible();
+  const acknowledgmentError = page.getByText(
+    'Confirm that you have read the Code of Conduct to continue.',
+    { exact: true },
+  );
+  await expect(acknowledgmentError).toBeVisible();
   await expect(documents).toHaveAttribute('aria-invalid', 'true');
-  const errorId = await page
-    .getByText(
-      'Please confirm that you have read the Code of Conduct and Instructions and Rules to continue.',
-      { exact: true },
-    )
-    .getAttribute('id');
+  const errorId = await acknowledgmentError.getAttribute('id');
   expect(errorId).toBeTruthy();
   expect((await documents.getAttribute('aria-describedby'))?.split(' ')).toContain(errorId);
 
@@ -219,12 +213,7 @@ test('requires document acknowledgment and restores only acceptance of the curre
       }),
     ).toBeChecked();
     await page.getByRole('button', { name: 'Continue', exact: true }).click();
-    await expect(
-      page.getByText(
-        'Please confirm that you have read the Code of Conduct and Instructions and Rules to continue.',
-        { exact: true },
-      ),
-    ).toBeVisible();
+    await expect(acknowledgmentError).toBeVisible();
     expect(
       await app.db
         .prepare('SELECT documents_acknowledged_at FROM participant')
@@ -253,34 +242,28 @@ test('shows accessible consent and policy links', async ({ page, context, app },
   await expect(page.locator('form a[href="/privacy"]')).toHaveAttribute('target', '_blank');
   await expect(page.locator('form a[href="/terms"]')).toHaveAttribute('target', '_blank');
   const documents = page.getByRole('checkbox', {
-    name: 'I have read the Code of Conduct and Instructions and Rules.',
+    name: 'I have read the Code of Conduct.',
     exact: true,
   });
   await expect(documents).not.toBeChecked();
   await expect(documents).toHaveAttribute('aria-required', 'true');
-  const documentLinks = [
-    page.locator(
-      'a[href="https://drive.google.com/file/d/1omx4qtnA4DYh6qeLnf9o_lQiF8wSb2HG/view?usp=sharing"]',
-    ),
-    page.locator(
-      'a[href="https://drive.google.com/file/d/1lblOCnzRenDdfWUR13vQMKcli6M9exZf/view?usp=sharing"]',
-    ),
-  ];
+  const codeOfConduct = page.getByRole('link', { name: 'Code of Conduct', exact: true });
+  const codeOfConductUrl =
+    'https://drive.google.com/file/d/1RRQvDMPs3dHcb3XTs3wcah10mARCAMtd/view?usp=sharing';
   await documents.focus();
   await page.keyboard.press('Space');
   await expect(documents).toBeChecked();
-  for (const link of documentLinks) {
-    await expect(link).toBeVisible();
-    await expect(link).toHaveAttribute('target', '_blank');
-    await expect(link).toHaveAttribute('rel', 'noopener');
-    const opening = page.waitForEvent('popup');
-    await link.click();
-    const popup = await opening;
-    await expect(popup).toHaveURL((await link.getAttribute('href'))!);
-    await popup.close();
-    await expect(page).toHaveURL(/\/onboarding$/);
-    await expect(documents).toBeChecked();
-  }
+  await expect(codeOfConduct).toBeVisible();
+  await expect(codeOfConduct).toHaveAttribute('href', codeOfConductUrl);
+  await expect(codeOfConduct).toHaveAttribute('target', '_blank');
+  await expect(codeOfConduct).toHaveAttribute('rel', 'noopener');
+  const opening = page.waitForEvent('popup');
+  await codeOfConduct.click();
+  const popup = await opening;
+  await expect(popup).toHaveURL(codeOfConductUrl);
+  await popup.close();
+  await expect(page).toHaveURL(/\/onboarding$/);
+  await expect(documents).toBeChecked();
   await consent.focus();
   await page.keyboard.press('Space');
   await expect(consent).toBeChecked();

@@ -22,8 +22,8 @@ export type ContestAccess = {
   tableNumber: string;
   login: string;
   password: string;
-  /** The proctoring upload page, with the password in the fragment so no server logs it. */
-  uploadUrl: string;
+  /** The configured proctoring page with the upload code in the URL fragment. */
+  uploadUrl: string | null;
   /** ISO instant from which the upload button shows; null hides it. */
   contestStart: string | null;
 };

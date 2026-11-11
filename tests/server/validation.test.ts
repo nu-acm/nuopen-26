@@ -172,8 +172,7 @@ it('requires explicit document acknowledgment of the current version', () => {
     expect(result.error?.issues).toContainEqual(
       expect.objectContaining({
         path: ['documentsRead'],
-        message:
-          'Please confirm that you have read the Code of Conduct and Instructions and Rules to continue.',
+        message: 'Confirm that you have read the Code of Conduct to continue.',
       }),
     );
   }
@@ -183,7 +182,7 @@ it('requires explicit document acknowledgment of the current version', () => {
       expect.objectContaining({
         path: ['documentsPolicyVersion'],
         message:
-          'The documents have changed. Reload this page and review them before confirming again.',
+          'The Code of Conduct has changed. Reload this page and read it before confirming again.',
       }),
     );
   }

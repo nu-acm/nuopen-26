@@ -1,12 +1,17 @@
 import { formatMoney } from '@/components/landing/nuopen/lib/format';
-import { EVENT_DATE, MAX_TEAM_SIZE, MIN_PARTICIPANT_AGE, MIN_TEAM_SIZE } from '@/lib/event';
+import {
+  CONTACT_EMAIL,
+  EVENT_DATE,
+  MAX_TEAM_SIZE,
+  MIN_PARTICIPANT_AGE,
+  MIN_TEAM_SIZE,
+} from '@/lib/event';
 import {
   CONFIRMATION_DATE,
   DEFAULT_REGISTRATION_DEADLINE,
   REGISTRATION_OPEN_DATE,
 } from '@/lib/registration';
 
-const EMAIL = 'acmsc@nu.edu.kz';
 const PRIZE = { amount: 1_000_000, currency: '₸' };
 const PRIZE_TEXT = formatMoney(PRIZE.amount, PRIZE.currency);
 
@@ -102,7 +107,7 @@ export const EVENT = {
     { title: 'One laptop per team', text: 'Bring your own. Laptops are not provided.' },
     {
       title: 'Coaches watch, not help',
-      text: `Coaches may come with notice to ${EMAIL}, but may not help during the contest.`,
+      text: `Coaches may come with notice to ${CONTACT_EMAIL}, but may not help during the contest.`,
     },
     {
       title: 'Turn off your targeting computer',
@@ -137,7 +142,7 @@ export const EVENT = {
     },
     {
       q: 'Can our coach come?',
-      a: `Yes, with notice to ${EMAIL} in advance. Coaches cannot help during the contest.`,
+      a: `Yes, with notice to ${CONTACT_EMAIL} in advance. Coaches cannot help during the contest.`,
     },
     {
       q: 'Who organises NU Open?',
@@ -145,11 +150,11 @@ export const EVENT = {
     },
     {
       q: 'How do I join ACM@NU?',
-      a: `Follow @nuacmsc on Instagram for recruitment calls, or write to ${EMAIL}.`,
+      a: `Follow @nuacmsc on Instagram for recruitment calls, or write to ${CONTACT_EMAIL}.`,
     },
   ],
   contacts: {
-    email: EMAIL,
+    email: CONTACT_EMAIL,
     social: [
       { label: 'Instagram', href: 'https://www.instagram.com/nuacmsc/' },
       { label: 'LinkedIn', href: 'https://www.linkedin.com/company/nuacmsc' },

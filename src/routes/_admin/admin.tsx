@@ -480,9 +480,9 @@ function AdminPage() {
     };
   }, [scrollTarget, tab]);
 
-  const exportCsv = async () => downloadFile(await downloadCsv(), 'whd-participants');
+  const exportCsv = async () => downloadFile(await downloadCsv(), 'nuopen-participants');
   const exportProctoring = async () =>
-    downloadFile(await downloadProctoringCsv(), 'whd-proctoring-teams');
+    downloadFile(await downloadProctoringCsv(), 'nuopen-proctoring-teams');
 
   const eligibilityOptions = [
     { value: 'all', label: 'All' },

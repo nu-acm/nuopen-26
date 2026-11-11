@@ -54,15 +54,12 @@ export function getContestAccess(t: {
   contestPassword: string | null;
 }): ContestAccess | null {
   if (t.number === null || t.contestPassword === null) return null;
-  const base = (appEnv().PROCTORING_URL?.trim() || 'https://proctoring.nuacmw.kz').replace(
-    /\/+$/,
-    '',
-  );
+  const base = appEnv().PROCTORING_URL?.trim().replace(/\/+$/, '');
   return {
     tableNumber: formatTeamNumber(t.number),
     login: contestLogin(t.number),
     password: t.contestPassword,
-    uploadUrl: `${base}/#team=${t.contestPassword}`,
+    uploadUrl: base ? `${base}/#team=${t.contestPassword}` : null,
     contestStart: getContestStart(),
   };
 }

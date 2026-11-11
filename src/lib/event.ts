@@ -1,12 +1,8 @@
-export const CONTACT_EMAIL = 'acm_w@nu.edu.kz';
-
-/** The participant chat linked in the FAQ. */
-export const TELEGRAM_CHAT_URL = 'https://t.me/whd_2026';
+export const CONTACT_EMAIL = 'acmsc@nu.edu.kz';
+export const TELEGRAM_CHAT_URL = 'https://t.me/nuopen';
 
 export const CODE_OF_CONDUCT_URL =
-  'https://drive.google.com/file/d/1omx4qtnA4DYh6qeLnf9o_lQiF8wSb2HG/view?usp=sharing';
-export const INSTRUCTIONS_AND_RULES_URL =
-  'https://drive.google.com/file/d/1lblOCnzRenDdfWUR13vQMKcli6M9exZf/view?usp=sharing';
+  'https://drive.google.com/file/d/1RRQvDMPs3dHcb3XTs3wcah10mARCAMtd/view?usp=sharing';
 
 /** Calendar date in Astana, used for participant age on the event day. */
 export const EVENT_DATE = '2026-11-22';

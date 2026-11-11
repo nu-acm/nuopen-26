@@ -28,7 +28,7 @@ function useStarted(start: string | null) {
 
 /**
  * A finalized team's table number and Codeforces account. Every member sees it from the moment
- * the teams are finalized, for good; the upload button joins it at the contest start.
+ * the teams are finalized. The upload button appears at contest start if a URL is configured.
  */
 export function ContestCard({ contest }: { contest: ContestAccess }) {
   const [shown, setShown] = useState(false);
@@ -86,7 +86,7 @@ export function ContestCard({ contest }: { contest: ContestAccess }) {
             </InputGroupAddon>
           </InputGroup>
         </Field>
-        {started && (
+        {started && contest.uploadUrl && (
           <LinkButton href={contest.uploadUrl} target="_blank" rel="noopener noreferrer">
             <span>Upload video</span>
             <ArrowUpRight className="account-button-arrow" aria-hidden="true" />

@@ -131,12 +131,20 @@ it('shows the contest card only to members of a numbered team, whatever the dead
   // Reopening registration or reaching the contest start never hides it.
   bindings.REGISTRATION_DEADLINE = '2099-01-01T00:00:00Z';
   bindings.CONTEST_START = '2026-11-14T12:00:00+05:00';
+  const proctoringUrl = bindings.PROCTORING_URL;
   try {
     expect((await getTeamByParticipant('m1'))?.contest).toEqual({
       ...expected,
       contestStart: '2026-11-14T07:00:00.000Z',
     });
+    bindings.PROCTORING_URL = '';
+    expect((await getTeamByParticipant('m1'))?.contest).toEqual({
+      ...expected,
+      uploadUrl: null,
+      contestStart: '2026-11-14T07:00:00.000Z',
+    });
   } finally {
+    bindings.PROCTORING_URL = proctoringUrl;
     bindings.CONTEST_START = '';
   }
 });
