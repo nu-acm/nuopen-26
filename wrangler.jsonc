@@ -19,10 +19,10 @@
     // setting must be the same.
     "CF_LOGIN_PREFIX": "team",
     // The proctoring upload page behind the dashboard's upload button.
-    "PROCTORING_URL": "",
+    "PROCTORING_URL": "https://proctoring.nuacm.kz",
     // ISO 8601 instant when the contest starts and the upload button appears. Blank hides it.
     // Proctoring's contest start must be the same instant.
-    "CONTEST_START": "",
+    "CONTEST_START": "2026-11-22T11:00:00+05:00",
   },
   // A deploy fails while any of these is not set on the Worker. Local dev only warns, and loads only
   // these names and the vars above from .dev.vars. Add Google credentials here to enable Google login.
