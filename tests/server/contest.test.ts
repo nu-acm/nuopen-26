@@ -173,6 +173,6 @@ it('exports numbered teams for proctoring and keeps passwords out of the report'
   expect(csv.split('\n')[0]).toContain('Team,Team number,Attended');
 
   const checkin = await getCheckinData();
-  expect(checkin.teams.map((t) => t.number)).toEqual([1, null]);
-  expect(new Set(checkin.participants.map((p) => p.teamNumber))).toEqual(new Set([1, null]));
+  expect(checkin.teams.map((t) => t.number)).toEqual([1]);
+  expect(new Set(checkin.participants.map((p) => p.teamNumber))).toEqual(new Set([1]));
 });
