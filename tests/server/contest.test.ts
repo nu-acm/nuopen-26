@@ -47,9 +47,14 @@ it('numbers eligible, confirmed teams once registration closes, and appends late
   expect(await finalizeTeams()).toEqual({ assigned: 4, badNames: [] });
 
   const first = await numbers();
-  const numbered = first.filter((t) => t.number !== null);
-  expect(numbered.map((t) => t.name).sort()).toEqual(['Alpha', 'Beta', 'Pair', 'Solo']);
-  expect(numbered.map((t) => t.number).sort((x, y) => (x ?? 0) - (y ?? 0))).toEqual([1, 2, 3, 4]);
+  const numbered = first
+    .filter((t) => t.number !== null)
+    .sort((x, y) => (x.number ?? 0) - (y.number ?? 0));
+  expect(numbered.map((t) => t.number)).toEqual([1, 2, 3, 4]);
+  // Smaller teams first; teams of the same size in random order.
+  const names = numbered.map((t) => t.name);
+  expect(names.slice(0, 2)).toEqual(['Solo', 'Pair']);
+  expect(names.slice(2).sort()).toEqual(['Alpha', 'Beta']);
   for (const t of numbered) expect(t.contest_password).toMatch(/^[A-HJKMNP-Z2-9]{6}$/);
 
   // Clicking again changes nothing; a numbered team can no longer be unconfirmed.

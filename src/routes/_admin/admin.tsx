@@ -535,7 +535,7 @@ function AdminPage() {
           open={finalizeOpen}
           onOpenChange={setFinalizeOpen}
           title="Finalize teams?"
-          description={`Eligible, confirmed teams without a number (${stats.awaitingNumber}) get table numbers and Codeforces passwords, in random order. Numbers can never be changed or taken back, and these teams can no longer change their members.`}
+          description={`Eligible, confirmed teams without a number (${stats.awaitingNumber}) get table numbers and Codeforces passwords: smaller teams first, in random order within each size. Numbers can never be changed or taken back, and these teams can no longer change their members.`}
           confirmLabel="Finalize"
           cancelLabel="Cancel"
           onConfirm={() => void finalize()}

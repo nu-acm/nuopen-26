@@ -136,11 +136,11 @@ export async function setTeamUnconfirmed(
 export type FinalizeResult = { assigned: number; badNames: string[] };
 
 /**
- * Give every eligible, confirmed team without a number one, in random order, with a Codeforces
- * password. Each UPDATE takes MAX(number) + 1 when it runs, inside one batch (a transaction), so
- * numbers never repeat or leave gaps, even when two organisers click at once; a later run, after a
- * team is confirmed again, appends to the end. Names the Codeforces users file can't carry stop
- * the run, so organisers can fix them first.
+ * Give every eligible, confirmed team without a number one, with a Codeforces password: smaller
+ * teams first, in random order within each size. Each UPDATE takes MAX(number) + 1 when it runs,
+ * inside one batch (a transaction), so numbers never repeat or leave gaps, even when two organisers
+ * click at once; a later run, after a team is confirmed again, appends to the end. Names the
+ * Codeforces users file can't carry stop the run, so organisers can fix them first.
  */
 export async function finalizeTeams(): Promise<FinalizeResult> {
   if (isRegistrationOpen()) throw new Error(CONTEST_ERRORS.registrationOpen);
@@ -148,7 +148,7 @@ export async function finalizeTeams(): Promise<FinalizeResult> {
 
   for (let attempt = 0; attempt < 5; attempt++) {
     const pending = await db
-      .select({ id: team.id, name: team.name })
+      .select({ id: team.id, name: team.name, size: memberCount })
       .from(team)
       .where(awaitingNumber());
     const badNames = pending.filter((t) => TEAM_NAME_FORBIDDEN.test(t.name)).map((t) => t.name);
@@ -159,8 +159,9 @@ export async function finalizeTeams(): Promise<FinalizeResult> {
     while (passwords.size < pending.length) passwords.add(generateContestPassword());
     const passwordList = [...passwords];
     const now = new Date();
-    // The batch runs in this order, so the shuffle decides who gets which number.
-    const [first, ...rest] = shuffle(pending).map((t, i) =>
+    // The batch runs in this order. The sort is stable, so each size keeps its shuffled order.
+    const ordered = shuffle(pending).sort((a, b) => a.size - b.size);
+    const [first, ...rest] = ordered.map((t, i) =>
       db
         .update(team)
         .set({
