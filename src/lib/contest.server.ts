@@ -106,25 +106,25 @@ function isUniqueViolation(error: unknown, column: string): boolean {
 /** Correlated to the outer `team` row; raw SQL so the reference can't bind to `participant`. */
 const memberCount = sql<number>`(select count(*) from participant where participant.team_id = team.id)`;
 
-/** Eligible, not marked unconfirmed, and not numbered yet: what finalizeTeams numbers. */
+/** Eligible, marked confirmed, and not numbered yet: what finalizeTeams numbers. */
 const awaitingNumber = () =>
   and(
     isNull(team.number),
-    eq(team.unconfirmed, false),
+    eq(team.confirmed, true),
     between(memberCount, MIN_TEAM_SIZE, MAX_TEAM_SIZE),
   );
 
-/** Mark a team as not having confirmed participation, or undo it. Numbered teams are final. */
-export async function setTeamUnconfirmed(
+/** Mark a team as having confirmed participation, or undo it. Numbered teams are final. */
+export async function setTeamConfirmed(
   inviteSlug: string,
-  unconfirmed: boolean,
-): Promise<{ inviteSlug: string; unconfirmed: boolean }> {
+  confirmed: boolean,
+): Promise<{ inviteSlug: string; confirmed: boolean }> {
   const db = getAppDb();
   const [row] = await db
     .update(team)
-    .set({ unconfirmed, updatedAt: new Date() })
+    .set({ confirmed, updatedAt: new Date() })
     .where(and(eq(team.inviteSlug, inviteSlug), isNull(team.number)))
-    .returning({ inviteSlug: team.inviteSlug, unconfirmed: team.unconfirmed });
+    .returning({ inviteSlug: team.inviteSlug, confirmed: team.confirmed });
   if (row) return row;
   const existing = await db.query.team.findFirst({
     where: eq(team.inviteSlug, inviteSlug),

@@ -2,7 +2,7 @@ import { expect, it, vi } from 'vite-plus/test';
 import { getCheckinData, setAttendance } from '@/lib/checkin.server';
 import { getReportData, participantsToCsv } from '@/lib/report.server';
 import { createTeam, joinTeamBySlug } from '@/lib/team.server';
-import { finalizeTeams, setTeamUnconfirmed } from '@/lib/contest.server';
+import { finalizeTeams, setTeamConfirmed } from '@/lib/contest.server';
 import { Route } from '@/routes/api/report';
 import { generateTeamNameForParticipant } from '@/lib/ai.server';
 import { AI_RATE_LIMIT_ERROR } from '@/lib/ai';
@@ -15,7 +15,8 @@ it('reports joined rosters and attendance, checking in finalized teams', async (
   const eligible = await createTeam('captain', 'Eligible Team');
   await joinTeamBySlug('member', eligible.inviteSlug);
   await joinTeamBySlug('third', eligible.inviteSlug);
-  await createTeam('small', 'Small Team');
+  const small = await createTeam('small', 'Small Team');
+  for (const t of [eligible, small]) await setTeamConfirmed(t.inviteSlug, true);
   bindings.REGISTRATION_DEADLINE = '2000-01-01T00:00:00Z';
   await finalizeTeams();
   await setAttendance('member', true);
@@ -76,13 +77,13 @@ it('restricts check-in lists and attendance writes to finalized team members', a
     const created = await createTeam(`${prefix}-captain`, `${prefix} Team`);
     await joinTeamBySlug(`${prefix}-second`, created.inviteSlug);
     await joinTeamBySlug(`${prefix}-third`, created.inviteSlug);
-    if (prefix !== 'finalized') await setTeamUnconfirmed(created.inviteSlug, true);
+    if (prefix === 'finalized') await setTeamConfirmed(created.inviteSlug, true);
   }
   await seedParticipant('solo');
   bindings.REGISTRATION_DEADLINE = '2000-01-01T00:00:00Z';
   await finalizeTeams();
   // Confirmed again after Finalize: eligible for the next run, but not numbered yet.
-  await setTeamUnconfirmed('pending-team', false);
+  await setTeamConfirmed('pending-team', true);
 
   const data = await getCheckinData();
   expect(data.teams.map((t) => t.name)).toEqual(['finalized Team']);

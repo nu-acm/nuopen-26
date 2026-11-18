@@ -43,6 +43,13 @@
       "when": 1793910785845,
       "tag": "0005_shocking_big_bertha",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1795024554424,
+      "tag": "0006_team_confirmed",
+      "breakpoints": true
     }
   ]
 }

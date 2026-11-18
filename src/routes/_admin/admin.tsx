@@ -17,7 +17,7 @@ import { ColumnToggleBar, AdminDataTable, StatCard } from '@/components/admin/ta
 import { getSession } from '@/lib/auth.server';
 import { sessionIsAdmin } from '@/lib/admin.server';
 import { compareTeamNumbers, formatTeamNumber } from '@/lib/contest';
-import { finalizeTeams, getProctoringCsv, setTeamUnconfirmed } from '@/lib/contest.server';
+import { finalizeTeams, getProctoringCsv, setTeamConfirmed } from '@/lib/contest.server';
 import { isRegistrationOpen } from '@/lib/registration.server';
 import {
   getReportData,
@@ -45,11 +45,11 @@ const downloadCsv = createServerFn({ method: 'GET' }).handler(async () => {
   return participantsToCsv(participants);
 });
 
-const setTeamUnconfirmedFn = createServerFn({ method: 'POST' })
-  .validator(z.object({ inviteSlug: z.string().min(1), unconfirmed: z.boolean() }))
+const setTeamConfirmedFn = createServerFn({ method: 'POST' })
+  .validator(z.object({ inviteSlug: z.string().min(1), confirmed: z.boolean() }))
   .handler(async ({ data }) => {
     await assertAdmin();
-    return setTeamUnconfirmed(data.inviteSlug, data.unconfirmed);
+    return setTeamConfirmed(data.inviteSlug, data.confirmed);
   });
 
 const finalizeTeamsFn = createServerFn({ method: 'POST' }).handler(async () => {
@@ -116,8 +116,8 @@ function AdminPage() {
   const [finalizing, setFinalizing] = useState(false);
   const [pendingSlugs, setPendingSlugs] = useState<ReadonlySet<string>>(() => new Set());
 
-  const setUnconfirmed = useCallback(
-    async (inviteSlug: string, unconfirmed: boolean) => {
+  const setConfirmed = useCallback(
+    async (inviteSlug: string, confirmed: boolean) => {
       const setPending = (pending: boolean) =>
         setPendingSlugs((prev) => {
           const next = new Set(prev);
@@ -134,12 +134,12 @@ function AdminPage() {
           d && {
             ...d,
             teams: d.teams.map((team) =>
-              team.inviteSlug === inviteSlug ? { ...team, unconfirmed } : team,
+              team.inviteSlug === inviteSlug ? { ...team, confirmed } : team,
             ),
           },
       );
       try {
-        await setTeamUnconfirmedFn({ data: { inviteSlug, unconfirmed } });
+        await setTeamConfirmedFn({ data: { inviteSlug, confirmed } });
       } catch (err) {
         setNotice({
           type: 'error',
@@ -401,22 +401,20 @@ function AdminPage() {
         ),
       },
       {
-        // Unticked for teams that didn't confirm participation; final once a team has a number.
+        // Ticked for teams that confirmed participation; final once a team has a number.
         id: 'confirmed',
-        accessorFn: (team) => !team.unconfirmed,
+        accessorFn: (team) => team.confirmed,
         meta: { label: 'Confirmed' },
-        sortFn: (a, b) => Number(a.original.unconfirmed) - Number(b.original.unconfirmed),
+        sortFn: (a, b) => Number(a.original.confirmed) - Number(b.original.confirmed),
         cell: ({ row }) => {
-          const { eligible, unconfirmed, number, inviteSlug, name } = row.original;
+          const { eligible, confirmed, number, inviteSlug, name } = row.original;
           if (!eligible) return <span className="text-muted-foreground">Not applicable</span>;
           return (
             <Checkbox
-              checked={!unconfirmed}
+              checked={confirmed}
               disabled={number !== null || pendingSlugs.has(inviteSlug)}
-              onCheckedChange={(checked) => void setUnconfirmed(inviteSlug, !checked)}
-              aria-label={
-                unconfirmed ? `Mark ${name} as confirmed` : `Mark ${name} as not confirmed`
-              }
+              onCheckedChange={(checked) => void setConfirmed(inviteSlug, checked)}
+              aria-label={confirmed ? `Mark ${name} as not confirmed` : `Mark ${name} as confirmed`}
             />
           );
         },
@@ -448,7 +446,7 @@ function AdminPage() {
         cell: ({ row }) => formatDate(row.original.createdAt),
       },
     ],
-    [goToParticipant, pendingSlugs, setUnconfirmed],
+    [goToParticipant, pendingSlugs, setConfirmed],
   );
   const participantTable = useAdminTable(
     participantMatches,

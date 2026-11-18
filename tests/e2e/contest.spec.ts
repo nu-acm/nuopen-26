@@ -9,7 +9,15 @@ test('finalizes teams, exports them for proctoring, and keeps the contest card f
   await login(page, app.codes, 'admin@example.test');
   await app.setDeadline('2000-01-01T00:00:00Z');
   await page.goto('/admin');
+  // Teams start unconfirmed, so there is nothing to number until an organiser ticks one.
+  await expect(page.getByText('Numbered: 0 · awaiting a number: 0')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Finalize teams' })).toBeDisabled();
+  await page.getByRole('tab', { name: 'Teams' }).click();
+  await page.getByRole('checkbox', { name: 'Mark Eligible Team as confirmed' }).click();
   await expect(page.getByText('Numbered: 0 · awaiting a number: 1')).toBeVisible();
+  await expect(
+    page.getByRole('checkbox', { name: 'Mark Eligible Team as not confirmed' }),
+  ).toBeChecked();
   await expect(page.getByRole('button', { name: 'Export for proctoring' })).toBeDisabled();
   await page.getByRole('button', { name: 'Finalize teams' }).click();
   await page

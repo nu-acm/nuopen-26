@@ -224,6 +224,7 @@ export async function createTeam(userId: string, name: string): Promise<TeamData
                 inviteToken: sql<string | null>`null`.as('invite_token'),
                 captainId: participant.id,
                 unconfirmed: sql<boolean>`0`.as('unconfirmed'),
+                confirmed: sql<boolean>`0`.as('confirmed'),
                 number: sql<number | null>`null`.as('number'),
                 contestPassword: sql<string | null>`null`.as('contest_password'),
                 createdAt: sql<number>`${now.getTime()}`.as('created_at'),

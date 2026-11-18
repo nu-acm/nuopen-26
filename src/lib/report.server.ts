@@ -40,8 +40,8 @@ export type ReportTeam = {
   memberCount: number;
   /** Whether the team's roster size qualifies for the contest. */
   eligible: boolean;
-  /** Marked by organisers after the confirmation period; such a team gets no number. */
-  unconfirmed: boolean;
+  /** Marked by organisers once the team confirms participation; only such a team gets a number. */
+  confirmed: boolean;
   /** Table number, set by finalizeTeams. The password is never part of the report. */
   number: number | null;
   /** Captain first. */
@@ -120,7 +120,7 @@ export async function getReportData(): Promise<{
       captainName: t.captain?.fullName ?? '',
       memberCount: t.members.length,
       eligible: eligibleTeamIds.has(t.id),
-      unconfirmed: t.unconfirmed,
+      confirmed: t.confirmed,
       number: t.number,
       members: ordered,
       createdAt: toIso(t.createdAt),
@@ -135,7 +135,7 @@ export async function getReportData(): Promise<{
       teams: teams.length,
       eligibleTeams: teams.filter((t) => t.eligible).length,
       numberedTeams: teams.filter((t) => t.number !== null).length,
-      awaitingNumber: teams.filter((t) => t.eligible && !t.unconfirmed && t.number === null).length,
+      awaitingNumber: teams.filter((t) => t.eligible && t.confirmed && t.number === null).length,
       teamless: participants.filter((p) => !p.teamName).length,
       attended: participants.filter((p) => p.attended).length,
     },
