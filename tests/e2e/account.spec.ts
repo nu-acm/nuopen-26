@@ -248,7 +248,7 @@ test('shows accessible consent and policy links', async ({ page, context, app },
   await expect(documents).toHaveAttribute('aria-required', 'true');
   const codeOfConduct = page.getByRole('link', { name: 'Code of Conduct', exact: true });
   const codeOfConductUrl =
-    'https://drive.google.com/file/d/1RRQvDMPs3dHcb3XTs3wcah10mARCAMtd/view?usp=sharing';
+    'https://drive.google.com/file/d/1QSaJAJk73y-pUQ0ZgYf7D0bO0uHr1CSB/view?usp=sharing';
   await documents.focus();
   await page.keyboard.press('Space');
   await expect(documents).toBeChecked();

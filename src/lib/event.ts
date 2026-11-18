@@ -2,7 +2,7 @@ export const CONTACT_EMAIL = 'acmsc@nu.edu.kz';
 export const TELEGRAM_CHAT_URL = 'https://t.me/nuopen';
 
 export const CODE_OF_CONDUCT_URL =
-  'https://drive.google.com/file/d/1RRQvDMPs3dHcb3XTs3wcah10mARCAMtd/view?usp=sharing';
+  'https://drive.google.com/file/d/1QSaJAJk73y-pUQ0ZgYf7D0bO0uHr1CSB/view?usp=sharing';
 
 /** Calendar date in Astana, used for participant age on the event day. */
 export const EVENT_DATE = '2026-11-22';
