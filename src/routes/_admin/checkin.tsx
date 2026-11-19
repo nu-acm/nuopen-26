@@ -13,7 +13,6 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Input } from '@/components/ui/input';
 import { Segmented } from '@/components/ui/segmented';
 import { ColumnToggleBar, AdminDataTable, StatCard } from '@/components/admin/table';
-import { MAX_TEAM_SIZE, MIN_TEAM_SIZE } from '@/lib/event';
 import { getSession } from '@/lib/auth.server';
 import { sessionIsAdmin } from '@/lib/admin.server';
 import { compareTeamNumbers, formatTeamNumber } from '@/lib/contest';
@@ -382,19 +381,19 @@ function CheckinPage() {
           <div>
             <h1 className="admin-title">Check-in</h1>
             <p className="mt-2 text-sm text-whd-text-muted">
-              {`Only teams with ${MIN_TEAM_SIZE} to ${MAX_TEAM_SIZE} members are listed.`}
+              Only finalized teams with assigned table numbers and their members are listed.
             </p>
           </div>
         </div>
 
         <div className="admin-stats admin-checkin-stats">
           <StatCard
-            label="Eligible participants"
+            label="Participants in finalized teams"
             value={participants.length}
             breakdown={`${presentCount} in / ${participants.length - presentCount} not yet`}
           />
           <StatCard
-            label="Eligible teams"
+            label="Finalized teams"
             value={teams.length}
             breakdown={`${statusCounts.ready} ready / ${statusCounts.partial} partial / ${statusCounts['no-show']} no-show`}
           />

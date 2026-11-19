@@ -106,25 +106,25 @@ function isUniqueViolation(error: unknown, column: string): boolean {
 /** Correlated to the outer `team` row; raw SQL so the reference can't bind to `participant`. */
 const memberCount = sql<number>`(select count(*) from participant where participant.team_id = team.id)`;
 
-/** Eligible, not marked unconfirmed, and not numbered yet: what finalizeTeams numbers. */
+/** Eligible, marked confirmed, and not numbered yet: what finalizeTeams numbers. */
 const awaitingNumber = () =>
   and(
     isNull(team.number),
-    eq(team.unconfirmed, false),
+    eq(team.confirmed, true),
     between(memberCount, MIN_TEAM_SIZE, MAX_TEAM_SIZE),
   );
 
-/** Mark a team as not having confirmed participation, or undo it. Numbered teams are final. */
-export async function setTeamUnconfirmed(
+/** Mark a team as having confirmed participation, or undo it. Numbered teams are final. */
+export async function setTeamConfirmed(
   inviteSlug: string,
-  unconfirmed: boolean,
-): Promise<{ inviteSlug: string; unconfirmed: boolean }> {
+  confirmed: boolean,
+): Promise<{ inviteSlug: string; confirmed: boolean }> {
   const db = getAppDb();
   const [row] = await db
     .update(team)
-    .set({ unconfirmed, updatedAt: new Date() })
+    .set({ confirmed, updatedAt: new Date() })
     .where(and(eq(team.inviteSlug, inviteSlug), isNull(team.number)))
-    .returning({ inviteSlug: team.inviteSlug, unconfirmed: team.unconfirmed });
+    .returning({ inviteSlug: team.inviteSlug, confirmed: team.confirmed });
   if (row) return row;
   const existing = await db.query.team.findFirst({
     where: eq(team.inviteSlug, inviteSlug),
@@ -136,11 +136,11 @@ export async function setTeamUnconfirmed(
 export type FinalizeResult = { assigned: number; badNames: string[] };
 
 /**
- * Give every eligible, confirmed team without a number one, in random order, with a Codeforces
- * password. Each UPDATE takes MAX(number) + 1 when it runs, inside one batch (a transaction), so
- * numbers never repeat or leave gaps, even when two organisers click at once; a later run, after a
- * team is confirmed again, appends to the end. Names the Codeforces users file can't carry stop
- * the run, so organisers can fix them first.
+ * Give every eligible, confirmed team without a number one, with a Codeforces password: smaller
+ * teams first, in random order within each size. Each UPDATE takes MAX(number) + 1 when it runs,
+ * inside one batch (a transaction), so numbers never repeat or leave gaps, even when two organisers
+ * click at once; a later run, after a team is confirmed again, appends to the end. Names the
+ * Codeforces users file can't carry stop the run, so organisers can fix them first.
  */
 export async function finalizeTeams(): Promise<FinalizeResult> {
   if (isRegistrationOpen()) throw new Error(CONTEST_ERRORS.registrationOpen);
@@ -148,7 +148,7 @@ export async function finalizeTeams(): Promise<FinalizeResult> {
 
   for (let attempt = 0; attempt < 5; attempt++) {
     const pending = await db
-      .select({ id: team.id, name: team.name })
+      .select({ id: team.id, name: team.name, size: memberCount })
       .from(team)
       .where(awaitingNumber());
     const badNames = pending.filter((t) => TEAM_NAME_FORBIDDEN.test(t.name)).map((t) => t.name);
@@ -159,8 +159,9 @@ export async function finalizeTeams(): Promise<FinalizeResult> {
     while (passwords.size < pending.length) passwords.add(generateContestPassword());
     const passwordList = [...passwords];
     const now = new Date();
-    // The batch runs in this order, so the shuffle decides who gets which number.
-    const [first, ...rest] = shuffle(pending).map((t, i) =>
+    // The batch runs in this order. The sort is stable, so each size keeps its shuffled order.
+    const ordered = shuffle(pending).sort((a, b) => a.size - b.size);
+    const [first, ...rest] = ordered.map((t, i) =>
       db
         .update(team)
         .set({

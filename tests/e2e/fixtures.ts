@@ -71,7 +71,8 @@ export const test = base.extend<{ app: App }>({
         GAS_URL: `http://127.0.0.1:${address.port}/exec`,
         GAS_SECRET: 'test-only-webhook-secret',
         ADMIN_EMAILS: 'admin@example.test',
-        REGISTRATION_DEADLINE: '2099-01-01T00:00:00Z',
+        // Keep registration open for the test run and within the browser's timer range.
+        REGISTRATION_DEADLINE: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       },
     };
     await mkdir(resolve('output'), { recursive: true });
