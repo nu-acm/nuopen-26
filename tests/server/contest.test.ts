@@ -161,6 +161,10 @@ it('shows the contest card only to members of a numbered team, whatever the dead
 it('exports every numbered team for proctoring, shown if offline, and keeps passwords out of the report', async () => {
   const offline = await seedTeam('q', 'Bits, "Bytes"', 3, true);
   const online = await seedTeam('o', 'Online', 2);
+  // Commas separate proctoring's member names, and | or a line break would break its users file.
+  await bindings.DB.prepare('UPDATE participant SET full_name = ? WHERE id = ?')
+    .bind('Smith,  John |\nJr', 'q1')
+    .run();
   closeRegistration();
   await finalizeTeams();
   // Sorted by name: the offline team, then the online one.
@@ -169,9 +173,10 @@ it('exports every numbered team for proctoring, shown if offline, and keeps pass
 
   expect(await getProctoringCsv()).toBe(
     [
-      'id,number,login,code,name,shown',
-      `${offline.id},1,team01,${passwords[0]},"Bits, ""Bytes""",1`,
-      `${online.id},2,team02,${passwords[1]},Online,0`,
+      'id,number,login,code,name,shown,members',
+      // The captain first, then by name.
+      `${offline.id},1,team01,${passwords[0]},"Bits, ""Bytes""",1,"q0, q2, Smith John Jr"`,
+      `${online.id},2,team02,${passwords[1]},Online,0,"o0, o1"`,
     ].join('\n'),
   );
 

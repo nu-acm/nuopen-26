@@ -30,7 +30,7 @@ test('finalizes teams, exports them for proctoring, and keeps the contest card f
   let csv = '';
   for await (const chunk of stream) csv += chunk.toString();
   const code =
-    /^id,number,login,code,name,shown\neligible-team,1,team01,([A-HJKMNP-Z2-9]{6}),Eligible Team,1$/.exec(
+    /^id,number,login,code,name,shown,members\neligible-team,1,team01,([A-HJKMNP-Z2-9]{6}),Eligible Team,1,"Captain, Member, Third"$/.exec(
       csv,
     )?.[1];
   expect(code, csv).toBeDefined();
