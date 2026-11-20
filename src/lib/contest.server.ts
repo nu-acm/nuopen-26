@@ -191,31 +191,46 @@ function csvField(value: string | number): string {
   return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
+/** A member's name for proctoring's list: commas separate the names, and `|` or a line break would break its users file. */
+const memberName = (fullName: string) => fullName.replace(/[,|\s]+/g, ' ').trim();
+
 /**
  * Numbered teams for proctoring's CSV import, online ones too: everyone gets a Codeforces account.
- * `shown` (optional in proctoring) starts offline teams shown in its review, online ones hidden.
+ * Two columns are optional in proctoring: `shown` starts offline teams shown in its review, online
+ * ones hidden; `members` (captain first, then by name) is what its bot and Codeforces names show.
  * Holds every password: generate on request only.
  */
 export async function getProctoringCsv(): Promise<string> {
-  const rows = await getAppDb()
-    .select({
-      id: team.id,
-      number: team.number,
-      contestPassword: team.contestPassword,
-      name: team.name,
-      offline: team.offline,
-    })
-    .from(team)
-    .where(and(isNotNull(team.number), isNotNull(team.contestPassword)))
-    .orderBy(asc(team.number));
-  const lines = rows.flatMap(({ id, number, contestPassword, name, offline }) =>
-    number === null || contestPassword === null
-      ? []
-      : [
-          [id, number, contestLogin(number), contestPassword, name, offline ? 1 : 0]
-            .map(csvField)
-            .join(','),
-        ],
+  const rows = await getAppDb().query.team.findMany({
+    columns: {
+      id: true,
+      number: true,
+      contestPassword: true,
+      name: true,
+      offline: true,
+      captainId: true,
+    },
+    with: { members: { columns: { id: true, fullName: true } } },
+    where: and(isNotNull(team.number), isNotNull(team.contestPassword)),
+    orderBy: asc(team.number),
+  });
+  const lines = rows.flatMap(
+    ({ id, number, contestPassword, name, offline, captainId, members }) => {
+      if (number === null || contestPassword === null) return [];
+      const names = [
+        ...members.filter((m) => m.id === captainId),
+        ...members
+          .filter((m) => m.id !== captainId)
+          .sort((a, b) => a.fullName.localeCompare(b.fullName, undefined, { sensitivity: 'base' })),
+      ]
+        .map((m) => memberName(m.fullName))
+        .filter(Boolean);
+      return [
+        [id, number, contestLogin(number), contestPassword, name, offline ? 1 : 0, names.join(', ')]
+          .map(csvField)
+          .join(','),
+      ];
+    },
   );
-  return ['id,number,login,code,name,shown', ...lines].join('\n');
+  return ['id,number,login,code,name,shown,members', ...lines].join('\n');
 }
