@@ -16,7 +16,7 @@ export const Route = createFileRoute('/privacy')({
 
 function PrivacyPage() {
   return (
-    <LegalPage title="Privacy Policy" updated="November 11, 2026">
+    <LegalPage title="Privacy Policy" updated="November 20, 2026">
       <LegalSection title="1. Who we are">
         <p>
           The ACM@NU Student Chapter at Nazarbayev University in Astana, Kazakhstan organizes NU
@@ -26,7 +26,10 @@ function PrivacyPage() {
       </LegalSection>
 
       <LegalSection title="2. Data we collect">
-        <p className="mb-2">We collect data when you sign in, register or check in at the event.</p>
+        <p className="mb-2">
+          We collect data when you sign in, register, check in at the event or upload contest
+          videos.
+        </p>
         <ul className="list-inside list-disc space-y-1">
           <li>
             <strong className="text-foreground">Account data:</strong> your email address, and your
@@ -44,8 +47,8 @@ function PrivacyPage() {
           </li>
           <li>
             <strong className="text-foreground">Team data:</strong> your team’s name, members and
-            invite link. Once your team is finalized, we store its table number and contest login
-            details.
+            invite link, and whether it competes in person or online. Once your team is finalized,
+            we store its contest login details, and its table number if it competes in person.
           </li>
           <li>
             <strong className="text-foreground">Optional CV:</strong> a PDF of up to {CV_MAX_MB} MB,
@@ -55,6 +58,10 @@ function PrivacyPage() {
             <strong className="text-foreground">Attendance:</strong> whether you checked in at the
             event.
           </li>
+          <li>
+            <strong className="text-foreground">Contest videos:</strong> if your team competes in
+            person, the videos it uploads on our proctoring page during the contest.
+          </li>
         </ul>
       </LegalSection>
 
@@ -63,12 +70,18 @@ function PrivacyPage() {
           <li>To verify your email, check your age using your IIN and manage registration</li>
           <li>To organize teams and communicate event logistics</li>
           <li>To check you in at the venue</li>
+          <li>To run the contest on Codeforces and publish its results</li>
+          <li>To review contest videos for rule violations</li>
           <li>To review any CV you upload and share it with event partners for recruitment</li>
           <li>To comply with legal obligations and keep the event safe</li>
         </ul>
         <p className="mt-2">
           Your teammates can see your name. Anyone with the team’s invite link can see its name and
           how many members it has.
+        </p>
+        <p className="mt-2">
+          Your team’s Codeforces account carries its name and its members’ full names. During and
+          after the contest, Codeforces shows them to anyone on the public ranklist.
         </p>
       </LegalSection>
 
@@ -101,6 +114,12 @@ function PrivacyPage() {
           the CV folder and share uploaded CVs with event partners for recruitment. Organizers can
           export registration data, including IINs, contact details, CV links and attendance, to a
           spreadsheet. We do not sell your data.
+        </p>
+        <p className="mt-2">
+          We pass team names, members’ full names and contest login details to the ACM@NU proctoring
+          system, also hosted on Cloudflare. It stores the contest videos uploaded on its page for
+          organizers to review. We give team names and members’ full names to Codeforces, a
+          third-party contest platform, to create each team’s account.
         </p>
         <p className="mt-2">
           While registration is open, you can remove your CV from your profile. This moves the file

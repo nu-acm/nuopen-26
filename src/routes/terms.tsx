@@ -20,7 +20,7 @@ export const Route = createFileRoute('/terms')({
 
 function TermsPage() {
   return (
-    <LegalPage title="Terms of Service" updated="November 11, 2026">
+    <LegalPage title="Terms of Service" updated="November 20, 2026">
       <LegalSection title="1. Acceptance of terms">
         <p>
           These terms apply to registration for NU Open at {new URL(SITE_URL).hostname}. You must
@@ -30,10 +30,11 @@ function TermsPage() {
 
       <LegalSection title="2. Eligibility">
         <p>
-          You must be at least {MIN_PARTICIPANT_AGE} years old on the day of the contest and compete
-          in person at Nazarbayev University. Participants who will be under 18 on the contest date
-          must provide a parent or guardian’s phone number. The registration form also asks for a
-          guardian’s number if it cannot determine your age from your IIN. Organizers verify
+          You must be at least {MIN_PARTICIPANT_AGE} years old on the day of the contest. Teams
+          compete in person at Nazarbayev University or online, as the organizers confirm, and only
+          teams competing in person can win prizes. Participants who will be under 18 on the contest
+          date must provide a parent or guardian’s phone number. The registration form also asks for
+          a guardian’s number if it cannot determine your age from your IIN. Organizers verify
           eligibility and obtain guardian consent through Telegram for participants under 18.
         </p>
       </LegalSection>
