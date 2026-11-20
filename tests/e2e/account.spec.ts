@@ -388,11 +388,15 @@ test('cancels attendance changes, restores focus, persists confirmation, and exp
     page.getByRole('checkbox', { name: 'Mark Member as checked in', exact: true }),
   ).toHaveCount(0);
   await expect(
-    page.getByText(
-      'Only finalized teams with assigned table numbers and their members are listed.',
-    ),
+    page.getByText('Only offline teams with table numbers and their members are listed.'),
   ).toBeVisible();
   await app.db.prepare("UPDATE team SET number = 1 WHERE id = 'eligible-team'").run();
+  await page.reload();
+  // Numbered but online: still not listed.
+  await expect(
+    page.getByRole('checkbox', { name: 'Mark Member as checked in', exact: true }),
+  ).toHaveCount(0);
+  await app.db.prepare("UPDATE team SET confirmed = 1 WHERE id = 'eligible-team'").run();
   await page.reload();
   await page.getByRole('checkbox', { name: 'Mark Member as checked in', exact: true }).click();
   const checkbox = page.getByRole('checkbox', {

@@ -1,5 +1,5 @@
 import { expect, it } from 'vite-plus/test';
-import { finalizeTeams, getProctoringCsv, setTeamConfirmed } from '@/lib/contest.server';
+import { finalizeTeams, getProctoringCsv, setTeamOffline } from '@/lib/contest.server';
 import { CONTEST_ERRORS } from '@/lib/contest';
 import { getCheckinData } from '@/lib/checkin.server';
 import { getReportData, participantsToCsv } from '@/lib/report.server';
@@ -15,12 +15,12 @@ import { TEAM_ERRORS } from '@/lib/team-errors';
 import { bindings, seedParticipant } from './support';
 
 /** A team of `size` members whose ids start with `prefix`; the first one is the captain. */
-async function seedTeam(prefix: string, name: string, size = 3, confirmed = true) {
+async function seedTeam(prefix: string, name: string, size = 3, offline = false) {
   const ids = Array.from({ length: size }, (_, i) => `${prefix}${i}`);
   for (const id of ids) await seedParticipant(id);
   const team = await createTeam(ids[0], name);
   for (const id of ids.slice(1)) await joinTeamBySlug(id, team.inviteSlug);
-  if (confirmed) await setTeamConfirmed(team.inviteSlug, true);
+  if (offline) await setTeamOffline(team.inviteSlug, true);
   return { ...team, ids };
 }
 
@@ -35,41 +35,42 @@ async function numbers() {
   return rows.results;
 }
 
-it('numbers eligible, confirmed teams once registration closes, and appends later ones', async () => {
-  const alpha = await seedTeam('a', 'Alpha');
+it('numbers every eligible team once registration closes, offline ones first, and appends later ones', async () => {
+  const alpha = await seedTeam('a', 'Alpha', 3, true);
+  await seedTeam('g', 'Gamma', 3, true);
+  await seedTeam('p', 'Pair', 2, true);
   const beta = await seedTeam('b', 'Beta');
-  // Teams start unconfirmed: Gamma stays that way for now.
-  const gamma = await seedTeam('c', 'Gamma', 3, false);
   const solo = await seedTeam('s', 'Solo', 1);
-  await seedTeam('p', 'Pair', 2);
-  const unconfirmed = await seedTeam('u', 'Unconfirmed');
-  await setTeamConfirmed(unconfirmed.inviteSlug, false);
+  await seedTeam('d', 'Duo', 2);
+  // Ticked by mistake, then back to online.
+  const undone = await seedTeam('u', 'Undone', 3, true);
+  await setTeamOffline(undone.inviteSlug, false);
 
   await expect(finalizeTeams()).rejects.toThrow(CONTEST_ERRORS.registrationOpen);
   closeRegistration();
-  expect(await finalizeTeams()).toEqual({ assigned: 4, badNames: [] });
+  expect(await finalizeTeams()).toEqual({ assigned: 7, badNames: [] });
 
   const first = await numbers();
-  const numbered = first
-    .filter((t) => t.number !== null)
-    .sort((x, y) => (x.number ?? 0) - (y.number ?? 0));
-  expect(numbered.map((t) => t.number)).toEqual([1, 2, 3, 4]);
-  // Smaller teams first; teams of the same size in random order.
+  const numbered = [...first].sort((x, y) => (x.number ?? 0) - (y.number ?? 0));
+  expect(numbered.map((t) => t.number)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+  // Offline teams first, then online ones; each smaller teams first, same sizes in random order.
   const names = numbered.map((t) => t.name);
-  expect(names.slice(0, 2)).toEqual(['Solo', 'Pair']);
-  expect(names.slice(2).sort()).toEqual(['Alpha', 'Beta']);
+  expect(names[0]).toBe('Pair');
+  expect(names.slice(1, 3).sort()).toEqual(['Alpha', 'Gamma']);
+  expect(names.slice(3, 5)).toEqual(['Solo', 'Duo']);
+  expect(names.slice(5).sort()).toEqual(['Beta', 'Undone']);
   for (const t of numbered) expect(t.contest_password).toMatch(/^[A-HJKMNP-Z2-9]{6}$/);
 
-  // Clicking again changes nothing; a numbered team can no longer be unconfirmed.
+  // Clicking again changes nothing; a numbered team can no longer switch.
   expect(await finalizeTeams()).toEqual({ assigned: 0, badNames: [] });
   expect(await numbers()).toEqual(first);
-  await expect(setTeamConfirmed(alpha.inviteSlug, false)).rejects.toThrow(TEAM_ERRORS.finalized);
-  await expect(setTeamConfirmed('missing', true)).rejects.toThrow(TEAM_ERRORS.notFound);
+  await expect(setTeamOffline(alpha.inviteSlug, false)).rejects.toThrow(TEAM_ERRORS.finalized);
+  await expect(setTeamOffline('missing', true)).rejects.toThrow(TEAM_ERRORS.notFound);
 
-  // A team confirmed after all gets the next number.
-  await setTeamConfirmed(gamma.inviteSlug, true);
+  // A team formed later gets the next number, even an offline one.
+  await seedTeam('l', 'Late', 3, true);
   expect(await finalizeTeams()).toEqual({ assigned: 1, badNames: [] });
-  expect((await numbers()).find((t) => t.name === 'Gamma')?.number).toBe(5);
+  expect((await numbers()).find((t) => t.name === 'Late')?.number).toBe(8);
   expect((await getTeamByParticipant(beta.ids[1]))?.contest).not.toBeNull();
   expect((await getTeamByParticipant(solo.ids[0]))?.contest).not.toBeNull();
 });
@@ -157,28 +158,39 @@ it('shows the contest card only to members of a numbered team, whatever the dead
   }
 });
 
-it('exports numbered teams for proctoring and keeps passwords out of the report', async () => {
-  const quoted = await seedTeam('q', 'Bits, "Bytes"');
-  await seedTeam('u', 'Unnumbered', 2, false);
+it('exports every numbered team for proctoring, shown if offline, and keeps passwords out of the report', async () => {
+  const offline = await seedTeam('q', 'Bits, "Bytes"', 3, true);
+  const online = await seedTeam('o', 'Online', 2);
   closeRegistration();
   await finalizeTeams();
-  const [{ contest_password: password }] = (await numbers()).filter((t) => t.number !== null);
+  // Sorted by name: the offline team, then the online one.
+  const passwords = (await numbers()).map((t) => t.contest_password ?? '');
+  expect(passwords).toHaveLength(2);
 
   expect(await getProctoringCsv()).toBe(
-    `id,number,login,code,name\n${quoted.id},1,team01,${password},"Bits, ""Bytes"""`,
+    [
+      'id,number,login,code,name,shown',
+      `${offline.id},1,team01,${passwords[0]},"Bits, ""Bytes""",1`,
+      `${online.id},2,team02,${passwords[1]},Online,0`,
+    ].join('\n'),
   );
 
   const report = await getReportData();
-  expect(JSON.stringify(report)).not.toContain(password);
-  expect(report.stats).toMatchObject({ numberedTeams: 1, awaitingNumber: 0 });
+  for (const password of passwords) expect(JSON.stringify(report)).not.toContain(password);
+  expect(report.stats).toMatchObject({ numberedTeams: 2, awaitingNumber: 0 });
   expect(report.teams.find((t) => t.name === 'Bits, "Bytes"')).toMatchObject({
     number: 1,
-    confirmed: true,
+    offline: true,
+  });
+  expect(report.teams.find((t) => t.name === 'Online')).toMatchObject({
+    number: 2,
+    offline: false,
   });
   const csv = participantsToCsv(report.participants);
-  expect(csv).not.toContain(password);
+  for (const password of passwords) expect(csv).not.toContain(password);
   expect(csv.split('\n')[0]).toContain('Team,Team number,Attended');
 
+  // Only the offline team comes to the venue.
   const checkin = await getCheckinData();
   expect(checkin.teams.map((t) => t.number)).toEqual([1]);
   expect(new Set(checkin.participants.map((p) => p.teamNumber))).toEqual(new Set([1]));

@@ -41,11 +41,14 @@ export type CheckinTeam = {
   members: CheckinTeamMember[];
 };
 
-/** Only people in finalized teams with assigned table numbers are listed for check-in. */
+/** Only people in numbered offline teams are listed for check-in: online teams never come. */
 export type CheckinData = {
   participants: CheckinParticipant[];
   teams: CheckinTeam[];
 };
+
+/** Numbered teams confirmed to come offline: the ones staff check in. */
+const checkedInTeam = () => and(isNotNull(team.number), eq(team.offline, true));
 
 const byName = (a: { fullName: string }, b: { fullName: string }) =>
   a.fullName.localeCompare(b.fullName, undefined, { sensitivity: 'base' });
@@ -53,10 +56,10 @@ const byName = (a: { fullName: string }, b: { fullName: string }) =>
 export async function getCheckinData(): Promise<CheckinData> {
   const db = getAppDb();
 
-  // Finalized teams are selected in SQL, so other rosters are never read.
+  // These teams are selected in SQL, so other rosters are never read.
   const finalized = db
     .$with('finalized')
-    .as(db.select({ teamId: team.id }).from(team).where(isNotNull(team.number)));
+    .as(db.select({ teamId: team.id }).from(team).where(checkedInTeam()));
 
   const teamsQuery = db
     .with(finalized)
@@ -127,7 +130,7 @@ export async function getCheckinData(): Promise<CheckinData> {
   return { participants, teams };
 }
 
-/** Mark a participant in a finalized team present or absent at the venue. */
+/** Mark a participant in a numbered offline team present or absent at the venue. */
 export async function setAttendance(
   participantId: string,
   attended: boolean,
@@ -139,13 +142,10 @@ export async function setAttendance(
     .where(
       and(
         eq(participant.id, participantId),
-        inArray(
-          participant.teamId,
-          db.select({ id: team.id }).from(team).where(isNotNull(team.number)),
-        ),
+        inArray(participant.teamId, db.select({ id: team.id }).from(team).where(checkedInTeam())),
       ),
     )
     .returning({ id: participant.id, attended: participant.attended });
-  if (!row) throw new Error('Participant not found in a finalized team');
+  if (!row) throw new Error('Participant not found in a numbered offline team');
   return row;
 }
