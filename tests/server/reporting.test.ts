@@ -2,7 +2,7 @@ import { expect, it, vi } from 'vite-plus/test';
 import { getCheckinData, setAttendance } from '@/lib/checkin.server';
 import { getReportData, participantsToCsv } from '@/lib/report.server';
 import { createTeam, joinTeamBySlug } from '@/lib/team.server';
-import { finalizeTeams, setTeamConfirmed } from '@/lib/contest.server';
+import { finalizeTeams, setTeamOffline } from '@/lib/contest.server';
 import { Route } from '@/routes/api/report';
 import { generateTeamNameForParticipant } from '@/lib/ai.server';
 import { AI_RATE_LIMIT_ERROR } from '@/lib/ai';
@@ -10,13 +10,13 @@ import { getRegistrationStatus, isRegistrationOpen } from '@/lib/registration.se
 import { DEFAULT_REGISTRATION_DEADLINE } from '@/lib/registration';
 import { bindings, seedParticipant } from './support';
 
-it('reports joined rosters and attendance, checking in finalized teams', async () => {
+it('reports joined rosters and attendance, checking in offline teams', async () => {
   for (const id of ['captain', 'member', 'third', 'small', 'solo']) await seedParticipant(id);
   const eligible = await createTeam('captain', 'Eligible Team');
   await joinTeamBySlug('member', eligible.inviteSlug);
   await joinTeamBySlug('third', eligible.inviteSlug);
   const small = await createTeam('small', 'Small Team');
-  for (const t of [eligible, small]) await setTeamConfirmed(t.inviteSlug, true);
+  for (const t of [eligible, small]) await setTeamOffline(t.inviteSlug, true);
   bindings.REGISTRATION_DEADLINE = '2000-01-01T00:00:00Z';
   await finalizeTeams();
   await setAttendance('member', true);
@@ -70,32 +70,34 @@ it('includes pairs, excludes oversized teams, and checks in no unfinalized team'
   expect(await getCheckinData()).toEqual({ participants: [], teams: [] });
 });
 
-it('restricts check-in lists and attendance writes to finalized team members', async () => {
-  for (const prefix of ['finalized', 'pending', 'unconfirmed']) {
+it('restricts check-in lists and attendance writes to numbered offline teams', async () => {
+  const seed = async (prefix: string) => {
     for (const suffix of ['captain', 'second', 'third'])
       await seedParticipant(`${prefix}-${suffix}`);
     const created = await createTeam(`${prefix}-captain`, `${prefix} Team`);
     await joinTeamBySlug(`${prefix}-second`, created.inviteSlug);
     await joinTeamBySlug(`${prefix}-third`, created.inviteSlug);
-    if (prefix === 'finalized') await setTeamConfirmed(created.inviteSlug, true);
-  }
+    return created;
+  };
+  await setTeamOffline((await seed('offline')).inviteSlug, true);
+  await seed('online');
   await seedParticipant('solo');
   bindings.REGISTRATION_DEADLINE = '2000-01-01T00:00:00Z';
   await finalizeTeams();
-  // Confirmed again after Finalize: eligible for the next run, but not numbered yet.
-  await setTeamConfirmed('pending-team', true);
+  // Offline, but formed after Finalize: not numbered yet.
+  await setTeamOffline((await seed('pending')).inviteSlug, true);
 
   const data = await getCheckinData();
-  expect(data.teams.map((t) => t.name)).toEqual(['finalized Team']);
+  expect(data.teams.map((t) => t.name)).toEqual(['offline Team']);
   expect(data.participants.map((p) => p.id).sort()).toEqual([
-    'finalized-captain',
-    'finalized-second',
-    'finalized-third',
+    'offline-captain',
+    'offline-second',
+    'offline-third',
   ]);
   expect(data.participants.every((p) => p.teamNumber === 1)).toBe(true);
-  for (const id of ['pending-second', 'unconfirmed-second', 'solo']) {
+  for (const id of ['online-second', 'pending-second', 'solo']) {
     await expect(setAttendance(id, true)).rejects.toThrow(
-      'Participant not found in a finalized team',
+      'Participant not found in a numbered offline team',
     );
     expect(
       await bindings.DB.prepare('SELECT attended FROM participant WHERE id = ?')
@@ -103,13 +105,13 @@ it('restricts check-in lists and attendance writes to finalized team members', a
         .first('attended'),
     ).toBe(0);
   }
-  await setAttendance('finalized-second', true);
+  await setAttendance('offline-second', true);
   expect(
-    (await getCheckinData()).participants.find((p) => p.id === 'finalized-second')?.attended,
+    (await getCheckinData()).participants.find((p) => p.id === 'offline-second')?.attended,
   ).toBe(true);
-  await setAttendance('finalized-second', false);
+  await setAttendance('offline-second', false);
   expect(
-    (await getCheckinData()).participants.find((p) => p.id === 'finalized-second')?.attended,
+    (await getCheckinData()).participants.find((p) => p.id === 'offline-second')?.attended,
   ).toBe(false);
 });
 

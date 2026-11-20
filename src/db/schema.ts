@@ -22,10 +22,11 @@ export const team = sqliteTable('team', {
   captainId: text('captain_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  // Unused column from the previous confirmation scheme, superseded by `confirmed`.
+  // Unused column from the first confirmation scheme.
   unconfirmed: integer('unconfirmed', { mode: 'boolean' }).default(false).notNull(),
-  // Set by an organiser once the team confirms participation: only confirmed teams get a number.
-  confirmed: integer('confirmed', { mode: 'boolean' }).default(false).notNull(),
+  // Set by an organiser for a team confirmed to come offline: numbered first and checked in at the
+  // venue. Every other team takes part online. The column keeps the name of the scheme before.
+  offline: integer('confirmed', { mode: 'boolean' }).default(false).notNull(),
   // Assigned once by finalizeTeams and never changed: the table number (also the Codeforces
   // login, with its prefix) and the Codeforces password, which is also the proctoring upload code.
   number: integer('number').unique(),

@@ -17,7 +17,7 @@ import { ColumnToggleBar, AdminDataTable, StatCard } from '@/components/admin/ta
 import { getSession } from '@/lib/auth.server';
 import { sessionIsAdmin } from '@/lib/admin.server';
 import { compareTeamNumbers, formatTeamNumber } from '@/lib/contest';
-import { finalizeTeams, getProctoringCsv, setTeamConfirmed } from '@/lib/contest.server';
+import { finalizeTeams, getProctoringCsv, setTeamOffline } from '@/lib/contest.server';
 import { isRegistrationOpen } from '@/lib/registration.server';
 import {
   getReportData,
@@ -45,11 +45,11 @@ const downloadCsv = createServerFn({ method: 'GET' }).handler(async () => {
   return participantsToCsv(participants);
 });
 
-const setTeamConfirmedFn = createServerFn({ method: 'POST' })
-  .validator(z.object({ inviteSlug: z.string().min(1), confirmed: z.boolean() }))
+const setTeamOfflineFn = createServerFn({ method: 'POST' })
+  .validator(z.object({ inviteSlug: z.string().min(1), offline: z.boolean() }))
   .handler(async ({ data }) => {
     await assertAdmin();
-    return setTeamConfirmed(data.inviteSlug, data.confirmed);
+    return setTeamOffline(data.inviteSlug, data.offline);
   });
 
 const finalizeTeamsFn = createServerFn({ method: 'POST' }).handler(async () => {
@@ -116,8 +116,8 @@ function AdminPage() {
   const [finalizing, setFinalizing] = useState(false);
   const [pendingSlugs, setPendingSlugs] = useState<ReadonlySet<string>>(() => new Set());
 
-  const setConfirmed = useCallback(
-    async (inviteSlug: string, confirmed: boolean) => {
+  const setOffline = useCallback(
+    async (inviteSlug: string, offline: boolean) => {
       const setPending = (pending: boolean) =>
         setPendingSlugs((prev) => {
           const next = new Set(prev);
@@ -134,12 +134,12 @@ function AdminPage() {
           d && {
             ...d,
             teams: d.teams.map((team) =>
-              team.inviteSlug === inviteSlug ? { ...team, confirmed } : team,
+              team.inviteSlug === inviteSlug ? { ...team, offline } : team,
             ),
           },
       );
       try {
-        await setTeamConfirmedFn({ data: { inviteSlug, confirmed } });
+        await setTeamOfflineFn({ data: { inviteSlug, offline } });
       } catch (err) {
         setNotice({
           type: 'error',
@@ -166,7 +166,7 @@ function AdminPage() {
             }
           : assigned
             ? { type: 'success', message: `Teams numbered: ${assigned}.` }
-            : { type: 'success', message: 'Every eligible, confirmed team already has a number.' },
+            : { type: 'success', message: 'Every eligible team already has a number.' },
       );
     } catch (err) {
       setNotice({
@@ -200,6 +200,8 @@ function AdminPage() {
   }, []);
 
   const eligibleParticipants = participants.filter((p) => p.teamEligible).length;
+  const offlineTeams = teams.filter((t) => t.eligible && t.offline).length;
+  const offlineAwaiting = teams.filter((t) => t.eligible && t.offline && t.number === null).length;
 
   const participantsInFilter = useMemo(
     () =>
@@ -401,20 +403,21 @@ function AdminPage() {
         ),
       },
       {
-        // Ticked for teams that confirmed participation; final once a team has a number.
-        id: 'confirmed',
-        accessorFn: (team) => team.confirmed,
-        meta: { label: 'Confirmed' },
-        sortFn: (a, b) => Number(a.original.confirmed) - Number(b.original.confirmed),
+        // Ticked for teams confirmed to come offline; the rest take part online. Final once a team
+        // has a number.
+        id: 'offline',
+        accessorFn: (team) => team.offline,
+        meta: { label: 'Offline' },
+        sortFn: (a, b) => Number(a.original.offline) - Number(b.original.offline),
         cell: ({ row }) => {
-          const { eligible, confirmed, number, inviteSlug, name } = row.original;
+          const { eligible, offline, number, inviteSlug, name } = row.original;
           if (!eligible) return <span className="text-muted-foreground">Not applicable</span>;
           return (
             <Checkbox
-              checked={confirmed}
+              checked={offline}
               disabled={number !== null || pendingSlugs.has(inviteSlug)}
-              onCheckedChange={(checked) => void setConfirmed(inviteSlug, checked)}
-              aria-label={confirmed ? `Mark ${name} as not confirmed` : `Mark ${name} as confirmed`}
+              onCheckedChange={(checked) => void setOffline(inviteSlug, checked)}
+              aria-label={offline ? `Mark ${name} as online` : `Mark ${name} as offline`}
             />
           );
         },
@@ -446,7 +449,7 @@ function AdminPage() {
         cell: ({ row }) => formatDate(row.original.createdAt),
       },
     ],
-    [goToParticipant, pendingSlugs, setConfirmed],
+    [goToParticipant, pendingSlugs, setOffline],
   );
   const participantTable = useAdminTable(
     participantMatches,
@@ -504,7 +507,7 @@ function AdminPage() {
             <p className="mt-2 text-sm text-whd-text-muted">
               {registrationOpen
                 ? 'Registration is still open. Finalize the teams once it closes.'
-                : `Numbered: ${stats.numberedTeams} · awaiting a number: ${stats.awaitingNumber}`}
+                : `Numbered: ${stats.numberedTeams} · awaiting a number: ${stats.awaitingNumber} · offline: ${offlineTeams}`}
             </p>
           </div>
           <div className="admin-heading-actions">
@@ -533,7 +536,7 @@ function AdminPage() {
           open={finalizeOpen}
           onOpenChange={setFinalizeOpen}
           title="Finalize teams?"
-          description={`Eligible, confirmed teams without a number (${stats.awaitingNumber}) get table numbers and Codeforces passwords: smaller teams first, in random order within each size. Numbers can never be changed or taken back, and these teams can no longer change their members.`}
+          description={`Eligible teams without a number (${stats.awaitingNumber}, ${offlineAwaiting} of them offline) get table numbers and Codeforces passwords: offline teams first, then online ones, each smaller teams first, in random order within each size. Numbers can never be changed or taken back, and these teams can no longer change their members or switch between online and offline.`}
           confirmLabel="Finalize"
           cancelLabel="Cancel"
           onConfirm={() => void finalize()}

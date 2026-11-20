@@ -106,25 +106,24 @@ function isUniqueViolation(error: unknown, column: string): boolean {
 /** Correlated to the outer `team` row; raw SQL so the reference can't bind to `participant`. */
 const memberCount = sql<number>`(select count(*) from participant where participant.team_id = team.id)`;
 
-/** Eligible, marked confirmed, and not numbered yet: what finalizeTeams numbers. */
+/** Eligible and not numbered yet, online or offline: what finalizeTeams numbers. */
 const awaitingNumber = () =>
-  and(
-    isNull(team.number),
-    eq(team.confirmed, true),
-    between(memberCount, MIN_TEAM_SIZE, MAX_TEAM_SIZE),
-  );
+  and(isNull(team.number), between(memberCount, MIN_TEAM_SIZE, MAX_TEAM_SIZE));
 
-/** Mark a team as having confirmed participation, or undo it. Numbered teams are final. */
-export async function setTeamConfirmed(
+/**
+ * Mark a team as confirmed to come offline, or back to online. Numbered teams are final: the status
+ * decided their number.
+ */
+export async function setTeamOffline(
   inviteSlug: string,
-  confirmed: boolean,
-): Promise<{ inviteSlug: string; confirmed: boolean }> {
+  offline: boolean,
+): Promise<{ inviteSlug: string; offline: boolean }> {
   const db = getAppDb();
   const [row] = await db
     .update(team)
-    .set({ confirmed, updatedAt: new Date() })
+    .set({ offline, updatedAt: new Date() })
     .where(and(eq(team.inviteSlug, inviteSlug), isNull(team.number)))
-    .returning({ inviteSlug: team.inviteSlug, confirmed: team.confirmed });
+    .returning({ inviteSlug: team.inviteSlug, offline: team.offline });
   if (row) return row;
   const existing = await db.query.team.findFirst({
     where: eq(team.inviteSlug, inviteSlug),
@@ -136,10 +135,10 @@ export async function setTeamConfirmed(
 export type FinalizeResult = { assigned: number; badNames: string[] };
 
 /**
- * Give every eligible, confirmed team without a number one, with a Codeforces password: smaller
- * teams first, in random order within each size. Each UPDATE takes MAX(number) + 1 when it runs,
+ * Give every eligible team without a number one, with a Codeforces password: offline teams first,
+ * then online ones, each by size, smaller first, in random order within each size. Each UPDATE takes MAX(number) + 1 when it runs,
  * inside one batch (a transaction), so numbers never repeat or leave gaps, even when two organisers
- * click at once; a later run, after a team is confirmed again, appends to the end. Names the
+ * click at once; a later run appends to the end. Names the
  * Codeforces users file can't carry stop the run, so organisers can fix them first.
  */
 export async function finalizeTeams(): Promise<FinalizeResult> {
@@ -148,7 +147,7 @@ export async function finalizeTeams(): Promise<FinalizeResult> {
 
   for (let attempt = 0; attempt < 5; attempt++) {
     const pending = await db
-      .select({ id: team.id, name: team.name, size: memberCount })
+      .select({ id: team.id, name: team.name, size: memberCount, offline: team.offline })
       .from(team)
       .where(awaitingNumber());
     const badNames = pending.filter((t) => TEAM_NAME_FORBIDDEN.test(t.name)).map((t) => t.name);
@@ -159,8 +158,10 @@ export async function finalizeTeams(): Promise<FinalizeResult> {
     while (passwords.size < pending.length) passwords.add(generateContestPassword());
     const passwordList = [...passwords];
     const now = new Date();
-    // The batch runs in this order. The sort is stable, so each size keeps its shuffled order.
-    const ordered = shuffle(pending).sort((a, b) => a.size - b.size);
+    // The batch runs in this order. The sort is stable, so each group keeps its shuffled order.
+    const ordered = shuffle(pending).sort(
+      (a, b) => Number(b.offline) - Number(a.offline) || a.size - b.size,
+    );
     const [first, ...rest] = ordered.map((t, i) =>
       db
         .update(team)
@@ -190,7 +191,11 @@ function csvField(value: string | number): string {
   return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
-/** Numbered teams for proctoring's CSV import. Holds every password: generate on request only. */
+/**
+ * Numbered teams for proctoring's CSV import, online ones too: everyone gets a Codeforces account.
+ * `shown` (optional in proctoring) starts offline teams shown in its review, online ones hidden.
+ * Holds every password: generate on request only.
+ */
 export async function getProctoringCsv(): Promise<string> {
   const rows = await getAppDb()
     .select({
@@ -198,14 +203,19 @@ export async function getProctoringCsv(): Promise<string> {
       number: team.number,
       contestPassword: team.contestPassword,
       name: team.name,
+      offline: team.offline,
     })
     .from(team)
     .where(and(isNotNull(team.number), isNotNull(team.contestPassword)))
     .orderBy(asc(team.number));
-  const lines = rows.flatMap(({ id, number, contestPassword, name }) =>
+  const lines = rows.flatMap(({ id, number, contestPassword, name, offline }) =>
     number === null || contestPassword === null
       ? []
-      : [[id, number, contestLogin(number), contestPassword, name].map(csvField).join(',')],
+      : [
+          [id, number, contestLogin(number), contestPassword, name, offline ? 1 : 0]
+            .map(csvField)
+            .join(','),
+        ],
   );
-  return ['id,number,login,code,name', ...lines].join('\n');
+  return ['id,number,login,code,name,shown', ...lines].join('\n');
 }

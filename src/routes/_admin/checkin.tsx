@@ -360,7 +360,7 @@ function CheckinPage() {
     'fullName',
     participantId,
   );
-  // Once the teams are finalized, staff look them up by table number.
+  // Once the teams are numbered, staff look them up by table number.
   const teamTable = useAdminTable(
     teamMatches,
     teamCols,
@@ -381,19 +381,19 @@ function CheckinPage() {
           <div>
             <h1 className="admin-title">Check-in</h1>
             <p className="mt-2 text-sm text-whd-text-muted">
-              Only finalized teams with assigned table numbers and their members are listed.
+              Only offline teams with table numbers and their members are listed.
             </p>
           </div>
         </div>
 
         <div className="admin-stats admin-checkin-stats">
           <StatCard
-            label="Participants in finalized teams"
+            label="Participants in offline teams"
             value={participants.length}
             breakdown={`${presentCount} in / ${participants.length - presentCount} not yet`}
           />
           <StatCard
-            label="Finalized teams"
+            label="Offline teams"
             value={teams.length}
             breakdown={`${statusCounts.ready} ready / ${statusCounts.partial} partial / ${statusCounts['no-show']} no-show`}
           />
