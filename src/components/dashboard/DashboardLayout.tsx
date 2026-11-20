@@ -22,6 +22,8 @@ export function DashboardLayout({
   sidebar: ReactNode;
 }) {
   const firstName = fullName.trim().split(/\s+/)[0] || 'Pilot';
+  // Known once the team has its number.
+  const contest = team?.contest ?? null;
   return (
     <main className="dashboard-main">
       <section className="dashboard-welcome" aria-labelledby="dashboard-title">
@@ -43,7 +45,7 @@ export function DashboardLayout({
             {`Episode ${EVENT.episode}`} / {EVENT.contest.format}
           </span>
           <strong>{EVENT.contest.dateLabel}</strong>
-          <span>{EVENT.venue.name}</span>
+          <span>{contest && !contest.offline ? 'Online' : EVENT.venue.name}</span>
         </div>
       </section>
       {feedback}
@@ -58,7 +60,11 @@ export function DashboardLayout({
               {`Teams of ${MIN_TEAM_SIZE} to ${MAX_TEAM_SIZE} have ${EVENT.contest.hours} hours to solve the problem set.`}
             </p>
             <p>
-              {`All team members must attend in person at ${EVENT.venue.name}, ${EVENT.venue.city}.`}
+              {contest
+                ? contest.offline
+                  ? `Your team competes offline: every member comes to ${EVENT.venue.name}, ${EVENT.venue.city}.`
+                  : 'Your team competes online, from anywhere. Only teams competing offline can win prizes.'
+                : `Teams compete offline at ${EVENT.venue.name}, ${EVENT.venue.city}, or online. Only offline teams can win prizes.`}
             </p>
             <Link to="/" hash="rules" className="account-text-button">
               Review the contest rules ↗

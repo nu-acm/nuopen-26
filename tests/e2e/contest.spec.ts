@@ -50,10 +50,23 @@ test('finalizes teams, exports them for proctoring, and keeps the contest card f
     // No contest start is configured, so there is nothing to upload yet.
     await expect(captain.getByRole('link', { name: 'Upload video' })).toHaveCount(0);
 
+    await expect(
+      captain.locator('.readiness-list li').filter({ hasText: 'Competing offline' }),
+    ).toContainText('Table 01');
+
     // Reopening registration never hides the card.
     await app.setDeadline('2099-01-01T00:00:00Z');
     await captain.reload();
     await expect(captain.getByRole('heading', { name: 'Table 01' })).toBeVisible();
+
+    // An online team sees no table number anywhere.
+    await app.db.prepare("UPDATE team SET confirmed = 0 WHERE id = 'eligible-team'").run();
+    await captain.reload();
+    await expect(captain.getByRole('heading', { name: 'Online', exact: true })).toBeVisible();
+    await expect(
+      captain.locator('.readiness-list li').filter({ hasText: 'Competing online' }),
+    ).toBeVisible();
+    await expect(captain.getByText(/Table 01/)).toHaveCount(0);
   } finally {
     await context.close();
   }

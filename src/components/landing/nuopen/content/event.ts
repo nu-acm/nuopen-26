@@ -67,7 +67,7 @@ export const EVENT = {
       label: 'Confirmation',
       note: 'Teams receive confirmation by email.',
     },
-    { date: EVENT_DATE, label: 'Contest day', note: 'Nazarbayev University, Astana.' },
+    { date: EVENT_DATE, label: 'Contest day', note: 'Nazarbayev University, Astana, or online.' },
   ],
   agenda: [
     {
@@ -103,7 +103,10 @@ export const EVENT = {
       title: 'Compete solo or with teammates',
       text: 'Compete on your own or in a team of up to three.',
     },
-    { title: 'Be there to win', text: 'Prizes go to teams who register and compete in person.' },
+    {
+      title: 'Be there to win',
+      text: 'Teams can compete online, but prizes go to teams who compete in person.',
+    },
     { title: 'One laptop per team', text: 'Bring your own. Laptops are not provided.' },
     {
       title: 'Coaches watch, not help',
@@ -117,7 +120,7 @@ export const EVENT = {
   faq: [
     {
       q: 'Who can take part?',
-      a: 'Anyone aged 16 or older can compete solo or in a team of up to three, in person at Nazarbayev University.',
+      a: 'Anyone aged 16 or older can compete solo or in a team of up to three, in person at Nazarbayev University or online.',
     },
     { q: 'Is it free?', a: 'Yes. Taking part in NU Open costs nothing.' },
     {
@@ -126,19 +129,19 @@ export const EVENT = {
     },
     {
       q: 'Who can win a prize?',
-      a: 'Every registered team competing in person at Nazarbayev University is eligible.',
+      a: "Every registered team competing in person at Nazarbayev University. Online teams can't win prizes.",
     },
     {
       q: "I'm still at school. Can I win?",
-      a: "Yes. If you're 16 or older, bring an ID and compete on campus.",
+      a: "Yes. If you're 16 or older and your team competes in person, bring an ID and compete on campus.",
     },
     {
       q: 'Do I need to attend in person?',
-      a: 'Yes. Every team member must compete in person at Nazarbayev University in Astana.',
+      a: 'No, online participation is allowed. Organisers confirm which teams compete in person at Nazarbayev University in Astana, and your dashboard shows which applies to yours. Only teams competing in person can win prizes.',
     },
     {
       q: 'What should I bring?',
-      a: 'One laptop per team with its charger, and an ID for every team member.',
+      a: 'If your team competes in person: one laptop per team with its charger, and an ID for every team member.',
     },
     {
       q: 'Can our coach come?',

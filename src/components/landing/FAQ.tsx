@@ -50,7 +50,8 @@ const faqs = [
   {
     id: 'online',
     question: 'Can I participate online?',
-    answer: 'No, NU Open 2026 will be held offline at Nazarbayev University, Astana, Kazakhstan.',
+    answer:
+      'Yes. Teams compete either offline at Nazarbayev University, Astana, or online from anywhere. Organisers confirm which teams compete offline after registration closes, and your dashboard shows which applies to yours. Only teams competing offline can win prizes.',
   },
   {
     id: 'whatIs',
@@ -66,7 +67,7 @@ const faqs = [
   {
     id: 'certificates',
     question: 'Will there be prizes?',
-    answer: `The prize pool is ${EVENT.prize.text}.`,
+    answer: `The prize pool is ${EVENT.prize.text}, for teams competing offline at Nazarbayev University. Online teams can't win prizes.`,
   },
   {
     id: 'noAnswer',

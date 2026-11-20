@@ -48,18 +48,24 @@ export function getContestStart(): string | null {
   return start.toISOString();
 }
 
-/** Shown to every member of a numbered team. Numbers are never taken back, so neither is this. */
+/**
+ * Shown to every member of a numbered team. Numbers are never taken back, so neither is this. Online
+ * teams get no table number and no upload link: they have no table, and only offline teams are
+ * proctored.
+ */
 export function getContestAccess(t: {
   number: number | null;
   contestPassword: string | null;
+  offline: boolean;
 }): ContestAccess | null {
   if (t.number === null || t.contestPassword === null) return null;
   const base = appEnv().PROCTORING_URL?.trim().replace(/\/+$/, '');
   return {
-    tableNumber: formatTeamNumber(t.number),
+    offline: t.offline,
+    tableNumber: t.offline ? formatTeamNumber(t.number) : null,
     login: contestLogin(t.number),
     password: t.contestPassword,
-    uploadUrl: base ? `${base}/#team=${t.contestPassword}` : null,
+    uploadUrl: t.offline && base ? `${base}/#team=${t.contestPassword}` : null,
     contestStart: getContestStart(),
   };
 }

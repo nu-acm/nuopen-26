@@ -4,6 +4,7 @@ import { LinkButton } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { EVENT } from '@/components/landing/nuopen/content/event';
 import {
   InputGroup,
   InputGroupAddon,
@@ -27,8 +28,9 @@ function useStarted(start: string | null) {
 }
 
 /**
- * A finalized team's table number and Codeforces account. Every member sees it from the moment
- * the teams are finalized. The upload button appears at contest start if a URL is configured.
+ * A finalized team's format (offline at a table, or online) and Codeforces account. Every member
+ * sees it from the moment the teams are finalized. Offline teams get the upload button at contest
+ * start if a URL is configured.
  */
 export function ContestCard({ contest }: { contest: ContestAccess }) {
   const [shown, setShown] = useState(false);
@@ -43,8 +45,13 @@ export function ContestCard({ contest }: { contest: ContestAccess }) {
           <KeyRound size={16} aria-hidden="true" />
           Contest access
         </p>
-        <CardTitle variant="team">{`Table ${contest.tableNumber}`}</CardTitle>
+        <CardTitle variant="team">
+          {contest.tableNumber === null ? 'Online' : `Table ${contest.tableNumber}`}
+        </CardTitle>
         <CardDescription variant="account">
+          {contest.offline
+            ? `Your team competes offline at ${EVENT.venue.name}, ${EVENT.venue.city}. `
+            : 'Your team competes online, from anywhere. '}
           Sign in to Codeforces with these during the contest. Don't share the password outside your
           team.
         </CardDescription>

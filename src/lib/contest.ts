@@ -19,10 +19,13 @@ export function compareTeamNumbers(a: number | null, b: number | null): number {
 
 /** What a finalized team sees on its dashboard, for good. */
 export type ContestAccess = {
-  tableNumber: string;
+  /** Confirmed to come to the venue; every other team competes online. */
+  offline: boolean;
+  /** Offline teams only: online teams have no table. */
+  tableNumber: string | null;
   login: string;
   password: string;
-  /** The configured proctoring page with the upload code in the URL fragment. */
+  /** The configured proctoring page with the upload code in the URL fragment. Offline teams only: only they are proctored. */
   uploadUrl: string | null;
   /** ISO instant from which the upload button shows; null hides it. */
   contestStart: string | null;

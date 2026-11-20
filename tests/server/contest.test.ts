@@ -121,13 +121,14 @@ it('freezes the roster of a numbered team', async () => {
 });
 
 it('shows the contest card only to members of a numbered team, whatever the deadline or time', async () => {
-  const team = await seedTeam('m', 'Members');
+  const team = await seedTeam('m', 'Members', 3, true);
   await seedParticipant('outsider');
   expect((await getTeamByParticipant('m0'))?.contest).toBeNull();
   closeRegistration();
   await finalizeTeams();
   const password = (await numbers())[0].contest_password;
   const expected = {
+    offline: true,
     tableNumber: '01',
     login: 'team01',
     password,
@@ -136,6 +137,16 @@ it('shows the contest card only to members of a numbered team, whatever the dead
   };
   for (const id of team.ids) expect((await getTeamByParticipant(id))?.contest).toEqual(expected);
   expect(await getTeamByParticipant('outsider')).toBeNull();
+
+  // An online team has no table, and only offline teams are proctored.
+  await seedTeam('w', 'Online', 2);
+  await finalizeTeams();
+  expect((await getTeamByParticipant('w0'))?.contest).toMatchObject({
+    offline: false,
+    tableNumber: null,
+    login: 'team02',
+    uploadUrl: null,
+  });
 
   // Reopening registration or reaching the contest start never hides it.
   bindings.REGISTRATION_DEADLINE = '2099-01-01T00:00:00Z';

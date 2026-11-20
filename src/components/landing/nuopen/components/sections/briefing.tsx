@@ -59,7 +59,7 @@ function briefingFacts(): Fact[] {
     {
       label: 'Format',
       value: `${contest.format} on ${contest.platform}`,
-      detail: 'Compete in person at Nazarbayev University',
+      detail: 'At Nazarbayev University or online',
     },
     { label: 'Entry', value: 'Free', detail: 'No participation fee' },
   ];

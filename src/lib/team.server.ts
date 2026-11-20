@@ -122,7 +122,7 @@ export type TeamData = {
   inviteSlug: string;
   captainId: string;
   members: TeamMember[];
-  /** Table number, login and password once the team is finalized; only its members get this. */
+  /** Online or offline, login and password once the team is finalized; only its members get this. */
   contest: ContestAccess | null;
 };
 
